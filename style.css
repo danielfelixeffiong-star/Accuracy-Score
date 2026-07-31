@@ -39,3 +39,26 @@ footer {
     background: #0f172a;
     color: white;
 }
+.navbar {
+  background-color: #0b1d3a; /* Dark background matching your footer */
+  padding: 15px 20px;
+  text-align: center;
+}
+
+.navbar nav {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.navbar nav a {
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.navbar nav a:hover {
+  color: #4a90e2; /* Highlight color on hover */
+}
