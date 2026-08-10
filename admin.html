@@ -2,92 +2,72 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Accuracy Score - Master Console</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accuracy Score - Master Admin</title>
     <style>
-        body { font-family: Arial, sans-serif; background: #0b0f19; color: #fff; padding: 15px; margin: 0; box-sizing: border-box; overflow-y: auto; }
-        h1 { font-size: 22px; text-align: center; color: #38bdf8; margin: 15px 0; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
-        .card { background: #151f32; padding: 16px; margin-bottom: 25px; border-radius: 12px; border: 1px solid #223049; }
-        h2 { font-size: 16px; margin: 0 0 14px 0; color: #38bdf8; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #223049; padding-bottom: 8px; }
-        label { font-size: 12px; color: #94a3b8; font-weight: bold; display: block; margin-top: 10px; }
-        input, select, textarea, button { width: 100%; padding: 12px; margin: 6px 0 12px 0; border-radius: 8px; border: none; box-sizing: border-box; font-size: 14px; }
+        body { font-family: Arial, sans-serif; background: #0b0f19; color: #fff; padding: 20px; }
+        .card { background: #151f32; padding: 15px; margin-bottom: 20px; border-radius: 8px; border: 1px solid #223049; }
+        input, select, textarea, button { width: 100%; padding: 12px; margin: 8px 0; border-radius: 6px; border: none; box-sizing: border-box; }
         input, select, textarea { background: #0f172a; color: #fff; border: 1px solid #334155; }
-        textarea { height: 90px; resize: vertical; }
         button { background: #38bdf8; color: #0b0f19; cursor: pointer; font-weight: bold; font-size: 15px; text-transform: uppercase; }
-        .item-row { background: #1e293b; padding: 12px; margin: 8px 0; border-radius: 8px; border-left: 4px solid #38bdf8; color: #fff; }
-        .btn-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 8px; }
-        .btn-status { padding: 8px; font-size: 11px; font-weight: 800; border-radius: 4px; color: #fff; text-transform: uppercase; }
-        .btn-won { background: #22c55e; }
-        .btn-lost { background: #ef4444; }
-        .btn-void { background: #64748b; }
-        .btn-postp { background: #f59e0b; }
-        .btn-cancel { background: #7c3aed; }
+        .item { background: #1e293b; padding: 12px; margin: 8px 0; border-radius: 6px; border-left: 4px solid #38bdf8; }
+        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }
+        .s-btn { padding: 6px; font-size: 11px; font-weight: bold; border-radius: 4px; color: #fff; }
     </style>
 </head>
 <body>
 
-    <h1>Accuracy Score Master Console</h1>
+    <h1>Accuracy Score Manager</h1>
 
-    <!-- 1. FREE TIPS MANAGEMENT SECTION -->
+    <!-- SECTION 1: FREE TIPS -->
     <div class="card">
-        <h2>🆓 Post Free Tip Match</h2>
-        <label>Target Matching Date:</label>
-        <input type="date" id="freeDate">
-        <input type="text" id="freeLeague" placeholder="League Name (e.g. Premier League)">
-        <input type="text" id="freeTime" placeholder="Match Kickoff Time (e.g. 20:00 UTC)">
-        <input type="text" id="freeTeam1" placeholder="Home Team (e.g. Arsenal)">
-        <input type="text" id="freeTeam2" placeholder="Away Team (e.g. Chelsea)">
-        <input type="text" id="freePrediction" placeholder="Free Prediction (e.g. Home Win or Draw)">
-        <input type="number" step="0.01" id="freeOdds" placeholder="Odds (e.g. 1.85)">
-        <textarea id="freeAnalytics" placeholder="Tap for Full Analysis text summary details..."></textarea>
-        <button type="button" onclick="publishFreeTip()">Publish Free Match</button>
-    </div>
-
-    <div class="card">
-        <h2>⏳ Live Settle / Edit Free Tips</h2>
-        <div id="freeMatchesList">Syncing live fixtures...</div>
-    </div>
-
-    <!-- 2. VIP ZONES MANAGEMENT SECTION -->
-    <div class="card">
-        <h2>👑 Upload Active VIP Ticket Match (Correct Score)</h2>
-        <input type="text" id="vipLeague" placeholder="League Name (e.g. UEFA Champions League)">
-        <input type="text" id="vipTime" placeholder="Kickoff Time (e.g. 00:10)">
-        <input type="text" id="vipTeam1" placeholder="Home Team (e.g. Bayern Munich)">
-        <input type="text" id="vipTeam2" placeholder="Away Team (e.g. Real Madrid)">
-        <input type="text" id="vipPrediction" placeholder="Correct Score Prediction (e.g. 2 - 1)">
-        <input type="number" step="0.01" id="vipOdds" placeholder="Match Odds (e.g. 9.50)">
-        <button type="button" onclick="publishVipMatch()">Add Match to Active Ticket</button>
-    </div>
-
-    <div class="card" style="background:#131224; border-color:#3b2273;">
-        <h2>⚡ Current Active VIP Ticket Details</h2>
-        <label>Total Combined Ticket Odds:</label>
-        <input type="number" step="0.01" id="ticketTotalOdds" placeholder="e.g. 60.00">
-        <button type="button" class="btn-won" style="margin-bottom:12px; color:#fff;" onclick="settleEntireVipTicket('CONFIRMED WON')">🏆 Mark Whole Ticket as CONFIRMED WON</button>
-        <button type="button" class="btn-lost" style="margin-bottom:12px; color:#fff;" onclick="settleEntireVipTicket('TICKET LOST')">❌ Mark Whole Ticket as LOST</button>
-        <div id="activeVipMatchesList">No matches inside current active ticket instance.</div>
-    </div>
-
-    <!-- 3. NOTIFICATIONS & DATE BANNER SETTINGS -->
-    <div class="card">
-        <h2>📅 Update VIP Calendar Ticket Notice Banner</h2>
-        <label>Display Target Date:</label>
-        <input type="date" id="metaVipDate">
-        <button type="button" onclick="updateVipBannerDate()">Update App Notice Layout Date</button>
+        <h2>🆓 Post Free Match</h2>
+        <input type="date" id="fDate">
+        <input type="text" id="fLeague" placeholder="League">
+        <input type="text" id="fTime" placeholder="Kickoff Time">
+        <input type="text" id="fTeam1" placeholder="Home Team">
+        <input type="text" id="fTeam2" placeholder="Away Team">
+        <input type="text" id="fPred" placeholder="Prediction">
+        <input type="number" step="0.01" id="fOdds" placeholder="Odds">
+        <textarea id="fAnly" placeholder="Analysis Notes"></textarea>
+        <button type="button" onclick="submitFree()">Publish Free Match</button>
     </div>
 
     <div class="card">
-        <h2>📢 Send Global Push Notification Alert</h2>
-        <input type="text" id="pushTitle" placeholder="Enter Alert Header Title">
-        <textarea id="pushBody" placeholder="Type notification text details here..."></textarea>
-        <button type="button" style="background:#f59e0b; color:#0b0f19;" onclick="triggerGlobalNotification()">Transmit Push Banner</button>
+        <h2>⏳ Manage Free Match Status</h2>
+        <div id="freeList">Loading live feed...</div>
     </div>
 
-    <!-- Core Script Logic Module Integration -->
+    <!-- SECTION 2: VIP ZONES -->
+    <div class="card">
+        <h2>👑 Post VIP Ticket Match</h2>
+        <input type="text" id="vLeague" placeholder="League">
+        <input type="text" id="vTime" placeholder="Kickoff Time">
+        <input type="text" id="vTeam1" placeholder="Home Team">
+        <input type="text" id="vTeam2" placeholder="Away Team">
+        <input type="text" id="vPred" placeholder="Correct Score Prediction">
+        <input type="number" step="0.01" id="vOdds" placeholder="Odds">
+        <button type="button" onclick="submitVip()">Add to Active VIP Ticket</button>
+    </div>
+
+    <div class="card" style="background:#131224;">
+        <h2>⚡ Active VIP Ticket</h2>
+        <input type="number" step="0.01" id="vTotal" placeholder="Total Combined Ticket Odds">
+        <button type="button" style="background:#22c55e; color:#fff; margin-bottom:10px;" onclick="closeVipTicket('WON')">🏆 Archive Ticket as WON</button>
+        <button type="button" style="background:#ef4444; color:#fff;" onclick="closeVipTicket('LOST')">❌ Archive Ticket as LOST</button>
+        <div id="vipList">No matches in active ticket.</div>
+    </div>
+
+    <!-- SECTION 3: SYSTEM NOTICES -->
+    <div class="card">
+        <h2>📅 Update VIP Notice Date</h2>
+        <input type="date" id="bannerDate">
+        <button type="button" onclick="submitBanner()">Update Notice Date</button>
+    </div>
+
     <script type="module">
         import { initializeApp } from "https://gstatic.com";
-        import { getFirestore, collection, addDoc, updateDoc, doc, setDoc, deleteDoc, query, where, onSnapshot, getDocs } from "https://gstatic.com";
+        import { getFirestore, collection, addDoc, updateDoc, doc, setDoc, deleteDoc, onSnapshot, getDocs } from "https://gstatic.com";
 
         const firebaseConfig = {
           apiKey: "AIzaSyAFFzyLlX_XUtFcw9i1YDY0L18QjRNMLA5Q",
@@ -101,68 +81,130 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // --- FREE TIPS LOGIC ---
-        window.publishFreeTip = async function() {
-            const date = document.getElementById('freeDate').value;
-            const league = document.getElementById('freeLeague').value;
-            const time = document.getElementById('freeTime').value;
-            const team1 = document.getElementById('freeTeam1').value;
-            const team2 = document.getElementById('freeTeam2').value;
-            const prediction = document.getElementById('freePrediction').value;
-            const odds = document.getElementById('freeOdds').value;
-            const analytics = document.getElementById('freeAnalytics').value;
+        // Submit Free Tip Data
+        window.submitFree = async function() {
+            const date = document.getElementById('fDate').value;
+            const league = document.getElementById('fLeague').value;
+            const time = document.getElementById('fTime').value;
+            const team1 = document.getElementById('fTeam1').value;
+            const team2 = document.getElementById('fTeam2').value;
+            const pred = document.getElementById('fPred').value;
+            const odds = document.getElementById('fOdds').value;
+            const anly = document.getElementById('fAnly').value;
 
-            if(!date || !team1 || !team2 || !prediction || !odds) return alert("Fill core fields!");
+            if(!date || !team1 || !team2 || !pred || !odds) return alert("Fill required inputs!");
 
             try {
                 await addDoc(collection(db, "free_tips"), {
-                    matchDate: date, league, time, team1, team2, prediction,
-                    odds: parseFloat(odds), analytics: analytics || "Analyze carefully.",
+                    matchDate: date, league, time, team1, team2, prediction: pred,
+                    odds: parseFloat(odds), analytics: anly || "Analyze carefully.",
                     status: "NOT STARTED", timestamp: Date.now()
                 });
-                alert("Free tip posted successfully!");
-                document.getElementById('freeTeam1').value = '';
-                document.getElementById('freeTeam2').value = '';
-                document.getElementById('freePrediction').value = '';
-                document.getElementById('freeOdds').value = '';
-                document.getElementById('freeAnalytics').value = '';
-            } catch (err) { alert(err.message); }
+                alert("Free match added successfully!");
+                document.getElementById('fTeam1').value = '';
+                document.getElementById('fTeam2').value = '';
+                document.getElementById('fPred').value = '';
+                document.getElementById('fOdds').value = '';
+            } catch(e) { alert("Error: " + e.message); }
         };
 
-        onSnapshot(collection(db, "free_tips"), (snapshot) => {
-            const container = document.getElementById('freeMatchesList');
-            container.innerHTML = '';
-            if(snapshot.empty) container.innerHTML = '<span style="color:#aaa;">No fixtures logged.</span>';
-            
-            snapshot.forEach(gDoc => {
-                const g = gDoc.data();
+        // Stream Free Matches
+        onSnapshot(collection(db, "free_tips"), (snap) => {
+            const box = document.getElementById('freeList');
+            box.innerHTML = '';
+            snap.forEach(itemDoc => {
+                const data = itemDoc.data();
                 const div = document.createElement('div');
-                div.className = 'item-row';
+                div.className = 'item';
                 div.innerHTML = `
-                    <strong>[${g.matchDate}] ${g.team1} vs ${g.team2}</strong><br>
-                    <small>Status: <b>${g.status}</b> | Tip: ${g.prediction}</small>
-                    <div class="btn-grid">
-                        <button type="button" class="btn-status btn-won" onclick="updateFreeStatus('${gDoc.id}','WON')">WON</button>
-                        <button type="button" class="btn-status btn-lost" onclick="updateFreeStatus('${gDoc.id}','LOST')">LOST</button>
-                        <button type="button" class="btn-status btn-void" onclick="updateFreeStatus('${gDoc.id}','VOID')">VOID</button>
-                        <button type="button" class="btn-status btn-postp" onclick="updateFreeStatus('${gDoc.id}','POSTPONED')">POSTP.</button>
-                        <button type="button" class="btn-status btn-cancel" onclick="updateFreeStatus('${gDoc.id}','CANCELED')">CANCEL</button>
+                    <strong>${data.team1} vs ${data.team2}</strong> [${data.status}]<br>
+                    <div class="grid">
+                        <button class="s-btn" style="background:#22c55e" onclick="setFreeStatus('${itemDoc.id}','WON')">WON</button>
+                        <button class="s-btn" style="background:#ef4444" onclick="setFreeStatus('${itemDoc.id}','LOST')">LOST</button>
+                        <button class="s-btn" style="background:#64748b" onclick="setFreeStatus('${itemDoc.id}','VOID')">VOID</button>
                     </div>
                 `;
-                container.appendChild(div);
+                box.appendChild(div);
             });
         });
 
-        window.updateFreeStatus = async function(id, status) {
-            try {
-                await updateDoc(doc(db, "free_tips", id), { status });
-                alert(`Match status changed to ${status}`);
-            } catch (err) { alert(err.message); }
+        window.setFreeStatus = async function(id, status) {
+            await updateDoc(doc(db, "free_tips", id), { status });
         };
 
-        // --- VIP LOGIC ---
-        window.publishVipMatch = async function() {
-            const league = document.getElementById('vipLeague').value;
-            const time = document.getElementById('vipTime').value;
-            const team1 = document.getElementById('vipTeam1').value;
-            const team2 = document.getElementById('vipTeam2').value;
+        // Submit VIP Data
+        window.submitVip = async function() {
+            const league = document.getElementById('vLeague').value;
+            const time = document.getElementById('vTime').value;
+            const team1 = document.getElementById('vTeam1').value;
+            const team2 = document.getElementById('vTeam2').value;
+            const pred = document.getElementById('vPred').value;
+            const odds = document.getElementById('vOdds').value;
+
+            if(!team1 || !team2 || !pred || !odds) return alert("Fill required fields!");
+
+            try {
+                await addDoc(collection(db, "vip_active"), {
+                    league, time, team1, team2, prediction: pred, odds: parseFloat(odds)
+                });
+                alert("Match added to VIP ticket!");
+                document.getElementById('vTeam1').value = '';
+                document.getElementById('vTeam2').value = '';
+                document.getElementById('vPred').value = '';
+                document.getElementById('vOdds').value = '';
+            } catch(e) { alert("Error: " + e.message); }
+        };
+
+        // Stream Active VIP
+        onSnapshot(collection(db, "vip_active"), (snap) => {
+            const box = document.getElementById('vipList');
+            box.innerHTML = '';
+            snap.forEach(itemDoc => {
+                const data = itemDoc.data();
+                const div = document.createElement('div');
+                div.className = 'item';
+                div.style.borderLeftColor = '#ffc107';
+                div.innerHTML = `<strong>${data.team1} vs ${data.team2}</strong> - CS: ${data.prediction}`;
+                box.appendChild(div);
+            });
+        });
+
+        // Settle Ticket Data
+        window.closeVipTicket = async function(outcome) {
+            const total = document.getElementById('vTotal').value;
+            if(!total) return alert("Enter total odds calculation!");
+
+            const snap = await getDocs(collection(db, "vip_active"));
+            if(snap.empty) return alert("No active games found.");
+
+            let matches = [];
+            snap.forEach(d => {
+                let mData = d.data();
+                mData.status = outcome;
+                matches.push(mData);
+            });
+
+            await addDoc(collection(db, "vip_results"), {
+                ticketOutcome: outcome,
+                totalOdds: parseFloat(total),
+                timestamp: Date.now(),
+                matches: matches
+            });
+
+            for (let d of snap.docs) {
+                await deleteDoc(doc(db, "vip_active", d.id));
+            }
+            alert("Ticket closed and moved to Correct Score Results!");
+            document.getElementById('vTotal').value = '';
+        };
+
+        // Update Notice Date
+        window.submitBanner = async function() {
+            const date = document.getElementById('bannerDate').value;
+            if(!date) return alert("Select a date!");
+            await setDoc(doc(db, "metadata", "vip_notice"), { next_ticket_date: date });
+            alert("VIP announcement notice calendar field updated!");
+        };
+    </script>
+</body>
+</html>
