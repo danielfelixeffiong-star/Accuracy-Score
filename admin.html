@@ -76,26 +76,24 @@
         <button type="button" onclick="handlePublishBanner()">Update App Notice Layout Date</button>
     </div>
 
-    <!-- Bulletproof Global Non-Module Firebase Scripts -->
+    <!-- Global Core Script CDNs Loaded Safely -->
     <script src="https://gstatic.com"></script>
     <script src="https://gstatic.com"></script>
 
     <script>
-        // Verified active credential parameters
+        // Storage line completely removed to bypass library version crashes
         const firebaseConfig = {
           apiKey: "AIzaSyAFFzyLlX_XUtFcw9i1YDY0L18QjRNMLA5Q",
           authDomain: "://firebaseapp.com",
           projectId: "accuracy-score-9fafd",
-          storageBucket: "accuracy-score-9fafd.firebasestorage.app",
           messagingSenderId: "1003404537815",
           appId: "1:1003404537815:web:8cb1dc67c77f8043f00592"
         };
 
-        // Initialize connection baseline globally
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // --- SUBMIT FREE GAME LINE ---
+        // --- SUBMIT FREE TIPS ---
         window.handlePublishFree = function() {
             const date = document.getElementById('freeDate').value;
             const league = document.getElementById('freeLeague').value;
@@ -114,6 +112,72 @@
                 matchDate: date, league, time, team1, team2, prediction,
                 odds: parseFloat(odds), analytics: analytics || "Analyze carefully.",
                 status: "NOT STARTED", timestamp: Date.now()
+            })
+            .then(() => {
+                alert("SUCCESS: Free match tip saved to database!");
+                document.getElementById('freeTeam1').value = '';
+                document.getElementById('freeTeam2').value = '';
+                document.getElementById('freePrediction').value = '';
+                document.getElementById('freeOdds').value = '';
+                document.getElementById('freeAnalytics').value = '';
+            })
+            .catch(err => alert("Cloud Rejection: " + err.message));
+        };
+
+        db.collection("free_tips").onSnapshot((snapshot) => {
+            const container = document.getElementById('freeMatchesList');
+            container.innerHTML = '';
+            snapshot.forEach(docItem => {
+                const g = docItem.data();
+                const div = document.createElement('div');
+                div.className = 'item-row';
+                div.innerHTML = `
+                    <strong>${g.team1} vs ${g.team2}</strong><br>
+                    <small>Status: [${g.status}] | Tip: ${g.prediction}</small>
+                    <div class="btn-grid">
+                        <button type="button" class="btn-status btn-won" onclick="setFreeGameStatus('${docItem.id}','WON')">WON</button>
+                        <button type="button" class="btn-status btn-lost" onclick="setFreeGameStatus('${docItem.id}','LOST')">LOST</button>
+                        <button type="button" class="btn-status btn-void" onclick="setFreeGameStatus('${docItem.id}','VOID')">VOID</button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        });
+
+        window.setFreeGameStatus = function(id, status) {
+            db.collection("free_tips").doc(id).update({ status })
+            .then(() => alert(`Status shifted to ${status}`));
+        };
+
+        // --- SUBMIT VIP TICKET ---
+        window.handlePublishVip = function() {
+            const league = document.getElementById('vipLeague').value;
+            const time = document.getElementById('vipTime').value;
+            const team1 = document.getElementById('vipTeam1').value;
+            const team2 = document.getElementById('vipTeam2').value;
+            const prediction = document.getElementById('vipPrediction').value;
+            const odds = document.getElementById('vipOdds').value;
+
+            if(!team1 || !team2 || !prediction || !odds) return alert("Fill core VIP fields!");
+
+            db.collection("vip_active").add({
+                league, time, team1, team2, prediction, odds: parseFloat(odds), status: "PENDING"
+            })
+            .then(() => {
+                alert("SUCCESS: Added match item to active VIP ticket!");
+                document.getElementById('vipTeam1').value = '';
+                document.getElementById('vipTeam2').value = '';
+                document.getElementById('vipPrediction').value = '';
+                document.getElementById('vipOdds').value = '';
+            })
+            .catch(err => alert("Error: " + err.message));
+        };
+
+        db.collection("vip_active").onSnapshot((snapshot) => {
+            const container = document.getElementById('activeVipMatchesList');
+            container.innerHTML = '';
+            snapshot.forEach(docItem => {
+                const v = docItem.data();
             })
             .then(() => {
                 alert("SUCCESS: Free match tip saved to database!");
