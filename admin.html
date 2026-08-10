@@ -3,73 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Accuracy Score - Super Admin Panel</title>
+    <title>Accuracy Score - Master Console</title>
     <style>
-        body { font-family: Arial, sans-serif; background: #121212; color: #fff; padding: 15px; margin: 0; box-sizing: border-box; }
-        .section-box { background: #1e1e1e; padding: 15px; margin-bottom: 20px; border-radius: 8px; border: 1px solid #333; }
-        h1 { font-size: 24px; text-align: center; color: #007bff; margin-bottom: 20px; }
-        h2 { font-size: 18px; margin-top: 0; color: #fff; border-bottom: 1px solid #444; padding-bottom: 8px; }
-        input, select, textarea, button { width: 100%; padding: 12px; margin: 8px 0; border-radius: 6px; border: none; box-sizing: border-box; font-size: 14px; }
-        input, select, textarea { background: #2d2d2d; color: #fff; }
-        textarea { height: 80px; resize: vertical; }
-        button { background: #007bff; color: #fff; cursor: pointer; font-weight: bold; transition: 0.2s; }
-        button:hover { background: #0056b3; }
-        .game-card { background: #2a2a2a; padding: 12px; margin: 10px 0; border-radius: 6px; display: flex; flex-direction: column; gap: 8px; border-left: 4px solid #ffc107; }
-        .btn-row { display: flex; gap: 10px; }
-        .btn-won { background: #28a745; margin: 0; }
-        .btn-lost { background: #dc3545; margin: 0; }
-        .btn-notify { background: #ffc107; color: #000; }
+        body { font-family: Arial, sans-serif; background: #0b0f19; color: #fff; padding: 15px; margin: 0; box-sizing: border-box; }
+        h1 { font-size: 22px; text-align: center; color: #38bdf8; margin: 10px 0 20px 0; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
+        .tab-bar { display: flex; overflow-x: auto; gap: 8px; margin-bottom: 20px; padding-bottom: 5px; border-bottom: 2px solid #1e293b; }
+        .tab-btn { background: #1e293b; color: #94a3b8; border: none; padding: 10px 16px; border-radius: 20px; font-weight: bold; cursor: pointer; white-space: nowrap; font-size: 13px; }
+        .tab-btn.active { background: #38bdf8; color: #0b0f19; }
+        .panel { display: none; }
+        .panel.active { display: block; }
+        .card { background: #151f32; padding: 16px; margin-bottom: 20px; border-radius: 12px; border: 1px solid #223049; }
+        h2 { font-size: 16px; margin: 0 0 14px 0; color: #f8fafc; display: flex; align-items: center; gap: 8px; }
+        label { font-size: 12px; color: #94a3b8; font-weight: bold; display: block; margin-top: 10px; }
+        input, select, textarea, button { width: 100%; padding: 12px; margin: 6px 0 12px 0; border-radius: 8px; border: none; box-sizing: border-box; font-size: 14px; }
+        input, select, textarea { background: #0f172a; color: #fff; border: 1px solid #334155; }
+        input:focus, select:focus, textarea:focus { border-color: #38bdf8; outline: none; }
+        button { background: #38bdf8; color: #0b0f19; cursor: pointer; font-weight: bold; font-size: 15px; text-transform: uppercase; }
+        button:hover { background: #0ea5e9; }
+        .item-row { background: #1e293b; padding: 12px; margin: 8px 0; border-radius: 8px; border-left: 4px solid #38bdf8; }
+        .btn-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 8px; }
+        .btn-status { padding: 8px; font-size: 11px; font-weight: 800; border-radius: 4px; color: #fff; }
+        .btn-won { background: #22c55e; }
+        .btn-lost { background: #ef4444; }
+        .btn-void { background: #64748b; }
+        .btn-postp { background: #f59e0b; }
+        .btn-cancel { background: #7c3aed; }
+        .btn-archive { background: #e2e8f0; color: #0f172a; grid-column: span 3; font-size: 12px; padding: 6px; margin-top: 4px; }
     </style>
 </head>
 <body>
 
-    <h1>Accuracy Score Manager</h1>
+    <h1>Accuracy Score Master Console</h1>
 
-    <!-- 1. PUSH NOTIFICATIONS CONTROLLER -->
-    <div class="section-box">
-        <h2>📢 Send Global Push Notification</h2>
-        <input type="text" id="notifyTitle" placeholder="Notification Title (e.g. VIP Update)">
-        <textarea id="notifyBody" placeholder="Type notification message text here..."></textarea>
-        <button class="btn-notify" onclick="sendCustomNotification()">Send Alert to All Users</button>
+    <!-- Horizontal Navigation Tabs for Mobile -->
+    <div class="tab-bar">
+        <button class="tab-btn active" onclick="switchTab('free-panel')">🆓 Free Tips</button>
+        <button class="tab-btn" onclick="switchTab('vip-panel')">👑 VIP Zones</button>
+        <button class="tab-btn" onclick="switchTab('meta-panel')">⚙️ Settings & Alerts</button>
     </div>
 
-    <!-- 2. NEXT VIP TICKET DATE MANAGEMENT -->
-    <div class="section-box">
-        <h2>📅 Update Next VIP Ticket Date</h2>
-        <label for="vipDate" style="font-size:12px; color:#aaa;">Select Date:</label>
-        <input type="date" id="vipDate">
-        <button onclick="updateVipDate()">Update Ticket Notice Date</button>
+    <!-- PANEL 1: FREE TIPS MANAGEMENT -->
+    <div id="free-panel" class="panel active">
+        <div class="card">
+            <h2>➕ Post Free Tip Match</h2>
+            <label>Target Matching Date:</label>
+            <input type="date" id="freeDate">
+            <input type="text" id="freeLeague" placeholder="League Name (e.g. Premier League)">
+            <input type="text" id="freeTime" placeholder="Match Kickoff Time (e.g. 20:00 UTC)">
+            <input type="text" id="freeTeam1" placeholder="Home Team (e.g. Arsenal)">
+            <input type="text" id="freeTeam2" placeholder="Away Team (e.g. Chelsea)">
+            <input type="text" id="freePrediction" placeholder="Free Prediction (e.g. Home Win or Draw)">
+            <input type="number" step="0.01" id="freeOdds" placeholder="Odds (e.g. 1.85)">
+            <textarea id="freeAnalytics" placeholder="Tap for Full Analysis text summary..."></textarea>
+            <button onclick="publishFreeTip()">Publish Free Match</button>
+        </div>
+
+        <div class="card">
+            <h2>⏳ Live Settle / Edit Free Tips</h2>
+            <div id="freeMatchesList">Syncing live fixtures...</div>
+        </div>
     </div>
 
-    <!-- 3. MAIN FORM TO POST GAMES -->
-    <div class="section-box">
-        <h2>⚽ Post Live Match Tip</h2>
-        <input type="text" id="matchName" placeholder="Teams (e.g. Real Madrid vs Barcelona)">
-        <input type="text" id="league" placeholder="League (e.g. La Liga)">
-        <input type="text" id="prediction" placeholder="Tip (e.g. Home Win or Correct Score 2-1)">
-        <input type="number" step="0.01" id="odds" placeholder="Match Odds (e.g. 1.85)">
-        
-        <select id="zoneType">
-            <option value="free">Free Tips Zone</option>
-            <option value="vip">VIP Tiers Zone</option>
-            <option value="fixed">Next Fixed Match</option>
-        </select>
+    <!-- PANEL 2: VIP ZONES MANAGEMENT -->
+    <div id="vip-panel" class="panel">
+        <div class="card">
+            <h2>🔥 Upload Active VIP Ticket Match</h2>
+            <p style="font-size:12px; color:#94a3b8; margin:0 0 10px 0;">This game loads inside the locked VIP zone profile view until you settle it.</p>
+            <input type="text" id="vipLeague" placeholder="League Name (e.g. UEFA Champions League)">
+            <input type="text" id="vipTime" placeholder="Kickoff Time (e.g. 00:10)">
+            <input type="text" id="vipTeam1" placeholder="Home Team (e.g. Bayern Munich)">
+            <input type="text" id="vipTeam2" placeholder="Away Team (e.g. Real Madrid)">
+            <input type="text" id="vipPrediction" placeholder="Correct Score Prediction (e.g. 2 - 1)">
+            <input type="number" step="0.01" id="vipOdds" placeholder="Match Odds (e.g. 9.50)">
+            <button onclick="publishVipMatch()">Add Match to Active Ticket</button>
+        </div>
 
-        <textarea id="analyticsText" placeholder="View Analytics Description (Write analysis notes here for the match details screen)"></textarea>
-        
-        <button onclick="postMatch()">Publish Tip to Database</button>
+        <div class="card" style="background:#1e1b4b; border-color:#4338ca;">
+            <h2>⚡ Current Unfinished VIP Ticket Layout</h2>
+            <label>Total Combined Ticket Odds:</label>
+            <input type="number" step="0.01" id="ticketTotalOdds" placeholder="e.g. 60.00">
+            <button class="btn-won" style="margin-bottom:15px;" onclick="settleEntireVipTicket('CONFIRMED WON')">🏆 Mark Whole Ticket as CONFIRMED WON</button>
+            <button class="btn-lost" style="margin-bottom:15px;" onclick="settleEntireVipTicket('TICKET LOST')">❌ Mark Whole Ticket as LOST</button>
+            <div id="activeVipMatchesList">No matches inside current active ticket instance.</div>
+        </div>
     </div>
 
-    <!-- 4. PENDING LIST / SETTLE SCORES VIEW -->
-    <div class="section-box">
-        <h2>⏳ Settle Pending Match Results</h2>
-        <div id="pendingGamesList">Loading streaming tips...</div>
+    <!-- PANEL 3: SETTINGS, BANNER NOTICES & NOTIFICATIONS -->
+    <div id="meta-panel" class="panel">
+        <div class="card">
+            <h2>📅 Update VIP Calendar Ticket Notice Banner</h2>
+            <label>Display Target Date:</label>
+            <input type="date" id="metaVipDate">
+            <button onclick="updateVipBannerDate()">Update App Notice Layout</button>
+        </div>
+
+        <div class="card">
+            <h2>📢 Send Global Push Notification Alert</h2>
+            <input type="text" id="pushTitle" placeholder="Enter Alert Header Title">
+            <textarea id="pushBody" placeholder="Type notification text details here..."></textarea>
+            <button style="background:#f59e0b;" onclick="triggerGlobalNotification()">Transmit Push Banner</button>
+        </div>
     </div>
 
-    <!-- Firebase Script Configuration System -->
+    <!-- Core Firebase SDK Integration Script modules -->
     <script type="module">
         import { initializeApp } from "https://gstatic.com";
-        import { getFirestore, collection, addDoc, updateDoc, doc, setDoc, query, where, onSnapshot } from "https://gstatic.com";
+        import { getFirestore, collection, addDoc, updateDoc, doc, setDoc, deleteDoc, query, where, onSnapshot, getDocs } from "https://gstatic.com";
 
         const firebaseConfig = {
           apiKey: "AIzaSyAFFzyLlX_XUtFcw9i1YDY0L18QjRNMLA5Q",
@@ -83,107 +122,48 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // A. Post Match with Analytics data
-        window.postMatch = async function() {
-            const matchName = document.getElementById('matchName').value;
-            const league = document.getElementById('league').value;
-            const prediction = document.getElementById('prediction').value;
-            const odds = document.getElementById('odds').value;
-            const zoneType = document.getElementById('zoneType').value;
-            const analytics = document.getElementById('analyticsText').value;
+        // Core UI Navigation Control
+        window.switchTab = function(panelId) {
+            document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(panelId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        };
 
-            if(!matchName || !prediction || !odds) return alert("Please fill all core fields!");
+        // --- SECTION A: FREE TIPS ENGINE ---
+        window.publishFreeTip = async function() {
+            const date = document.getElementById('freeDate').value;
+            const league = document.getElementById('freeLeague').value;
+            const time = document.getElementById('freeTime').value;
+            const team1 = document.getElementById('freeTeam1').value;
+            const team2 = document.getElementById('freeTeam2').value;
+            const prediction = document.getElementById('freePrediction').value;
+            const odds = document.getElementById('freeOdds').value;
+            const analytics = document.getElementById('freeAnalytics').value;
+
+            if(!date || !team1 || !team2 || !prediction || !odds) return alert("Fill core fields!");
 
             try {
-                await addDoc(collection(db, "predictions"), {
-                    matchName, league, prediction, odds: parseFloat(odds), zoneType,
-                    analytics: analytics || "No additional detailed breakdown analytics provided.",
-                    status: "pending",
-                    timestamp: Date.now()
+                await addDoc(collection(db, "free_tips"), {
+                    matchDate: date, league, time, team1, team2, prediction,
+                    odds: parseFloat(odds), analytics: analytics || "Analyze carefully and play responsibly.",
+                    status: "NOT STARTED", timestamp: Date.now()
                 });
-                alert("Match distributed to live apps successfully!");
-                document.getElementById('matchName').value = '';
-                document.getElementById('prediction').value = '';
-                document.getElementById('odds').value = '';
-                document.getElementById('analyticsText').value = '';
-            } catch (error) {
-                alert("Error: " + error.message);
-            }
-        }
+                alert("Free tip posted!");
+                document.getElementById('freeTeam1').value = '';
+                document.getElementById('freeTeam2').value = '';
+                document.getElementById('freePrediction').value = '';
+                document.getElementById('freeOdds').value = '';
+                document.getElementById('freeAnalytics').value = '';
+            } catch (err) { alert(err.message); }
+        };
 
-        // B. Update Next VIP Ticket Announcement Date notice
-        window.updateVipDate = async function() {
-            const dateVal = document.getElementById('vipDate').value;
-            if(!dateVal) return alert("Select a valid calendar date!");
-
-            try {
-                // Creates a single static metadata folder config document
-                await setDoc(doc(db, "metadata", "vip_notice"), {
-                    next_ticket_date: dateVal,
-                    last_updated: Date.now()
-                });
-                alert("Next VIP Ticket Alert Date updated successfully!");
-            } catch (error) {
-                alert("Error setting date: " + error.message);
-            }
-        }
-
-        // C. Send Notification to Firebase Push Collection
-        window.sendCustomNotification = async function() {
-            const title = document.getElementById('notifyTitle').value;
-            const message = document.getElementById('notifyBody').value;
-
-            if(!title || !message) return alert("Fill out notification content fields!");
-
-            try {
-                // Saves notification message log data into firestore, mobile apps listen here to display banner alerts
-                await addDoc(collection(db, "notifications"), {
-                    title, message, timestamp: Date.now()
-                });
-                alert("Push notification alert transmitted successfully!");
-                document.getElementById('notifyTitle').value = '';
-                document.getElementById('notifyBody').value = '';
-            } catch (error) {
-                alert("Error: " + error.message);
-            }
-        }
-
-        // D. Sync Live Pending Matches
-        const q = query(collection(db, "predictions"), where("status", "==", "pending"));
-        onSnapshot(q, (snapshot) => {
-            const listDiv = document.getElementById('pendingGamesList');
-            listDiv.innerHTML = '';
-            if(snapshot.empty) listDiv.innerHTML = '<span style="color:#aaa;">No pending matches active.</span>';
-            
-            snapshot.forEach((gameDoc) => {
-                const game = gameDoc.data();
-                const card = document.createElement('div');
-                card.className = 'game-card';
-                card.innerHTML = `
-                    <div>
-                        <strong style="color:#ffc107;">[${game.zoneType.toUpperCase()}] ${game.matchName}</strong><br>
-                        <span>Tip: ${game.prediction} | Odds: ${game.odds}</span><br>
-                        <small style="color:#aaa; font-style:italic;">Analytics: ${game.analytics}</small>
-                    </div>
-                    <div class="btn-row">
-                        <button class="btn-won" onclick="settleMatch('${gameDoc.id}', 'won')">WON</button>
-                        <button class="btn-lost" onclick="settleMatch('${gameDoc.id}', 'lost')">LOST</button>
-                    </div>
-                `;
-                listDiv.appendChild(card);
-            });
-        });
-
-        // E. Settle Match Results
-        window.settleMatch = async function(id, finalStatus) {
-            try {
-                const matchRef = doc(db, "predictions", id);
-                await updateDoc(matchRef, { status: finalStatus });
-                alert(`Match moved to completed results view as ${finalStatus.toUpperCase()}!`);
-            } catch (error) {
-                alert("Error: " + error.message);
-            }
-        }
-    </script>
-</body>
-</html>
+        // Streaming Feed Live monitor for Free Tips
+        onSnapshot(collection(db, "free_tips"), (snapshot) => {
+            const container = document.getElementById('freeMatchesList');
+            container.innerHTML = '';
+            snapshot.forEach(gDoc => {
+                const g = gDoc.data();
+                const div = document.createElement('div');
+                div.className = 'item-row';
+                div.innerHTML = `
