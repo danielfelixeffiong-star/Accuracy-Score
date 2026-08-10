@@ -3,52 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Accuracy Score - Admin Panel</title>
+    <title>Accuracy Score - Super Admin Panel</title>
     <style>
-        body { font-family: Arial, sans-serif; background: #121212; color: #fff; padding: 20px; }
-        .form-section, .list-section { background: #1e1e1e; padding: 20px; margin-bottom: 20px; border-radius: 8px; }
-        input, select, button { width: 100%; padding: 10px; margin: 8px 0; border-radius: 4px; border: none; box-sizing: border-box; }
-        input, select { background: #333; color: #fff; }
-        button { background: #007bff; color: #fff; cursor: pointer; font-weight: bold; }
+        body { font-family: Arial, sans-serif; background: #121212; color: #fff; padding: 15px; margin: 0; box-sizing: border-box; }
+        .section-box { background: #1e1e1e; padding: 15px; margin-bottom: 20px; border-radius: 8px; border: 1px solid #333; }
+        h1 { font-size: 24px; text-align: center; color: #007bff; margin-bottom: 20px; }
+        h2 { font-size: 18px; margin-top: 0; color: #fff; border-bottom: 1px solid #444; padding-bottom: 8px; }
+        input, select, textarea, button { width: 100%; padding: 12px; margin: 8px 0; border-radius: 6px; border: none; box-sizing: border-box; font-size: 14px; }
+        input, select, textarea { background: #2d2d2d; color: #fff; }
+        textarea { height: 80px; resize: vertical; }
+        button { background: #007bff; color: #fff; cursor: pointer; font-weight: bold; transition: 0.2s; }
         button:hover { background: #0056b3; }
-        .game-card { background: #2a2a2a; padding: 15px; margin: 10px 0; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; }
-        .btn-won { background: #28a745; width: auto; display: inline-block; margin-right: 5px; }
-        .btn-lost { background: #dc3545; width: auto; display: inline-block; }
+        .game-card { background: #2a2a2a; padding: 12px; margin: 10px 0; border-radius: 6px; display: flex; flex-direction: column; gap: 8px; border-left: 4px solid #ffc107; }
+        .btn-row { display: flex; gap: 10px; }
+        .btn-won { background: #28a745; margin: 0; }
+        .btn-lost { background: #dc3545; margin: 0; }
+        .btn-notify { background: #ffc107; color: #000; }
     </style>
 </head>
 <body>
 
-    <h1>Accuracy Score Manager Dashboard</h1>
+    <h1>Accuracy Score Manager</h1>
 
-    <!-- 1. Form to Post New Tips -->
-    <div class="form-section">
-        <h2>Post New Match Tip</h2>
-        <input type="text" id="matchName" placeholder="e.g. Real Madrid vs Barcelona">
-        <input type="text" id="league" placeholder="e.g. La Liga">
-        <input type="text" id="prediction" placeholder="e.g. Correct Score 2-1">
-        <input type="number" step="0.01" id="odds" placeholder="Odds e.g. 2.45">
+    <!-- 1. PUSH NOTIFICATIONS CONTROLLER -->
+    <div class="section-box">
+        <h2>📢 Send Global Push Notification</h2>
+        <input type="text" id="notifyTitle" placeholder="Notification Title (e.g. VIP Update)">
+        <textarea id="notifyBody" placeholder="Type notification message text here..."></textarea>
+        <button class="btn-notify" onclick="sendCustomNotification()">Send Alert to All Users</button>
+    </div>
+
+    <!-- 2. NEXT VIP TICKET DATE MANAGEMENT -->
+    <div class="section-box">
+        <h2>📅 Update Next VIP Ticket Date</h2>
+        <label for="vipDate" style="font-size:12px; color:#aaa;">Select Date:</label>
+        <input type="date" id="vipDate">
+        <button onclick="updateVipDate()">Update Ticket Notice Date</button>
+    </div>
+
+    <!-- 3. MAIN FORM TO POST GAMES -->
+    <div class="section-box">
+        <h2>⚽ Post Live Match Tip</h2>
+        <input type="text" id="matchName" placeholder="Teams (e.g. Real Madrid vs Barcelona)">
+        <input type="text" id="league" placeholder="League (e.g. La Liga)">
+        <input type="text" id="prediction" placeholder="Tip (e.g. Home Win or Correct Score 2-1)">
+        <input type="number" step="0.01" id="odds" placeholder="Match Odds (e.g. 1.85)">
         
         <select id="zoneType">
-            <option value="free">Free Tips</option>
-            <option value="vip">VIP Match Zones</option>
+            <option value="free">Free Tips Zone</option>
+            <option value="vip">VIP Tiers Zone</option>
             <option value="fixed">Next Fixed Match</option>
         </select>
+
+        <textarea id="analyticsText" placeholder="View Analytics Description (Write analysis notes here for the match details screen)"></textarea>
         
-        <button onclick="postMatch()">Publish Tip to App & Website</button>
+        <button onclick="postMatch()">Publish Tip to Database</button>
     </div>
 
-    <!-- 2. Section to Settle Scores and Results -->
-    <div class="list-section">
-        <h2>Live Pending Matches</h2>
-        <div id="pendingGamesList">Loading active tips...</div>
+    <!-- 4. PENDING LIST / SETTLE SCORES VIEW -->
+    <div class="section-box">
+        <h2>⏳ Settle Pending Match Results</h2>
+        <div id="pendingGamesList">Loading streaming tips...</div>
     </div>
 
-    <!-- Firebase System Scripts -->
+    <!-- Firebase Script Configuration System -->
     <script type="module">
         import { initializeApp } from "https://gstatic.com";
-        import { getFirestore, collection, addDoc, updateDoc, doc, query, where, onSnapshot } from "https://gstatic.com";
+        import { getFirestore, collection, addDoc, updateDoc, doc, setDoc, query, where, onSnapshot } from "https://gstatic.com";
 
-        // Your live credentials verified from your Firebase project
         const firebaseConfig = {
           apiKey: "AIzaSyAFFzyLlX_XUtFcw9i1YDY0L18QjRNMLA5Q",
           authDomain: "://firebaseapp.com",
@@ -61,37 +83,77 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Function to write match data to Firestore
+        // A. Post Match with Analytics data
         window.postMatch = async function() {
             const matchName = document.getElementById('matchName').value;
             const league = document.getElementById('league').value;
             const prediction = document.getElementById('prediction').value;
             const odds = document.getElementById('odds').value;
             const zoneType = document.getElementById('zoneType').value;
+            const analytics = document.getElementById('analyticsText').value;
 
-            if(!matchName || !prediction || !odds) return alert("Please fill all fields!");
+            if(!matchName || !prediction || !odds) return alert("Please fill all core fields!");
 
             try {
                 await addDoc(collection(db, "predictions"), {
                     matchName, league, prediction, odds: parseFloat(odds), zoneType,
+                    analytics: analytics || "No additional detailed breakdown analytics provided.",
                     status: "pending",
                     timestamp: Date.now()
                 });
-                alert("Match distributed to live database successfully!");
+                alert("Match distributed to live apps successfully!");
                 document.getElementById('matchName').value = '';
                 document.getElementById('prediction').value = '';
                 document.getElementById('odds').value = '';
+                document.getElementById('analyticsText').value = '';
             } catch (error) {
-                alert("Error publishing match: " + error.message);
+                alert("Error: " + error.message);
             }
         }
 
-        // Live stream updates for pending matches
+        // B. Update Next VIP Ticket Announcement Date notice
+        window.updateVipDate = async function() {
+            const dateVal = document.getElementById('vipDate').value;
+            if(!dateVal) return alert("Select a valid calendar date!");
+
+            try {
+                // Creates a single static metadata folder config document
+                await setDoc(doc(db, "metadata", "vip_notice"), {
+                    next_ticket_date: dateVal,
+                    last_updated: Date.now()
+                });
+                alert("Next VIP Ticket Alert Date updated successfully!");
+            } catch (error) {
+                alert("Error setting date: " + error.message);
+            }
+        }
+
+        // C. Send Notification to Firebase Push Collection
+        window.sendCustomNotification = async function() {
+            const title = document.getElementById('notifyTitle').value;
+            const message = document.getElementById('notifyBody').value;
+
+            if(!title || !message) return alert("Fill out notification content fields!");
+
+            try {
+                // Saves notification message log data into firestore, mobile apps listen here to display banner alerts
+                await addDoc(collection(db, "notifications"), {
+                    title, message, timestamp: Date.now()
+                });
+                alert("Push notification alert transmitted successfully!");
+                document.getElementById('notifyTitle').value = '';
+                document.getElementById('notifyBody').value = '';
+            } catch (error) {
+                alert("Error: " + error.message);
+            }
+        }
+
+        // D. Sync Live Pending Matches
         const q = query(collection(db, "predictions"), where("status", "==", "pending"));
         onSnapshot(q, (snapshot) => {
             const listDiv = document.getElementById('pendingGamesList');
             listDiv.innerHTML = '';
-            if(snapshot.empty) listDiv.innerHTML = 'No pending matches active.';
+            if(snapshot.empty) listDiv.innerHTML = '<span style="color:#aaa;">No pending matches active.</span>';
             
             snapshot.forEach((gameDoc) => {
                 const game = gameDoc.data();
@@ -99,10 +161,11 @@
                 card.className = 'game-card';
                 card.innerHTML = `
                     <div>
-                        <strong>[${game.zoneType.toUpperCase()}] ${game.matchName}</strong><br>
-                        <span>Tip: ${game.prediction} | Odds: ${game.odds}</span>
+                        <strong style="color:#ffc107;">[${game.zoneType.toUpperCase()}] ${game.matchName}</strong><br>
+                        <span>Tip: ${game.prediction} | Odds: ${game.odds}</span><br>
+                        <small style="color:#aaa; font-style:italic;">Analytics: ${game.analytics}</small>
                     </div>
-                    <div>
+                    <div class="btn-row">
                         <button class="btn-won" onclick="settleMatch('${gameDoc.id}', 'won')">WON</button>
                         <button class="btn-lost" onclick="settleMatch('${gameDoc.id}', 'lost')">LOST</button>
                     </div>
@@ -111,14 +174,14 @@
             });
         });
 
-        // Function to update status as Won or Lost
+        // E. Settle Match Results
         window.settleMatch = async function(id, finalStatus) {
             try {
                 const matchRef = doc(db, "predictions", id);
                 await updateDoc(matchRef, { status: finalStatus });
-                alert(`Match status updated to ${finalStatus.toUpperCase()}!`);
+                alert(`Match moved to completed results view as ${finalStatus.toUpperCase()}!`);
             } catch (error) {
-                alert("Error updating score: " + error.message);
+                alert("Error: " + error.message);
             }
         }
     </script>
