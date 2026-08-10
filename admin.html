@@ -10,14 +10,16 @@
         .card { background: #151f32; padding: 16px; margin-bottom: 25px; border-radius: 12px; border: 1px solid #223049; }
         h2 { font-size: 15px; margin: 0 0 14px 0; color: #38bdf8; font-weight: bold; text-transform: uppercase; border-bottom: 1px solid #223049; padding-bottom: 8px; }
         label { font-size: 12px; color: #94a3b8; font-weight: bold; display: block; margin-top: 10px; }
-        input, select, textarea, button { width: 100%; padding: 12px; margin: 6px 0 12px 0; border-radius: 8px; border: none; box-sizing: border-box; font-size: 14px; }
-        input, select, textarea { background: #0f172a; color: #fff; border: 1px solid #334155; }
+        input, select, textarea { width: 100%; padding: 12px; margin: 6px 0 12px 0; border-radius: 8px; border: 1px solid #334155; box-sizing: border-box; font-size: 14px; background: #0f172a; color: #fff; }
         textarea { height: 90px; resize: vertical; }
-        button { background: #38bdf8; color: #0b0f19; cursor: pointer; font-weight: bold; font-size: 15px; text-transform: uppercase; }
-        button:active { background: #0ea5e9; }
+        
+        /* Touch-Safe Interactive Action Trigger Bars */
+        .action-trigger { width: 100%; padding: 14px; margin: 10px 0; border-radius: 8px; border: none; background: #38bdf8; color: #0b0f19; cursor: pointer; font-weight: bold; font-size: 15px; text-transform: uppercase; text-align: center; display: block; user-select: none; -webkit-tap-highlight-color: transparent; }
+        .action-trigger:active { background: #0ea5e9; }
+        
         .item-row { background: #1e293b; padding: 12px; margin: 8px 0; border-radius: 8px; border-left: 4px solid #38bdf8; color: #fff; }
         .btn-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 8px; }
-        .btn-status { padding: 8px; font-size: 11px; font-weight: 800; border-radius: 4px; color: #fff; text-transform: uppercase; cursor: pointer; }
+        .status-pill { padding: 10px; font-size: 11px; font-weight: 800; border-radius: 4px; color: #fff; text-transform: uppercase; text-align: center; cursor: pointer; user-select: none; }
         .btn-won { background: #22c55e; }
         .btn-lost { background: #ef4444; }
         .btn-void { background: #64748b; }
@@ -39,7 +41,7 @@
         <input type="text" id="freePrediction" placeholder="Free Prediction (e.g. Home Win)">
         <input type="number" step="0.01" id="freeOdds" placeholder="Odds (e.g. 1.85)">
         <textarea id="freeAnalytics" placeholder="Analysis Notes Details..."></textarea>
-        <button type="button" onclick="handlePublishFree()">Publish Free Match</button>
+        <div class="action-trigger" id="submit-free-btn">Publish Free Match</div>
     </div>
 
     <div class="card">
@@ -56,15 +58,15 @@
         <input type="text" id="vipTeam2" placeholder="Away Team">
         <input type="text" id="vipPrediction" placeholder="Correct Score Prediction">
         <input type="number" step="0.01" id="vipOdds" placeholder="Match Odds">
-        <button type="button" onclick="handlePublishVip()">Add Match to Active Ticket</button>
+        <div class="action-trigger" id="submit-vip-btn">Add Match to Active Ticket</div>
     </div>
 
     <div class="card" style="background:#131224; border-color:#3b2273;">
         <h2>⚡ Current Active VIP Ticket Details</h2>
         <label>Total Combined Ticket Odds:</label>
         <input type="number" step="0.01" id="ticketTotalOdds" placeholder="e.g. 60.00">
-        <button type="button" class="btn-status btn-won" style="margin-bottom:12px; width:100%;" onclick="handleArchiveVip('CONFIRMED WON')">🏆 Mark Whole Ticket as CONFIRMED WON</button>
-        <button type="button" class="btn-status btn-lost" style="margin-bottom:12px; width:100%;" onclick="handleArchiveVip('TICKET LOST')">❌ Mark Whole Ticket as LOST</button>
+        <div class="status-pill btn-won" style="margin-bottom:12px;" id="archive-vip-won-btn">🏆 Mark Whole Ticket as CONFIRMED WON</div>
+        <div class="status-pill btn-lost" style="margin-bottom:12px;" id="archive-vip-lost-btn">❌ Mark Whole Ticket as LOST</div>
         <div id="activeVipMatchesList">No matches inside current active ticket instance.</div>
     </div>
 
@@ -73,7 +75,7 @@
         <h2>📅 Update VIP Calendar Ticket Notice Banner</h2>
         <label>Display Target Date:</label>
         <input type="date" id="metaVipDate">
-        <button type="button" onclick="handlePublishBanner()">Update App Notice Layout Date</button>
+        <div class="action-trigger" id="submit-banner-btn">Update App Notice Layout Date</div>
     </div>
 
     <!-- Global Core Script CDNs Loaded Safely -->
@@ -81,7 +83,6 @@
     <script src="https://gstatic.com"></script>
 
     <script>
-        // Storage line completely removed to bypass library version crashes
         const firebaseConfig = {
           apiKey: "AIzaSyAFFzyLlX_XUtFcw9i1YDY0L18QjRNMLA5Q",
           authDomain: "://firebaseapp.com",
@@ -94,7 +95,9 @@
         const db = firebase.firestore();
 
         // --- SUBMIT FREE TIPS ---
-        window.handlePublishFree = function() {
+        document.getElementById('submit-free-btn').addEventListener('click', function(e) {
+            e.preventDefault(); e.stopPropagation();
+            
             const date = document.getElementById('freeDate').value;
             const league = document.getElementById('freeLeague').value;
             const time = document.getElementById('freeTime').value;
@@ -112,6 +115,68 @@
                 matchDate: date, league, time, team1, team2, prediction,
                 odds: parseFloat(odds), analytics: analytics || "Analyze carefully.",
                 status: "NOT STARTED", timestamp: Date.now()
+            })
+            .then(() => {
+                alert("SUCCESS: Free match tip saved to database!");
+                document.getElementById('freeTeam1').value = '';
+                document.getElementById('freeTeam2').value = '';
+                document.getElementById('freePrediction').value = '';
+                document.getElementById('freeOdds').value = '';
+                document.getElementById('freeAnalytics').value = '';
+            })
+            .catch(err => alert("Cloud Rejection: " + err.message));
+        });
+
+        db.collection("free_tips").onSnapshot((snapshot) => {
+            const container = document.getElementById('freeMatchesList');
+            container.innerHTML = '';
+            snapshot.forEach(docItem => {
+                const g = docItem.data();
+                const div = document.createElement('div');
+                div.className = 'item-row';
+                
+                // Generated clear string identities for explicit event attachment paths
+                const wId = "w-" + docItem.id;
+                const lId = "l-" + docItem.id;
+                const vId = "v-" + docItem.id;
+
+                div.innerHTML = `
+                    <strong>${g.team1} vs ${g.team2}</strong><br>
+                    <small>Status: [${g.status}] | Tip: ${g.prediction}</small>
+                    <div class="btn-grid">
+                        <div class="status-pill btn-won" id="${wId}">WON</div>
+                        <div class="status-pill btn-lost" id="${lId}">LOST</div>
+                        <div class="status-pill btn-void" id="${vId}">VOID</div>
+                    </div>
+                `;
+                container.appendChild(div);
+
+                document.getElementById(wId).addEventListener('click', () => setFreeGameStatus(docItem.id, 'WON'));
+                document.getElementById(lId).addEventListener('click', () => setFreeGameStatus(docItem.id, 'LOST'));
+                document.getElementById(vId).addEventListener('click', () => setFreeGameStatus(docItem.id, 'VOID'));
+            });
+        });
+
+        window.setFreeGameStatus = function(id, status) {
+            db.collection("free_tips").doc(id).update({ status })
+            .then(() => alert(`Status shifted to ${status}`));
+        };
+
+        // --- SUBMIT VIP TICKET ---
+        document.getElementById('submit-vip-btn').addEventListener('click', function(e) {
+            e.preventDefault(); e.stopPropagation();
+
+            const league = document.getElementById('vipLeague').value;
+            const time = document.getElementById('vipTime').value;
+            const team1 = document.getElementById('vipTeam1').value;
+            const team2 = document.getElementById('vipTeam2').value;
+            const prediction = document.getElementById('vipPrediction').value;
+            const odds = document.getElementById('vipOdds').value;
+
+            if(!team1 || !team2 || !prediction || !odds) return alert("Fill core VIP fields!");
+
+            db.collection("vip_active").add({
+                league, time, team1, team2, prediction, odds: parseFloat(odds), status: "PENDING"
             })
             .then(() => {
                 alert("SUCCESS: Free match tip saved to database!");
