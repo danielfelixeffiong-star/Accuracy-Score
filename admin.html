@@ -2,44 +2,46 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Accuracy Score - Master Console</title>
     <style>
-        body { font-family: Arial, sans-serif; background: #0b0f19; color: #fff; padding: 15px; margin: 0; box-sizing: border-box; }
-        h1 { font-size: 22px; text-align: center; color: #38bdf8; margin: 10px 0 20px 0; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
-        .tab-bar { display: flex; overflow-x: auto; gap: 8px; margin-bottom: 20px; padding-bottom: 5px; border-bottom: 2px solid #1e293b; }
-        .tab-btn { background: #1e293b; color: #94a3b8; border: none; padding: 10px 16px; border-radius: 20px; font-weight: bold; cursor: pointer; white-space: nowrap; font-size: 13px; }
+        body { font-family: Arial, sans-serif; background: #0b0f19; color: #fff; padding: 15px; margin: 0; box-sizing: border-box; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+        h1 { font-size: 20px; text-align: center; color: #38bdf8; margin: 10px 0 20px 0; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
+        
+        /* Fixed Horizontal Navigation Tabs and Scroll Container For Mobile */
+        .tab-bar { display: flex !important; overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; gap: 10px; margin-bottom: 20px; padding: 5px 0 10px 0; border-bottom: 2px solid #1e293b; width: 100%; white-space: nowrap; }
+        .tab-btn { background: #1e293b; color: #94a3b8; border: none; padding: 12px 20px; border-radius: 20px; font-weight: bold; cursor: pointer; display: inline-block; flex-shrink: 0; font-size: 14px; position: relative; z-index: 100; touch-action: manipulation; }
         .tab-btn.active { background: #38bdf8; color: #0b0f19; }
+        
         .panel { display: none; }
-        .panel.active { display: block; }
+        .panel.active { display: block !important; }
         .card { background: #151f32; padding: 16px; margin-bottom: 20px; border-radius: 12px; border: 1px solid #223049; }
-        h2 { font-size: 16px; margin: 0 0 14px 0; color: #f8fafc; display: flex; align-items: center; gap: 8px; }
+        h2 { font-size: 16px; margin: 0 0 14px 0; color: #f8fafc; }
         label { font-size: 12px; color: #94a3b8; font-weight: bold; display: block; margin-top: 10px; }
-        input, select, textarea, button { width: 100%; padding: 12px; margin: 6px 0 12px 0; border-radius: 8px; border: none; box-sizing: border-box; font-size: 14px; }
+        input, select, textarea, button { width: 100%; padding: 12px; margin: 6px 0 12px 0; border-radius: 8px; border: none; box-sizing: border-box; font-size: 14px; touch-action: manipulation; }
         input, select, textarea { background: #0f172a; color: #fff; border: 1px solid #334155; }
-        input:focus, select:focus, textarea:focus { border-color: #38bdf8; outline: none; }
+        textarea { height: 100px; resize: vertical; }
         button { background: #38bdf8; color: #0b0f19; cursor: pointer; font-weight: bold; font-size: 15px; text-transform: uppercase; }
-        button:hover { background: #0ea5e9; }
-        .item-row { background: #1e293b; padding: 12px; margin: 8px 0; border-radius: 8px; border-left: 4px solid #38bdf8; }
+        
+        .item-row { background: #1e293b; padding: 12px; margin: 8px 0; border-radius: 8px; border-left: 4px solid #38bdf8; color: #fff; }
         .btn-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 8px; }
-        .btn-status { padding: 8px; font-size: 11px; font-weight: 800; border-radius: 4px; color: #fff; }
+        .btn-status { padding: 8px; font-size: 11px; font-weight: 800; border-radius: 4px; color: #fff; text-transform: uppercase; }
         .btn-won { background: #22c55e; }
         .btn-lost { background: #ef4444; }
         .btn-void { background: #64748b; }
         .btn-postp { background: #f59e0b; }
         .btn-cancel { background: #7c3aed; }
-        .btn-archive { background: #e2e8f0; color: #0f172a; grid-column: span 3; font-size: 12px; padding: 6px; margin-top: 4px; }
     </style>
 </head>
 <body>
 
     <h1>Accuracy Score Master Console</h1>
 
-    <!-- Horizontal Navigation Tabs for Mobile -->
+    <!-- Optimized Touch Navigation Container Layout -->
     <div class="tab-bar">
-        <button class="tab-btn active" onclick="switchTab('free-panel')">🆓 Free Tips</button>
-        <button class="tab-btn" onclick="switchTab('vip-panel')">👑 VIP Zones</button>
-        <button class="tab-btn" onclick="switchTab('meta-panel')">⚙️ Settings & Alerts</button>
+        <button class="tab-btn active" id="btn-free" onclick="switchTab('free-panel', 'btn-free')">🆓 Free Tips</button>
+        <button class="tab-btn" id="btn-vip" onclick="switchTab('vip-panel', 'btn-vip')">👑 VIP Zones</button>
+        <button class="tab-btn" id="btn-meta" onclick="switchTab('meta-panel', 'btn-meta')">⚙️ Settings & Alerts</button>
     </div>
 
     <!-- PANEL 1: FREE TIPS MANAGEMENT -->
@@ -55,7 +57,7 @@
             <input type="text" id="freePrediction" placeholder="Free Prediction (e.g. Home Win or Draw)">
             <input type="number" step="0.01" id="freeOdds" placeholder="Odds (e.g. 1.85)">
             <textarea id="freeAnalytics" placeholder="Tap for Full Analysis text summary..."></textarea>
-            <button onclick="publishFreeTip()">Publish Free Match</button>
+            <button type="button" onclick="publishFreeTip()">Publish Free Match</button>
         </div>
 
         <div class="card">
@@ -68,44 +70,43 @@
     <div id="vip-panel" class="panel">
         <div class="card">
             <h2>🔥 Upload Active VIP Ticket Match</h2>
-            <p style="font-size:12px; color:#94a3b8; margin:0 0 10px 0;">This game loads inside the locked VIP zone profile view until you settle it.</p>
             <input type="text" id="vipLeague" placeholder="League Name (e.g. UEFA Champions League)">
             <input type="text" id="vipTime" placeholder="Kickoff Time (e.g. 00:10)">
             <input type="text" id="vipTeam1" placeholder="Home Team (e.g. Bayern Munich)">
             <input type="text" id="vipTeam2" placeholder="Away Team (e.g. Real Madrid)">
             <input type="text" id="vipPrediction" placeholder="Correct Score Prediction (e.g. 2 - 1)">
             <input type="number" step="0.01" id="vipOdds" placeholder="Match Odds (e.g. 9.50)">
-            <button onclick="publishVipMatch()">Add Match to Active Ticket</button>
+            <button type="button" onclick="publishVipMatch()">Add Match to Active Ticket</button>
         </div>
 
         <div class="card" style="background:#1e1b4b; border-color:#4338ca;">
             <h2>⚡ Current Unfinished VIP Ticket Layout</h2>
             <label>Total Combined Ticket Odds:</label>
             <input type="number" step="0.01" id="ticketTotalOdds" placeholder="e.g. 60.00">
-            <button class="btn-won" style="margin-bottom:15px;" onclick="settleEntireVipTicket('CONFIRMED WON')">🏆 Mark Whole Ticket as CONFIRMED WON</button>
-            <button class="btn-lost" style="margin-bottom:15px;" onclick="settleEntireVipTicket('TICKET LOST')">❌ Mark Whole Ticket as LOST</button>
+            <button type="button" class="btn-won" style="margin-bottom:15px; color:#fff;" onclick="settleEntireVipTicket('CONFIRMED WON')">🏆 Mark Whole Ticket as CONFIRMED WON</button>
+            <button type="button" class="btn-lost" style="margin-bottom:15px; color:#fff;" onclick="settleEntireVipTicket('TICKET LOST')">❌ Mark Whole Ticket as LOST</button>
             <div id="activeVipMatchesList">No matches inside current active ticket instance.</div>
         </div>
     </div>
 
-    <!-- PANEL 3: SETTINGS, BANNER NOTICES & NOTIFICATIONS -->
+    <!-- PANEL 3: SETTINGS & BANNER NOTICES -->
     <div id="meta-panel" class="panel">
         <div class="card">
             <h2>📅 Update VIP Calendar Ticket Notice Banner</h2>
             <label>Display Target Date:</label>
             <input type="date" id="metaVipDate">
-            <button onclick="updateVipBannerDate()">Update App Notice Layout</button>
+            <button type="button" onclick="updateVipBannerDate()">Update App Notice Layout</button>
         </div>
 
         <div class="card">
             <h2>📢 Send Global Push Notification Alert</h2>
             <input type="text" id="pushTitle" placeholder="Enter Alert Header Title">
             <textarea id="pushBody" placeholder="Type notification text details here..."></textarea>
-            <button style="background:#f59e0b;" onclick="triggerGlobalNotification()">Transmit Push Banner</button>
+            <button type="button" style="background:#f59e0b; color:#0b0f19;" onclick="triggerGlobalNotification()">Transmit Push Banner</button>
         </div>
     </div>
 
-    <!-- Core Firebase SDK Integration Script modules -->
+    <!-- Core Script Logic Module Modules -->
     <script type="module">
         import { initializeApp } from "https://gstatic.com";
         import { getFirestore, collection, addDoc, updateDoc, doc, setDoc, deleteDoc, query, where, onSnapshot, getDocs } from "https://gstatic.com";
@@ -114,6 +115,55 @@
           apiKey: "AIzaSyAFFzyLlX_XUtFcw9i1YDY0L18QjRNMLA5Q",
           authDomain: "://firebaseapp.com",
           projectId: "accuracy-score-9fafd",
+          storageBucket: "accuracy-score-9fafd.firebasestorage.app",
+          messagingSenderId: "1003404537815",
+          appId: "1:1003404537815:web:8cb1dc67c77f8043f00592"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Core Touch-Safe Tab Navigation Switcher
+        window.switchTab = function(panelId, btnId) {
+            // Hide all panels
+            document.getElementById('free-panel').style.display = 'none';
+            document.getElementById('vip-panel').style.display = 'none';
+            document.getElementById('meta-panel').style.display = 'none';
+            
+            document.getElementById('free-panel').classList.remove('active');
+            document.getElementById('vip-panel').classList.remove('active');
+            document.getElementById('meta-panel').classList.remove('active');
+
+            // Deactivate all buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+
+            // Activate specific target panel and active tab button
+            const activePanel = document.getElementById(panelId);
+            activePanel.style.display = 'block';
+            activePanel.classList.add('active');
+            document.getElementById(btnId).classList.add('active');
+        };
+
+        // --- FREE TIPS PUBLISHING ---
+        window.publishFreeTip = async function() {
+            const date = document.getElementById('freeDate').value;
+            const league = document.getElementById('freeLeague').value;
+            const time = document.getElementById('freeTime').value;
+            const team1 = document.getElementById('freeTeam1').value;
+            const team2 = document.getElementById('freeTeam2').value;
+            const prediction = document.getElementById('freePrediction').value;
+            const odds = document.getElementById('freeOdds').value;
+            const analytics = document.getElementById('freeAnalytics').value;
+
+            if(!date || !team1 || !team2 || !prediction || !odds) return alert("Fill core fields!");
+
+            try {
+                await addDoc(collection(db, "free_tips"), {
+                    matchDate: date, league, time, team1, team2, prediction,
+                    odds: parseFloat(odds), analytics: analytics || "Analyze carefully.",
+                    status: "NOT STARTED", timestamp: Date.now()
+                });
+                alert("Free tip posted successfully!");
           storageBucket: "accuracy-score-9fafd.firebasestorage.app",
           messagingSenderId: "1003404537815",
           appId: "1:1003404537815:web:8cb1dc67c77f8043f00592"
