@@ -10,11 +10,11 @@
         
         /* Clean Vertical Stacked Menu Layout for Mobile Control */
         .tab-bar-vertical { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; width: 100%; }
-        .tab-btn { background: #1e293b; color: #94a3b8; border: 1px solid #334155; padding: 14px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 14px; text-align: left; transition: 0.2s; }
+        .tab-btn { background: #1e293b; color: #94a3b8; border: 1px solid #334155; padding: 14px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 14px; text-align: left; -webkit-tap-highlight-color: transparent; }
         .tab-btn.active { background: #38bdf8; color: #0b0f19; border-color: #38bdf8; }
         
+        /* Structural visibility layers fixed to avoid click blocking bugs */
         .panel { display: none; }
-        .panel.active { display: block !important; }
         .card { background: #151f32; padding: 16px; margin-bottom: 20px; border-radius: 12px; border: 1px solid #223049; }
         h2 { font-size: 15px; margin: 0 0 14px 0; color: #f8fafc; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; }
         label { font-size: 12px; color: #94a3b8; font-weight: bold; display: block; margin-top: 10px; }
@@ -39,13 +39,13 @@
 
     <!-- Stacked Switch Controls to Avoid Squishing Screens -->
     <div class="tab-bar-vertical">
-        <button class="tab-btn active" id="btn-free" onclick="switchTab('free-panel', 'btn-free')">🆓 Open Free Tips Panel</button>
-        <button class="tab-btn" id="btn-vip" onclick="switchTab('vip-panel', 'btn-vip')">👑 Open VIP Tiers & Zones Panel</button>
-        <button class="tab-btn" id="btn-meta" onclick="switchTab('meta-panel', 'btn-meta')">⚙️ Open Notifications & Date Settings</button>
+        <button class="tab-btn active" id="btn-free" onclick="showTargetPanel('free-panel', 'btn-free')">🆓 Open Free Tips Panel</button>
+        <button class="tab-btn" id="btn-vip" onclick="showTargetPanel('vip-panel', 'btn-vip')">👑 Open VIP Tiers & Zones Panel</button>
+        <button class="tab-btn" id="btn-meta" onclick="showTargetPanel('meta-panel', 'btn-meta')">⚙️ Open Notifications & Date Settings</button>
     </div>
 
     <!-- PANEL 1: FREE TIPS MANAGEMENT -->
-    <div id="free-panel" class="panel active">
+    <div id="free-panel" class="panel" style="display: block;">
         <div class="card">
             <h2>➕ Post Free Tip Match</h2>
             <label>Target Matching Date:</label>
@@ -123,21 +123,18 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Responsive Panel Control Script
-        window.switchTab = function(panelId, btnId) {
+        // Fail-safe view control mechanism
+        window.showTargetPanel = function(panelId, btnId) {
+            // Force reset all displays explicitly
             document.getElementById('free-panel').style.display = 'none';
             document.getElementById('vip-panel').style.display = 'none';
             document.getElementById('meta-panel').style.display = 'none';
             
-            document.getElementById('free-panel').classList.remove('active');
-            document.getElementById('vip-panel').classList.remove('active');
-            document.getElementById('meta-panel').classList.remove('active');
-
+            // Untoggle header highlighting styles
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
 
-            const activePanel = document.getElementById(panelId);
-            activePanel.style.display = 'block';
-            activePanel.classList.add('active');
+            // Turn on requested dashboard section
+            document.getElementById(panelId).style.display = 'block';
             document.getElementById(btnId).classList.add('active');
         };
 
@@ -165,3 +162,4 @@
                 document.getElementById('freeTeam2').value = '';
                 document.getElementById('freePrediction').value = '';
                 document.getElementById('freeOdds').value = '';
+                document.getElementById('freeAnalytics').value = '';
