@@ -3,306 +3,1329 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>Accuracy Score - Master Admin Panel</title>
     <style>
-        body { font-family: Arial, sans-serif; background: #0b0f19; color: #fff; padding: 15px; margin: 0; box-sizing: border-box; overflow-y: auto; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0b0f19; color: #fff; padding: 15px; margin: 0; box-sizing: border-box; overflow-y: auto; }
         h1 { font-size: 20px; text-align: center; color: #38bdf8; margin: 15px 0; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
-        .card { background: #151f32; padding: 16px; margin-bottom: 25px; border-radius: 12px; border: 1px solid #223049; }
-        h2 { font-size: 15px; margin: 0 0 14px 0; color: #38bdf8; font-weight: bold; text-transform: uppercase; border-bottom: 1px solid #223049; padding-bottom: 8px; }
+        .card { background: #151f32; padding: 16px; margin-bottom: 20px; border-radius: 12px; border: 1px solid #223049; }
+        h2 { font-size: 15px; margin: 0 0 14px 0; color: #38bdf8; font-weight: bold; text-transform: uppercase; border-bottom: 1px solid #223049; padding-bottom: 8px; display: flex; align-items: center; justify-content: space-between; }
         label { font-size: 12px; color: #94a3b8; font-weight: bold; display: block; margin-top: 10px; }
-        input, select, textarea { width: 100%; padding: 12px; margin: 6px 0 12px 0; border-radius: 8px; border: 1px solid #334155; box-sizing: border-box; font-size: 14px; background: #0f172a; color: #fff; }
-        textarea { height: 90px; resize: vertical; }
+        input, select, textarea { width: 100%; padding: 12px; margin: 6px 0 12px 0; border-radius: 8px; border: 1px solid #334155; box-sizing: border-box; font-size: 14px; background: #0f172a; color: #fff; touch-action: manipulation; }
+        textarea { height: 80px; resize: vertical; }
         
-        /* Touch-Safe Interactive Action Trigger Bars */
-        .action-trigger { width: 100%; padding: 14px; margin: 10px 0; border-radius: 8px; border: none; background: #38bdf8; color: #0b0f19; cursor: pointer; font-weight: bold; font-size: 15px; text-transform: uppercase; text-align: center; display: block; user-select: none; -webkit-tap-highlight-color: transparent; }
+        .action-trigger { width: 100%; padding: 14px; margin: 10px 0; border-radius: 8px; border: none; background: #38bdf8; color: #0b0f19; cursor: pointer; font-weight: bold; font-size: 15px; text-transform: uppercase; text-align: center; display: block; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
         .action-trigger:active { background: #0ea5e9; }
+        .btn-danger { background: #ef4444; color: #fff; }
+        .btn-success { background: #22c55e; color: #fff; }
+        .btn-warning { background: #f59e0b; color: #000; }
+        .btn-secondary { background: #475569; color: #fff; }
         
         .item-row { background: #1e293b; padding: 12px; margin: 8px 0; border-radius: 8px; border-left: 4px solid #38bdf8; color: #fff; }
-        .btn-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 8px; }
-        .status-pill { padding: 10px; font-size: 11px; font-weight: 800; border-radius: 4px; color: #fff; text-transform: uppercase; text-align: center; cursor: pointer; user-select: none; }
+        .item-row.unpublished { border-left-color: #f59e0b; opacity: 0.8; }
+        .btn-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 8px; }
+        .status-pill { padding: 10px; font-size: 11px; font-weight: 800; border-radius: 4px; color: #fff; text-transform: uppercase; text-align: center; cursor: pointer; user-select: none; border: none; }
         .btn-won { background: #22c55e; }
         .btn-lost { background: #ef4444; }
         .btn-void { background: #64748b; }
+        .btn-toggle { background: #0284c7; }
+        
+        .auth-banner { padding: 12px; border-radius: 8px; font-size: 13px; margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between; font-weight: bold; }
+        .auth-banner.logged-in { background: #064e3b; border: 1px solid #059669; color: #6ee7b7; }
+        .auth-banner.logged-out { background: #450a0a; border: 1px solid #dc2626; color: #fca5a5; }
+        
+        .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; text-transform: uppercase; margin-left: 6px; }
+        .badge-pub { background: #065f46; color: #34d399; }
+        .badge-unpub { background: #78350f; color: #fcd34d; }
+        
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
     <h1>Accuracy Score Master Console</h1>
 
-    <!-- 1. FREE TIPS REGISTRATION SECTION -->
-    <div class="card">
-        <h2> Free Tip Match Manager</h2>
-        <label>Target Matching Date:</label>
-        <input type="date" id="freeDate">
-        <input type="text" id="freeLeague" placeholder="League Name (e.g. Premier League)">
-        <input type="text" id="freeTime" placeholder="Match Kickoff Time (e.g. 16:00)">
-        <input type="text" id="freeTeam1" placeholder="Home Team (e.g. Arsenal)">
-        <input type="text" id="freeTeam2" placeholder="Away Team (e.g. Chelsea)">
-        <input type="text" id="freePrediction" placeholder="Free Prediction (e.g. Home Win)">
-        <input type="number" step="0.01" id="freeOdds" placeholder="Odds (e.g. 1.85)">
-        <textarea id="freeAnalytics" placeholder="Analysis Notes Details..."></textarea>
-        <div class="action-trigger" id="submit-free-btn">Publish Free Match</div>
+    <!-- 0. ADMIN AUTHENTICATION BANNER / LOGIN FORM -->
+    <div id="auth-status-bar" class="auth-banner logged-out">
+        <span id="auth-status-text">🔒 Status: Not Authenticated</span>
+        <button id="logout-btn" class="status-pill btn-danger hidden">Logout</button>
     </div>
 
-    <div class="card">
-        <h2>⏳ Live Settle / Edit Free Tips</h2>
-        <div id="freeMatchesList">Syncing live fixtures...</div>
+    <div id="login-card" class="card">
+        <h2>🔐 Firebase Administrator Login</h2>
+        <form id="admin-login-form">
+            <label>Admin Email Address:</label>
+            <input type="email" id="login-email" placeholder="admin@accuracyscore.site" required>
+            <label>Admin Password:</label>
+            <input type="password" id="login-password" placeholder="••••••••" required>
+            <button type="submit" id="login-btn" class="action-trigger">Authenticate Admin</button>
+        </form>
+        <div id="login-error" style="color: #f87171; font-size: 12px; font-weight: bold; margin-top: 8px;" class="hidden"></div>
     </div>
 
-    <!-- 2. VIP ZONES REGISTRATION SECTION -->
-    <div class="card">
-        <h2>👑 Upload Active VIP Ticket Match</h2>
-        <input type="text" id="vipLeague" placeholder="League Name">
-        <input type="text" id="vipTime" placeholder="Kickoff Time">
-        <input type="text" id="vipTeam1" placeholder="Home Team">
-        <input type="text" id="vipTeam2" placeholder="Away Team">
-        <input type="text" id="vipPrediction" placeholder="Correct Score Prediction">
-        <input type="number" step="0.01" id="vipOdds" placeholder="Match Odds">
-        <div class="action-trigger" id="submit-vip-btn">Add Match to Active Ticket</div>
+    <!-- MAIN ADMIN PANEL CONTENT (UNLOCKED AFTER VERIFIED LOGIN) -->
+    <div id="admin-panel-content" class="hidden">
+
+        <!-- 1. FREE TIPS REGISTRATION SECTION -->
+        <div class="card">
+            <h2>⚽ Free Tip Match Manager</h2>
+            <label>Target Matching Date / Category:</label>
+            <select id="freeDate">
+                <option value="Today">Today</option>
+                <option value="Yesterday">Yesterday</option>
+                <option value="Tomorrow">Tomorrow</option>
+            </select>
+            <label>League Name:</label>
+            <input type="text" id="freeLeague" placeholder="e.g. Premier League">
+            <label>Kickoff Time:</label>
+            <input type="text" id="freeTime" placeholder="e.g. 16:00 UTC">
+            <label>Home Team:</label>
+            <input type="text" id="freeTeam1" placeholder="e.g. Arsenal">
+            <label>Away Team:</label>
+            <input type="text" id="freeTeam2" placeholder="e.g. Chelsea">
+            <label>Free Prediction Tip:</label>
+            <input type="text" id="freePrediction" placeholder="e.g. Home Win or Draw (1X)">
+            <label>Odds:</label>
+            <input type="number" step="0.01" id="freeOdds" placeholder="e.g. 1.85">
+            
+            <button type="button" class="action-trigger" id="submit-free-btn">Publish Free Match</button>
+        </div>
+
+        <div class="card">
+            <h2>⏳ Live Settle / Edit Free Tips</h2>
+            <div id="freeMatchesList">Loading live free tips...</div>
+        </div>
+
+        <!-- 2. VIP ZONES REGISTRATION SECTION -->
+        <div class="card">
+            <h2>👑 Upload Active VIP Match</h2>
+            <label>Competition Name:</label>
+            <input type="text" id="vipLeague" placeholder="e.g. UEFA Champions League">
+            <label>Display Date:</label>
+            <input type="text" id="vipDate" placeholder="Today" value="Today">
+            <label>Kickoff Time:</label>
+            <input type="text" id="vipTime" placeholder="e.g. 20:00 UTC">
+            <label>Home Team:</label>
+            <input type="text" id="vipTeam1" placeholder="e.g. Bayern Munich">
+            <label>Away Team:</label>
+            <input type="text" id="vipTeam2" placeholder="e.g. Real Madrid">
+            <label>Correct Score / Vip Prediction:</label>
+            <input type="text" id="vipPrediction" placeholder="e.g. 2 - 1">
+            <label>Odds:</label>
+            <input type="number" step="0.01" id="vipOdds" placeholder="e.g. 1.95">
+            <label>Actual Final Score (Optional):</label>
+            <input type="text" id="vipActualScore" placeholder="e.g. 2 - 1 (leave blank if match not yet finished)">
+
+            <button type="button" class="action-trigger" id="submit-vip-btn">Publish VIP Match</button>
+        </div>
+
+        <div class="card" style="background:#131224; border-color:#3b2273;">
+            <h2>⚡ Live Settle / Edit VIP Matches</h2>
+            <div id="activeVipMatchesList">Loading live VIP matches...</div>
+        </div>
+
+        <!-- 3. CORRECT SCORE RESULTS SECTION -->
+        <div class="card">
+            <h2>🎯 Correct Score Ticket Manager</h2>
+            <label>Ticket Title:</label>
+            <input type="text" id="csTicketTitle" placeholder="e.g. VIP Correct Score Slip">
+            <label>Ticket Date:</label>
+            <input type="text" id="csDate" placeholder="e.g. Today">
+            <label>Total Combined Odds:</label>
+            <input type="number" step="0.01" id="csOdds" placeholder="e.g. 44.00">
+            <label>Predicted Score:</label>
+            <input type="text" id="csPredictedScore" placeholder="e.g. 2 - 1">
+            <label>Actual Final Score:</label>
+            <input type="text" id="csActualScore" placeholder="e.g. 2 - 1">
+            <label>Ticket Result Status:</label>
+            <select id="csStatus">
+                <option value="WON">WON</option>
+                <option value="LOST">LOST</option>
+                <option value="PENDING">PENDING</option>
+            </select>
+
+            <button type="button" class="action-trigger" id="submit-cs-btn">Publish Correct Score Ticket</button>
+        </div>
+
+        <div class="card">
+            <h2>📋 Live Correct Score Tickets</h2>
+            <div id="csTicketList">Loading live tickets...</div>
+        </div>
+
+        <!-- 4. NOTIFICATIONS MANAGER -->
+        <div class="card">
+            <h2>🔔 Broadcast App Notification Alert</h2>
+            <label>Notification Title:</label>
+            <input type="text" id="notifTitle" placeholder="e.g. New VIP Tip Updated">
+            <label>Message Payload:</label>
+            <textarea id="notifMessage" placeholder="e.g. High-confidence Champions League ticket is now available."></textarea>
+            <label>Alert Category:</label>
+            <select id="notifType">
+                <option value="system">System Alert</option>
+                <option value="free_tip">Free Tip</option>
+                <option value="vip">VIP Match</option>
+                <option value="result">Match Result</option>
+            </select>
+            <label>Timestamp Text:</label>
+            <input type="text" id="notifTimestamp" value="Just now" placeholder="Just now">
+
+            <button type="button" class="action-trigger" id="submit-notif-btn">Send App Alert</button>
+        </div>
+
+        <div class="card">
+            <h2>📣 Live Notifications Feed</h2>
+            <div id="notifList">Loading notifications...</div>
+        </div>
+
+        <!-- 5. APP SETTINGS SECTION -->
+        <div class="card">
+            <h2>⚙️ Dynamic App Settings</h2>
+            <label>Official Telegram Channel URL:</label>
+            <input type="text" id="settingTelegram" placeholder="https://t.me/...">
+            <label>Admin Contact Email:</label>
+            <input type="email" id="settingEmail" placeholder="support@accuracyscore.site">
+            <label>WhatsApp Support Phone Number:</label>
+            <input type="text" id="settingWhatsapp" placeholder="2349152840495">
+            <label>App Disclaimer Text:</label>
+            <textarea id="settingDisclaimer" placeholder="Accuracy Score provides sports analysis for informational purposes only..."></textarea>
+
+            <button type="button" class="action-trigger" id="submit-settings-btn">Save Global Settings</button>
+        </div>
+
     </div>
 
-    <div class="card" style="background:#131224; border-color:#3b2273;">
-        <h2>⚡ Current Active VIP Ticket Details</h2>
-        <label>Total Combined Ticket Odds:</label>
-        <input type="number" step="0.01" id="ticketTotalOdds" placeholder="e.g. 60.00">
-        <div class="status-pill btn-won" style="margin-bottom:12px;" id="archive-vip-won-btn">🏆 Mark Whole Ticket as CONFIRMED WON</div>
-        <div class="status-pill btn-lost" style="margin-bottom:12px;" id="archive-vip-lost-btn">❌ Mark Whole Ticket as LOST</div>
-        <div id="activeVipMatchesList">No matches inside current active ticket instance.</div>
-    </div>
+    <!-- Firebase JS SDK ES Modules -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, collection, doc, addDoc, setDoc, updateDoc, deleteDoc, getDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    <!-- 3. NOTICES CONFIGURATION SECTION -->
-    <div class="card">
-        <h2>📅 Update VIP Calendar Ticket Notice Banner</h2>
-        <label>Display Target Date:</label>
-        <input type="date" id="metaVipDate">
-        <div class="action-trigger" id="submit-banner-btn">Update App Notice Layout Date</div>
-    </div>
-
-    <!-- Global Core Script CDNs Loaded Safely -->
-    <script src="https://gstatic.com"></script>
-    <script src="https://gstatic.com"></script>
-
-    <script>
         const firebaseConfig = {
-          apiKey: "AIzaSyAFFzyLlX_XUtFcw9i1YDY0L18QjRNMLA5Q",
-          authDomain: "://firebaseapp.com",
-          projectId: "accuracy-score-9fafd",
-          messagingSenderId: "1003404537815",
-          appId: "1:1003404537815:web:8cb1dc67c77f8043f00592"
+            apiKey: "AIzaSyAEPONO0nriI_tpzJo2JZnobBU9O5ZV-yE",
+            authDomain: "solid-marker-0qvh5.firebaseapp.com",
+            projectId: "solid-marker-0qvh5",
+            storageBucket: "solid-marker-0qvh5.firebasestorage.app",
+            messagingSenderId: "92765035899",
+            appId: "1:92765035899:web:dc980df2315a736133b1de"
         };
 
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app, "ai-studio-accuracyscore-815a63cc-1a8d-4296-8574-4b1171cc9a03");
 
-        // --- SUBMIT FREE TIPS ---
-        document.getElementById('submit-free-btn').addEventListener('click', function(e) {
-            e.preventDefault(); e.stopPropagation();
-            
+        let currentUser = null;
+
+        // UI Element References
+        const statusBar = document.getElementById('auth-status-bar');
+        const statusText = document.getElementById('auth-status-text');
+        const logoutBtn = document.getElementById('logout-btn');
+        const loginCard = document.getElementById('login-card');
+        const adminContent = document.getElementById('admin-panel-content');
+        const loginForm = document.getElementById('admin-login-form');
+        const loginError = document.getElementById('login-error');
+
+        // --- AUTHENTICATION STATE OBSERVER ---
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                try {
+                    const adminRef = doc(db, "admins", user.uid);
+                    const adminSnap = await getDoc(adminRef);
+
+                    if (adminSnap.exists() && (adminSnap.data().role === 'admin' || adminSnap.data().role === 'superadmin')) {
+                        currentUser = user;
+                        statusBar.className = "auth-banner logged-in";
+                        statusText.textContent = `✅ Authenticated Admin: ${user.email} (${adminSnap.data().role})`;
+                        logoutBtn.classList.remove('hidden');
+                        loginCard.classList.add('hidden');
+                        adminContent.classList.remove('hidden');
+                        loginError.classList.add('hidden');
+
+                        initRealtimeListeners();
+                        loadAppSettings();
+                    } else {
+                        throw new Error(`UID ${user.uid} is not authorized in /admins or lacks admin role.`);
+                    }
+                } catch (err) {
+                    console.error("Admin verification error:", err);
+                    loginError.textContent = `Access Denied: ${err.message}`;
+                    loginError.classList.remove('hidden');
+                    statusBar.className = "auth-banner logged-out";
+                    statusText.textContent = "🔒 Status: Unauthorized Admin Record";
+                    logoutBtn.classList.add('hidden');
+                    loginCard.classList.remove('hidden');
+                    adminContent.classList.add('hidden');
+                    await signOut(auth);
+                }
+            } else {
+                currentUser = null;
+                statusBar.className = "auth-banner logged-out";
+                statusText.textContent = "🔒 Status: Not Authenticated";
+                logoutBtn.classList.add('hidden');
+                loginCard.classList.remove('hidden');
+                adminContent.classList.add('hidden');
+            }
+        });
+
+        // --- LOGIN HANDLER ---
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value.trim();
+            const password = document.getElementById('login-password').value;
+            loginError.classList.add('hidden');
+
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+            } catch (err) {
+                loginError.textContent = `Login Failed: ${err.message}`;
+                loginError.classList.remove('hidden');
+            }
+        });
+
+        // --- LOGOUT HANDLER ---
+        logoutBtn.addEventListener('click', async () => {
+            await signOut(auth);
+        });
+
+        // --- 1. FREE TIPS PUBLISH & MANAGE ---
+        const submitFreeBtn = document.getElementById('submit-free-btn');
+        submitFreeBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
             const date = document.getElementById('freeDate').value;
-            const league = document.getElementById('freeLeague').value;
-            const time = document.getElementById('freeTime').value;
-            const team1 = document.getElementById('freeTeam1').value;
-            const team2 = document.getElementById('freeTeam2').value;
-            const prediction = document.getElementById('freePrediction').value;
-            const odds = document.getElementById('freeOdds').value;
-            const analytics = document.getElementById('freeAnalytics').value;
+            const league = document.getElementById('freeLeague').value.trim() || 'Premier League';
+            const time = document.getElementById('freeTime').value.trim() || '16:00 UTC';
+            const team1 = document.getElementById('freeTeam1').value.trim();
+            const team2 = document.getElementById('freeTeam2').value.trim();
+            const prediction = document.getElementById('freePrediction').value.trim();
+            const odds = document.getElementById('freeOdds').value.trim();
 
-            if(!date || !team1 || !team2 || !prediction || !odds) {
-                return alert("Please fill in all required form input fields!");
+            if (!team1 || !team2 || !prediction || !odds) {
+                return alert("Please fill in required fields: Home Team, Away Team, Prediction Tip, and Odds!");
             }
 
-            db.collection("free_tips").add({
-                matchDate: date, league, time, team1, team2, prediction,
-                odds: parseFloat(odds), analytics: analytics || "Analyze carefully.",
-                status: "NOT STARTED", timestamp: Date.now()
-            })
-            .then(() => {
-                alert("SUCCESS: Free match tip saved to database!");
+            try {
+                const docData = {
+                    homeTeam: team1,
+                    awayTeam: team2,
+                    league: league,
+                    kickoffTime: time,
+                    date: date,
+                    prediction: prediction,
+                    odds: String(odds),
+                    status: 'NOT STARTED',
+                    published: true,
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                };
+
+                await addDoc(collection(db, "free_tips"), docData);
+                alert("SUCCESS: Free Tip published to Firestore!");
+
+                // Clear input fields
                 document.getElementById('freeTeam1').value = '';
                 document.getElementById('freeTeam2').value = '';
                 document.getElementById('freePrediction').value = '';
                 document.getElementById('freeOdds').value = '';
-                document.getElementById('freeAnalytics').value = '';
-            })
-            .catch(err => alert("Cloud Rejection: " + err.message));
+            } catch (err) {
+                console.error("Firestore Free Tips Error:", err);
+                alert("Firestore Error: " + err.message);
+            }
         });
 
-        db.collection("free_tips").onSnapshot((snapshot) => {
-            const container = document.getElementById('freeMatchesList');
-            container.innerHTML = '';
-            snapshot.forEach(docItem => {
-                const g = docItem.data();
-                const div = document.createElement('div');
-                div.className = 'item-row';
-                
-                // Generated clear string identities for explicit event attachment paths
-                const wId = "w-" + docItem.id;
-                const lId = "l-" + docItem.id;
-                const vId = "v-" + docItem.id;
+        // --- 2. VIP MATCH PUBLISH & MANAGE ---
+        const submitVipBtn = document.getElementById('submit-vip-btn');
+        submitVipBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
 
-                div.innerHTML = `
-                    <strong>${g.team1} vs ${g.team2}</strong><br>
-                    <small>Status: [${g.status}] | Tip: ${g.prediction}</small>
-                    <div class="btn-grid">
-                        <div class="status-pill btn-won" id="${wId}">WON</div>
-                        <div class="status-pill btn-lost" id="${lId}">LOST</div>
-                        <div class="status-pill btn-void" id="${vId}">VOID</div>
-                    </div>
-                `;
-                container.appendChild(div);
+            const league = document.getElementById('vipLeague').value.trim() || 'UEFA Champions League';
+            const date = document.getElementById('vipDate').value.trim() || 'Today';
+            const time = document.getElementById('vipTime').value.trim() || '20:00 UTC';
+            const team1 = document.getElementById('vipTeam1').value.trim();
+            const team2 = document.getElementById('vipTeam2').value.trim();
+            const prediction = document.getElementById('vipPrediction').value.trim();
+            const odds = document.getElementById('vipOdds').value.trim();
+            const actualScore = document.getElementById('vipActualScore').value.trim();
 
-                document.getElementById(wId).addEventListener('click', () => setFreeGameStatus(docItem.id, 'WON'));
-                document.getElementById(lId).addEventListener('click', () => setFreeGameStatus(docItem.id, 'LOST'));
-                document.getElementById(vId).addEventListener('click', () => setFreeGameStatus(docItem.id, 'VOID'));
-            });
-        });
+            if (!team1 || !team2 || !prediction || !odds) {
+                return alert("Please fill in required fields for VIP Match!");
+            }
 
-        window.setFreeGameStatus = function(id, status) {
-            db.collection("free_tips").doc(id).update({ status })
-            .then(() => alert(`Status shifted to ${status}`));
-        };
+            try {
+                const docData = {
+                    competition: league,
+                    date: date,
+                    kickoffTime: time,
+                    homeTeam: team1,
+                    awayTeam: team2,
+                    correctScorePrediction: prediction,
+                    odds: String(odds),
+                    status: 'upcoming',
+                    actualScore: actualScore || '',
+                    published: true,
+                    updatedAt: new Date().toISOString()
+                };
 
-        // --- SUBMIT VIP TICKET ---
-        document.getElementById('submit-vip-btn').addEventListener('click', function(e) {
-            e.preventDefault(); e.stopPropagation();
+                await addDoc(collection(db, "vip_zones"), docData);
+                alert("SUCCESS: VIP Match published to Firestore!");
 
-            const league = document.getElementById('vipLeague').value;
-            const time = document.getElementById('vipTime').value;
-            const team1 = document.getElementById('vipTeam1').value;
-            const team2 = document.getElementById('vipTeam2').value;
-            const prediction = document.getElementById('vipPrediction').value;
-            const odds = document.getElementById('vipOdds').value;
-
-            if(!team1 || !team2 || !prediction || !odds) return alert("Fill core VIP fields!");
-
-            db.collection("vip_active").add({
-                league, time, team1, team2, prediction, odds: parseFloat(odds), status: "PENDING"
-            })
-            .then(() => {
-                alert("SUCCESS: Free match tip saved to database!");
-                document.getElementById('freeTeam1').value = '';
-                document.getElementById('freeTeam2').value = '';
-                document.getElementById('freePrediction').value = '';
-                document.getElementById('freeOdds').value = '';
-                document.getElementById('freeAnalytics').value = '';
-            })
-            .catch(err => alert("Cloud Rejection: " + err.message));
-        };
-
-        db.collection("free_tips").onSnapshot((snapshot) => {
-            const container = document.getElementById('freeMatchesList');
-            container.innerHTML = '';
-            snapshot.forEach(docItem => {
-                const g = docItem.data();
-                const div = document.createElement('div');
-                div.className = 'item-row';
-                div.innerHTML = `
-                    <strong>${g.team1} vs ${g.team2}</strong><br>
-                    <small>Status: [${g.status}] | Tip: ${g.prediction}</small>
-                    <div class="btn-grid">
-                        <button type="button" class="btn-status btn-won" onclick="setFreeGameStatus('${docItem.id}','WON')">WON</button>
-                        <button type="button" class="btn-status btn-lost" onclick="setFreeGameStatus('${docItem.id}','LOST')">LOST</button>
-                        <button type="button" class="btn-status btn-void" onclick="setFreeGameStatus('${docItem.id}','VOID')">VOID</button>
-                    </div>
-                `;
-                container.appendChild(div);
-            });
-        });
-
-        window.setFreeGameStatus = function(id, status) {
-            db.collection("free_tips").doc(id).update({ status })
-            .then(() => alert(`Status shifted to ${status}`));
-        };
-
-        // --- SUBMIT VIP TICKET ---
-        window.handlePublishVip = function() {
-            const league = document.getElementById('vipLeague').value;
-            const time = document.getElementById('vipTime').value;
-            const team1 = document.getElementById('vipTeam1').value;
-            const team2 = document.getElementById('vipTeam2').value;
-            const prediction = document.getElementById('vipPrediction').value;
-            const odds = document.getElementById('vipOdds').value;
-
-            if(!team1 || !team2 || !prediction || !odds) return alert("Fill core VIP fields!");
-
-            db.collection("vip_active").add({
-                league, time, team1, team2, prediction, odds: parseFloat(odds), status: "PENDING"
-            })
-            .then(() => {
-                alert("SUCCESS: Added match item to active VIP ticket!");
                 document.getElementById('vipTeam1').value = '';
                 document.getElementById('vipTeam2').value = '';
                 document.getElementById('vipPrediction').value = '';
                 document.getElementById('vipOdds').value = '';
-            })
-            .catch(err => alert("Error: " + err.message));
+                document.getElementById('vipActualScore').value = '';
+            } catch (err) {
+                console.error("Firestore VIP Error:", err);
+                alert("Firestore Error: " + err.message);
+            }
+        });
+
+        // --- HELPER: SETTLE VIP MATCH & AUTO-SYNC TO CORRECT SCORE RESULTS ---
+        async function settleVipMatch(vipId, item, status) {
+            try {
+                const scoreInput = document.getElementById(`vip-score-${vipId}`);
+                const actualScore = scoreInput ? scoreInput.value.trim() : (item.actualScore || item.correctScorePrediction || '');
+
+                // 1. Update VIP match document in vip_zones
+                await updateDoc(doc(db, "vip_zones", vipId), {
+                    status: status,
+                    actualScore: actualScore,
+                    updatedAt: new Date().toISOString()
+                });
+
+                // 2. Automatically sync / update corresponding entry in correct_score_results
+                const csDocId = `vip-${vipId}`;
+                const title = `${item.homeTeam} vs ${item.awayTeam}`;
+                const csData = {
+                    ticketTitle: item.competition ? `${item.competition}: ${title}` : title,
+                    date: item.date || 'Today',
+                    odds: String(item.odds || '2.00'),
+                    status: status,
+                    published: true,
+                    vipMatchId: vipId,
+                    matches: [
+                        {
+                            homeTeam: item.homeTeam,
+                            awayTeam: item.awayTeam,
+                            predictedScore: item.correctScorePrediction || '2-1',
+                            actualScore: actualScore || item.correctScorePrediction || '2-1',
+                            status: status,
+                            odds: String(item.odds || '2.00')
+                        }
+                    ],
+                    updatedAt: new Date().toISOString()
+                };
+
+                await setDoc(doc(db, "correct_score_results", csDocId), csData, { merge: true });
+                alert(`SUCCESS: VIP Match settled as ${status} & synced to Correct Score Results!`);
+            } catch (err) {
+                console.error("Settlement sync error:", err);
+                alert("Settlement error: " + err.message);
+            }
+        }
+
+        // --- 3. CORRECT SCORE RESULTS PUBLISH (MANUAL TICKETS) ---
+        const submitCsBtn = document.getElementById('submit-cs-btn');
+        submitCsBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const title = document.getElementById('csTicketTitle').value.trim() || 'VIP Correct Score Ticket';
+            const date = document.getElementById('csDate').value.trim() || 'Today';
+            const odds = document.getElementById('csOdds').value.trim() || '10.00';
+            const predictedScore = document.getElementById('csPredictedScore').value.trim();
+            const actualScore = document.getElementById('csActualScore').value.trim();
+            const status = document.getElementById('csStatus').value;
+
+            if (!predictedScore) {
+                return alert("Predicted Score is required!");
+            }
+
+            try {
+                const docData = {
+                    ticketTitle: title,
+                    date: date,
+                    odds: String(odds),
+                    status: status,
+                    published: true,
+                    matches: [
+                        {
+                            homeTeam: title.split(' vs ')[0] || 'Team A',
+                            awayTeam: title.split(' vs ')[1] || 'Team B',
+                            predictedScore: predictedScore,
+                            actualScore: actualScore || predictedScore,
+                            status: status,
+                            odds: odds
+                        }
+                    ],
+                    updatedAt: new Date().toISOString()
+                };
+
+                await addDoc(collection(db, "correct_score_results"), docData);
+                alert("SUCCESS: Correct Score Ticket published to Firestore!");
+
+                document.getElementById('csTicketTitle').value = '';
+                document.getElementById('csPredictedScore').value = '';
+                document.getElementById('csActualScore').value = '';
+            } catch (err) {
+                alert("Firestore Correct Score Error: " + err.message);
+            }
+        });
+
+        // --- 4. NOTIFICATIONS BROADCAST ---
+        const submitNotifBtn = document.getElementById('submit-notif-btn');
+        submitNotifBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const title = document.getElementById('notifTitle').value.trim();
+            const message = document.getElementById('notifMessage').value.trim();
+            const type = document.getElementById('notifType').value;
+            const timestamp = document.getElementById('notifTimestamp').value.trim() || 'Just now';
+
+            if (!title || !message) {
+                return alert("Notification Title and Message Payload are required!");
+            }
+
+            try {
+                const notifId = `notif-${Date.now()}`;
+                const docData = {
+                    id: notifId,
+                    title: title,
+                    message: message,
+                    type: type,
+                    timestamp: timestamp,
+                    read: false,
+                    published: true,
+                    createdAt: new Date().toISOString()
+                };
+
+                await setDoc(doc(db, "notifications", notifId), docData);
+                alert("SUCCESS: App Notification Broadcasted to Firestore!");
+
+                document.getElementById('notifTitle').value = '';
+                document.getElementById('notifMessage').value = '';
+            } catch (err) {
+                alert("Firestore Notification Error: " + err.message);
+            }
+        });
+
+        // --- 5. APP SETTINGS SAVE ---
+        const submitSettingsBtn = document.getElementById('submit-settings-btn');
+        submitSettingsBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+
+            const telegramUrl = document.getElementById('settingTelegram').value.trim();
+            const adminEmail = document.getElementById('settingEmail').value.trim();
+            const whatsapp = document.getElementById('settingWhatsapp').value.trim();
+            const disclaimer = document.getElementById('settingDisclaimer').value.trim();
+
+            try {
+                const docData = {
+                    telegramUrl: telegramUrl || 'https://t.me/thekingdomtradingsignal',
+                    adminContactEmail: adminEmail || 'support@accuracyscore.site',
+                    whatsappSupport: whatsapp || '2349152840495',
+                    disclaimerText: disclaimer || 'Accuracy Score provides sports analysis for informational purposes only.',
+                    updatedAt: new Date().toISOString()
+                };
+
+                await setDoc(doc(db, "app_settings", "general"), docData, { merge: true });
+                alert("SUCCESS: Dynamic App Settings updated in Firestore!");
+            } catch (err) {
+                alert("Firestore Settings Error: " + err.message);
+            }
+        });
+
+        async function loadAppSettings() {
+            try {
+                const snap = await getDoc(doc(db, "app_settings", "general"));
+                if (snap.exists()) {
+                    const data = snap.data();
+                    if (data.telegramUrl) document.getElementById('settingTelegram').value = data.telegramUrl;
+                    if (data.adminContactEmail) document.getElementById('settingEmail').value = data.adminContactEmail;
+                    if (data.whatsappSupport) document.getElementById('settingWhatsapp').value = data.whatsappSupport;
+                    if (data.disclaimerText) document.getElementById('settingDisclaimer').value = data.disclaimerText;
+                }
+            } catch (err) {
+                console.warn("Error loading app settings:", err);
+            }
+        }
+
+        // --- REALTIME FIRESTORE LISTENERS FOR LIVE MANAGE / SETTLE ---
+        function initRealtimeListeners() {
+            // Live Free Tips
+            onSnapshot(collection(db, "free_tips"), (snapshot) => {
+                const container = document.getElementById('freeMatchesList');
+                if (snapshot.empty) {
+                    container.innerHTML = '<p style="font-size:12px; color:#94a3b8;">No free tips in database.</p>';
+                    return;
+                }
+                container.innerHTML = '';
+                snapshot.forEach(docSnap => {
+                    const item = docSnap.data();
+                    const id = docSnap.id;
+                    const isPub = item.published !== false;
+
+                    const div = document.createElement('div');
+                    div.className = `item-row ${isPub ? '' : 'unpublished'}`;
+                    div.innerHTML = `
+                        <div>
+                            <strong>${item.homeTeam} vs ${item.awayTeam}</strong>
+                            <span class="badge ${isPub ? 'badge-pub' : 'badge-unpub'}">${isPub ? 'PUBLISHED' : 'UNPUBLISHED'}</span>
+                            <br>
+                            <small>Date: [${item.date || 'Today'}] | Tip: ${item.prediction} @ ${item.odds} | Status: <strong style="color:#38bdf8">${item.status || 'NOT STARTED'}</strong></small>
+                        </div>
+                        <div class="btn-grid">
+                            <button type="button" class="status-pill btn-won" id="free-won-${id}">WON</button>
+                            <button type="button" class="status-pill btn-lost" id="free-lost-${id}">LOST</button>
+                            <button type="button" class="status-pill btn-toggle" id="free-toggle-${id}">${isPub ? 'Hide' : 'Show'}</button>
+                            <button type="button" class="status-pill btn-void" id="free-del-${id}">Delete</button>
+                        </div>
+                    `;
+                    container.appendChild(div);
+
+                    setTimeout(() => {
+                        document.getElementById(`free-won-${id}`)?.addEventListener('click', () => updateDoc(doc(db, "free_tips", id), { status: 'WON' }));
+                        document.getElementById(`free-lost-${id}`)?.addEventListener('click', () => updateDoc(doc(db, "free_tips", id), { status: 'LOST' }));
+                        document.getElementById(`free-toggle-${id}`)?.addEventListener('click', () => updateDoc(doc(db, "free_tips", id), { published: !isPub }));
+                        document.getElementById(`free-del-${id}`)?.addEventListener('click', () => {
+                            if (confirm("Delete this Free Tip permanently?")) deleteDoc(doc(db, "free_tips", id));
+                        });
+                    }, 0);
+                });
+            });
+
+            // Live VIP Matches with Actual Score & Automatic Result Synchronization
+            onSnapshot(collection(db, "vip_zones"), (snapshot) => {
+                const container = document.getElementById('activeVipMatchesList');
+                if (snapshot.empty) {
+                    container.innerHTML = '<p style="font-size:12px; color:#94a3b8;">No VIP matches in database.</p>';
+                    return;
+                }
+                container.innerHTML = '';
+                snapshot.forEach(docSnap => {
+                    const item = docSnap.data();
+                    const id = docSnap.id;
+                    const isPub = item.published !== false;
+
+                    const div = document.createElement('div');
+                    div.className = `item-row ${isPub ? '' : 'unpublished'}`;
+                    div.innerHTML = `
+                        <div>
+                            <strong>${item.homeTeam} vs ${item.awayTeam}</strong>
+                            <span class="badge ${isPub ? 'badge-pub' : 'badge-unpub'}">${isPub ? 'PUBLISHED' : 'UNPUBLISHED'}</span>
+                            <br>
+                            <small>${item.competition || 'VIP League'} (${item.date || 'Today'}) | Pred: <strong>${item.correctScorePrediction}</strong> @ ${item.odds} | Status: <strong style="color:#38bdf8">${item.status || 'upcoming'}</strong></small>
+                            ${item.actualScore ? `<br><small style="color:#34d399">Final Score: <strong>${item.actualScore}</strong></small>` : ''}
+                        </div>
+                        <div style="margin-top: 8px;">
+                            <label style="font-size: 11px; margin-top: 4px;">Actual Final Score (e.g. 2 - 1):</label>
+                            <input type="text" id="vip-score-${id}" placeholder="e.g. 2 - 1" value="${item.actualScore || ''}" style="margin: 4px 0 8px 0; padding: 8px; font-size: 13px;">
+                        </div>
+                        <div class="btn-grid">
+                            <button type="button" class="status-pill btn-won" id="vip-won-${id}">WON</button>
+                            <button type="button" class="status-pill btn-lost" id="vip-lost-${id}">LOST</button>
+                            <button type="button" class="status-pill btn-toggle" id="vip-toggle-${id}">${isPub ? 'Hide' : 'Show'}</button>
+                            <button type="button" class="status-pill btn-void" id="vip-del-${id}">Delete</button>
+                        </div>
+                    `;
+                    container.appendChild(div);
+
+                    setTimeout(() => {
+                        document.getElementById(`vip-won-${id}`)?.addEventListener('click', () => settleVipMatch(id, item, 'WON'));
+                        document.getElementById(`vip-lost-${id}`)?.addEventListener('click', () => settleVipMatch(id, item, 'LOST'));
+                        document.getElementById(`vip-toggle-${id}`)?.addEventListener('click', () => updateDoc(doc(db, "vip_zones", id), { published: !isPub }));
+                        document.getElementById(`vip-del-${id}`)?.addEventListener('click', async () => {
+                            if (confirm("Delete this VIP match permanently?")) {
+                                await deleteDoc(doc(db, "vip_zones", id));
+                                try {
+                                    await deleteDoc(doc(db, "correct_score_results", `vip-${id}`));
+                                } catch (e) {}
+                            }
+                        });
+                    }, 0);
+                });
+            });
+
+            // Live Correct Score Tickets
+            onSnapshot(collection(db, "correct_score_results"), (snapshot) => {
+                const container = document.getElementById('csTicketList');
+                if (snapshot.empty) {
+                    container.innerHTML = '<p style="font-size:12px; color:#94a3b8;">No correct score tickets in database.</p>';
+                    return;
+                }
+                container.innerHTML = '';
+                snapshot.forEach(docSnap => {
+                    const item = docSnap.data();
+                    const id = docSnap.id;
+                    const isPub = item.published !== false;
+
+                    const div = document.createElement('div');
+                    div.className = `item-row ${isPub ? '' : 'unpublished'}`;
+                    div.innerHTML = `
+                        <div>
+                            <strong>${item.ticketTitle}</strong> (${item.date || 'Today'})
+                            <span class="badge ${isPub ? 'badge-pub' : 'badge-unpub'}">${isPub ? 'PUBLISHED' : 'UNPUBLISHED'}</span>
+                            <br>
+                            <small>Odds: ${item.odds} | Status: <strong style="color:#38bdf8">${item.status}</strong></small>
+                            ${item.matches && item.matches[0] ? `<br><small style="color:#94a3b8">Pred: ${item.matches[0].predictedScore} | Actual: ${item.matches[0].actualScore}</small>` : ''}
+                        </div>
+                        <div class="btn-grid">
+                            <button type="button" class="status-pill btn-won" id="cs-won-${id}">WON</button>
+                            <button type="button" class="status-pill btn-lost" id="cs-lost-${id}">LOST</button>
+                            <button type="button" class="status-pill btn-toggle" id="cs-toggle-${id}">${isPub ? 'Hide' : 'Show'}</button>
+                            <button type="button" class="status-pill btn-void" id="cs-del-${id}">Delete</button>
+                        </div>
+                    `;
+                    container.appendChild(div);
+
+                    setTimeout(() => {
+                        document.getElementById(`cs-won-${id}`)?.addEventListener('click', () => updateDoc(doc(db, "correct_score_results", id), { status: 'WON' }));
+                        document.getElementById(`cs-lost-${id}`)?.addEventListener('click', () => updateDoc(doc(db, "correct_score_results", id), { status: 'LOST' }));
+                        document.getElementById(`cs-toggle-${id}`)?.addEventListener('click', () => updateDoc(doc(db, "correct_score_results", id), { published: !isPub }));
+                        document.getElementById(`cs-del-${id}`)?.addEventListener('click', () => {
+                            if (confirm("Delete ticket permanently?")) deleteDoc(doc(db, "correct_score_results", id));
+                        });
+                    }, 0);
+                });
+            });
+
+            // Live Notifications
+            onSnapshot(collection(db, "notifications"), (snapshot) => {
+                const container = document.getElementById('notifList');
+                if (snapshot.empty) {
+                    container.innerHTML = '<p style="font-size:12px; color:#94a3b8;">No notifications in database.</p>';
+                    return;
+                }
+                container.innerHTML = '';
+                snapshot.forEach(docSnap => {
+                    const item = docSnap.data();
+                    const id = docSnap.id;
+                    const isPub = item.published !== false;
+
+                    const div = document.createElement('div');
+                    div.className = `item-row ${isPub ? '' : 'unpublished'}`;
+                    div.innerHTML = `
+                        <div>
+                            <strong>${item.title}</strong>
+                            <span class="badge ${isPub ? 'badge-pub' : 'badge-unpub'}">${isPub ? 'PUBLISHED' : 'UNPUBLISHED'}</span>
+                            <br>
+                            <small style="color:#94a3b8;">${item.message}</small>
+                        </div>
+                        <div class="btn-grid" style="grid-template-columns: repeat(2, 1fr);">
+                            <button type="button" class="status-pill btn-toggle" id="notif-toggle-${id}">${isPub ? 'Unpublish' : 'Publish'}</button>
+                            <button type="button" class="status-pill btn-void" id="notif-del-${id}">Delete</button>
+                        </div>
+                    `;
+                    container.appendChild(div);
+
+                    setTimeout(() => {
+                        document.getElementById(`notif-toggle-${id}`)?.addEventListener('click', () => updateDoc(doc(db, "notifications", id), { published: !isPub }));
+                        document.getElementById(`notif-del-${id}`)?.addEventListener('click', () => {
+                            if (confirm("Delete notification permanently?")) deleteDoc(doc(db, "notifications", id));
+                        });
+                    }, 0);
+                });
+            });
+        }
+    </script>
+</body>
+</html>            <input type="text" id="csActualScore" placeholder="e.g. 2 - 1">
+            <label>Ticket Result Status:</label>
+            <select id="csStatus">
+                <option value="WON">WON</option>
+                <option value="LOST">LOST</option>
+                <option value="PENDING">PENDING</option>
+            </select>
+
+            <button type="button" class="action-trigger" id="submit-cs-btn">Publish Correct Score Ticket</button>
+        </div>
+
+        <div class="card">
+            <h2>📋 Live Correct Score Tickets</h2>
+            <div id="csTicketList">Loading live tickets...</div>
+        </div>
+
+        <!-- 4. NOTIFICATIONS MANAGER -->
+        <div class="card">
+            <h2>🔔 Broadcast App Notification Alert</h2>
+            <label>Notification Title:</label>
+            <input type="text" id="notifTitle" placeholder="e.g. New VIP Tip Updated">
+            <label>Message Payload:</label>
+            <textarea id="notifMessage" placeholder="e.g. High-confidence Champions League ticket is now available."></textarea>
+            <label>Alert Category:</label>
+            <select id="notifType">
+                <option value="system">System Alert</option>
+                <option value="free_tip">Free Tip</option>
+                <option value="vip">VIP Match</option>
+                <option value="result">Match Result</option>
+            </select>
+            <label>Timestamp Text:</label>
+            <input type="text" id="notifTimestamp" value="Just now" placeholder="Just now">
+
+            <button type="button" class="action-trigger" id="submit-notif-btn">Send App Alert</button>
+        </div>
+
+        <div class="card">
+            <h2>📣 Live Notifications Feed</h2>
+            <div id="notifList">Loading notifications...</div>
+        </div>
+
+        <!-- 5. APP SETTINGS SECTION -->
+        <div class="card">
+            <h2>⚙️ Dynamic App Settings</h2>
+            <label>Official Telegram Channel URL:</label>
+            <input type="text" id="settingTelegram" placeholder="https://t.me/...">
+            <label>Admin Contact Email:</label>
+            <input type="email" id="settingEmail" placeholder="support@accuracyscore.site">
+            <label>WhatsApp Support Phone Number:</label>
+            <input type="text" id="settingWhatsapp" placeholder="2349152840495">
+            <label>App Disclaimer Text:</label>
+            <textarea id="settingDisclaimer" placeholder="Accuracy Score provides sports analysis for informational purposes only..."></textarea>
+
+            <button type="button" class="action-trigger" id="submit-settings-btn">Save Global Settings</button>
+        </div>
+
+    </div>
+
+    <!-- Firebase JS SDK ES Modules -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, collection, doc, addDoc, setDoc, updateDoc, deleteDoc, getDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAEPONO0nriI_tpzJo2JZnobBU9O5ZV-yE",
+            authDomain: "solid-marker-0qvh5.firebaseapp.com",
+            projectId: "solid-marker-0qvh5",
+            storageBucket: "solid-marker-0qvh5.firebasestorage.app",
+            messagingSenderId: "92765035899",
+            appId: "1:92765035899:web:dc980df2315a736133b1de"
         };
 
-        db.collection("vip_active").onSnapshot((snapshot) => {
-            const container = document.getElementById('activeVipMatchesList');
-            container.innerHTML = '';
-            snapshot.forEach(docItem => {
-                const v = docItem.data();
-            })
-            .then(() => {
-                alert("SUCCESS: Free match tip saved to database!");
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app, "ai-studio-accuracyscore-815a63cc-1a8d-4296-8574-4b1171cc9a03");
+
+        let currentUser = null;
+
+        // UI Element References
+        const statusBar = document.getElementById('auth-status-bar');
+        const statusText = document.getElementById('auth-status-text');
+        const logoutBtn = document.getElementById('logout-btn');
+        const loginCard = document.getElementById('login-card');
+        const adminContent = document.getElementById('admin-panel-content');
+        const loginForm = document.getElementById('admin-login-form');
+        const loginError = document.getElementById('login-error');
+
+        // --- AUTHENTICATION STATE OBSERVER ---
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                try {
+                    const adminRef = doc(db, "admins", user.uid);
+                    const adminSnap = await getDoc(adminRef);
+
+                    if (adminSnap.exists() && (adminSnap.data().role === 'admin' || adminSnap.data().role === 'superadmin')) {
+                        currentUser = user;
+                        statusBar.className = "auth-banner logged-in";
+                        statusText.textContent = `✅ Authenticated Admin: ${user.email} (${adminSnap.data().role})`;
+                        logoutBtn.classList.remove('hidden');
+                        loginCard.classList.add('hidden');
+                        adminContent.classList.remove('hidden');
+                        loginError.classList.add('hidden');
+
+                        initRealtimeListeners();
+                        loadAppSettings();
+                    } else {
+                        throw new Error(`UID ${user.uid} is not authorized in /admins or lacks admin role.`);
+                    }
+                } catch (err) {
+                    console.error("Admin verification error:", err);
+                    loginError.textContent = `Access Denied: ${err.message}`;
+                    loginError.classList.remove('hidden');
+                    statusBar.className = "auth-banner logged-out";
+                    statusText.textContent = "🔒 Status: Unauthorized Admin Record";
+                    logoutBtn.classList.add('hidden');
+                    loginCard.classList.remove('hidden');
+                    adminContent.classList.add('hidden');
+                    await signOut(auth);
+                }
+            } else {
+                currentUser = null;
+                statusBar.className = "auth-banner logged-out";
+                statusText.textContent = "🔒 Status: Not Authenticated";
+                logoutBtn.classList.add('hidden');
+                loginCard.classList.remove('hidden');
+                adminContent.classList.add('hidden');
+            }
+        });
+
+        // --- LOGIN HANDLER ---
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value.trim();
+            const password = document.getElementById('login-password').value;
+            loginError.classList.add('hidden');
+
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+            } catch (err) {
+                loginError.textContent = `Login Failed: ${err.message}`;
+                loginError.classList.remove('hidden');
+            }
+        });
+
+        // --- LOGOUT HANDLER ---
+        logoutBtn.addEventListener('click', async () => {
+            await signOut(auth);
+        });
+
+        // --- 1. FREE TIPS PUBLISH & MANAGE ---
+        const submitFreeBtn = document.getElementById('submit-free-btn');
+        submitFreeBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const date = document.getElementById('freeDate').value;
+            const league = document.getElementById('freeLeague').value.trim() || 'Premier League';
+            const time = document.getElementById('freeTime').value.trim() || '16:00 UTC';
+            const team1 = document.getElementById('freeTeam1').value.trim();
+            const team2 = document.getElementById('freeTeam2').value.trim();
+            const prediction = document.getElementById('freePrediction').value.trim();
+            const odds = document.getElementById('freeOdds').value.trim();
+
+            if (!team1 || !team2 || !prediction || !odds) {
+                return alert("Please fill in required fields: Home Team, Away Team, Prediction Tip, and Odds!");
+            }
+
+            try {
+                const docData = {
+                    homeTeam: team1,
+                    awayTeam: team2,
+                    league: league,
+                    kickoffTime: time,
+                    date: date,
+                    prediction: prediction,
+                    odds: String(odds),
+                    status: 'NOT STARTED',
+                    published: true,
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                };
+
+                await addDoc(collection(db, "free_tips"), docData);
+                alert("SUCCESS: Free Tip published to Firestore!");
+
+                // Clear input fields
                 document.getElementById('freeTeam1').value = '';
                 document.getElementById('freeTeam2').value = '';
                 document.getElementById('freePrediction').value = '';
                 document.getElementById('freeOdds').value = '';
-                document.getElementById('freeAnalytics').value = '';
-            })
-            .catch(err => alert("Cloud Rejection: " + err.message));
-        };
-
-        // Stream and display free items live
-        db.collection("free_tips").onSnapshot((snapshot) => {
-            const container = document.getElementById('freeMatchesList');
-            container.innerHTML = '';
-            snapshot.forEach(docItem => {
-                const g = docItem.data();
-                const div = document.createElement('div');
-                div.className = 'item-row';
-                div.innerHTML = `
-                    <strong>${g.team1} vs ${g.team2}</strong><br>
-                    <small>Status: [${g.status}] | Tip: ${g.prediction}</small>
-                    <div class="btn-grid">
-                        <button type="button" class="btn-status btn-won" onclick="setFreeGameStatus('${docItem.id}','WON')">WON</button>
-                        <button type="button" class="btn-status btn-lost" onclick="setFreeGameStatus('${docItem.id}','LOST')">LOST</button>
-                        <button type="button" class="btn-status btn-void" onclick="setFreeGameStatus('${docItem.id}','VOID')">VOID</button>
-                    </div>
-                `;
-                container.appendChild(div);
-            });
+            } catch (err) {
+                console.error("Firestore Free Tips Error:", err);
+                alert("Firestore Error: " + err.message);
+            }
         });
 
-        window.setFreeGameStatus = function(id, status) {
-            db.collection("free_tips").doc(id).update({ status })
-            .then(() => alert(`Status shifted to ${status}`));
-        };
+        // --- 2. VIP MATCH PUBLISH & MANAGE ---
+        const submitVipBtn = document.getElementById('submit-vip-btn');
+        submitVipBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
 
-        // --- SUBMIT VIP TICKET ---
-        window.handlePublishVip = function() {
-            const league = document.getElementById('vipLeague').value;
-            const time = document.getElementById('vipTime').value;
-            const team1 = document.getElementById('vipTeam1').value;
-            const team2 = document.getElementById('vipTeam2').value;
-            const prediction = document.getElementById('vipPrediction').value;
-            const odds = document.getElementById('vipOdds').value;
+            const league = document.getElementById('vipLeague').value.trim() || 'UEFA Champions League';
+            const date = document.getElementById('vipDate').value.trim() || 'Today';
+            const time = document.getElementById('vipTime').value.trim() || '20:00 UTC';
+            const team1 = document.getElementById('vipTeam1').value.trim();
+            const team2 = document.getElementById('vipTeam2').value.trim();
+            const prediction = document.getElementById('vipPrediction').value.trim();
+            const odds = document.getElementById('vipOdds').value.trim();
+            const actualScore = document.getElementById('vipActualScore').value.trim();
 
-            if(!team1 || !team2 || !prediction || !odds) return alert("Fill core VIP fields!");
+            if (!team1 || !team2 || !prediction || !odds) {
+                return alert("Please fill in required fields for VIP Match!");
+            }
 
-            db.collection("vip_active").add({
-                league, time, team1, team2, prediction, odds: parseFloat(odds), status: "PENDING"
-            })
-            .then(() => {
-                alert("SUCCESS: Added match item to active VIP ticket!");
+            try {
+                const docData = {
+                    competition: league,
+                    date: date,
+                    kickoffTime: time,
+                    homeTeam: team1,
+                    awayTeam: team2,
+                    correctScorePrediction: prediction,
+                    odds: String(odds),
+                    status: 'upcoming',
+                    actualScore: actualScore || '',
+                    published: true,
+                    updatedAt: new Date().toISOString()
+                };
+
+                await addDoc(collection(db, "vip_zones"), docData);
+                alert("SUCCESS: VIP Match published to Firestore!");
+
                 document.getElementById('vipTeam1').value = '';
                 document.getElementById('vipTeam2').value = '';
                 document.getElementById('vipPrediction').value = '';
                 document.getElementById('vipOdds').value = '';
-            })
-            .catch(err => alert("Error: " + err.message));
-        };
+                document.getElementById('vipActualScore').value = '';
+            } catch (err) {
+                console.error("Firestore VIP Error:", err);
+                alert("Firestore Error: " + err.message);
+            }
+        });
 
-        db.collection("vip_active").onSnapshot((snapshot) => {
+        // --- HELPER: SETTLE VIP MATCH & AUTO-SYNC TO CORRECT SCORE RESULTS ---
+        async function settleVipMatch(vipId, item, status) {
+            try {
+                const scoreInput = document.getElementById(`vip-score-${vipId}`);
+                const actualScore = scoreInput ? scoreInput.value.trim() : (item.actualScore || item.correctScorePrediction || '');
+
+                // 1. Update VIP match document in vip_zones
+                await updateDoc(doc(db, "vip_zones", vipId), {
+                    status: status,
+                    actualScore: actualScore,
+                    updatedAt: new Date().toISOString()
+                });
+
+                // 2. Automatically sync / update corresponding entry in correct_score_results
+                const csDocId = `vip-${vipId}`;
+                const title = `${item.homeTeam} vs ${item.awayTeam}`;
+                const csData = {
+                    ticketTitle: item.competition ? `${item.competition}: ${title}` : title,
+                    date: item.date || 'Today',
+                    odds: String(item.odds || '2.00'),
+                    status: status,
+                    published: true,
+                    vipMatchId: vipId,
+                    matches: [
+                        {
+                            homeTeam: item.homeTeam,
+                            awayTeam: item.awayTeam,
+                            predictedScore: item.correctScorePrediction || '2-1',
+                            actualScore: actualScore || item.correctScorePrediction || '2-1',
+                            status: status,
+                            odds: String(item.odds || '2.00')
+                        }
+                    ],
+                    updatedAt: new Date().toISOString()
+                };
+
+                await setDoc(doc(db, "correct_score_results", csDocId), csData, { merge: true });
+                alert(`SUCCESS: VIP Match settled as ${status} & synced to Correct Score Results!`);
+            } catch (err) {
+                console.error("Settlement sync error:", err);
+                alert("Settlement error: " + err.message);
+            }
+        }
+
+        // --- 3. CORRECT SCORE RESULTS PUBLISH (MANUAL TICKETS) ---
+        const submitCsBtn = document.getElementById('submit-cs-btn');
+        submitCsBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const title = document.getElementById('csTicketTitle').value.trim() || 'VIP Correct Score Ticket';
+            const date = document.getElementById('csDate').value.trim() || 'Today';
+            const odds = document.getElementById('csOdds').value.trim() || '10.00';
+            const predictedScore = document.getElementById('csPredictedScore').value.trim();
+            const actualScore = document.getElementById('csActualScore').value.trim();
+            const status = document.getElementById('csStatus').value;
+
+            if (!predictedScore) {
+                return alert("Predicted Score is required!");
+            }
+
+            try {
+                const docData = {
+                    ticketTitle: title,
+                    date: date,
+                    odds: String(odds),
+                    status: status,
+                    published: true,
+                    matches: [
+                        {
+                            homeTeam: title.split(' vs ')[0] || 'Team A',
+                            awayTeam: title.split(' vs ')[1] || 'Team B',
+                            predictedScore: predictedScore,
+                            actualScore: actualScore || predictedScore,
+                            status: status,
+                            odds: odds
+                        }
+                    ],
+                    updatedAt: new Date().toISOString()
+                };
+
+                await addDoc(collection(db, "correct_score_results"), docData);
+                alert("SUCCESS: Correct Score Ticket published to Firestore!");
+
+                document.getElementById('csTicketTitle').value = '';
+                document.getElementById('csPredictedScore').value = '';
+                document.getElementById('csActualScore').value = '';
+            } catch (err) {
+                alert("Firestore Correct Score Error: " + err.message);
+            }
+        });
+
+        // --- 4. NOTIFICATIONS BROADCAST ---
+        const submitNotifBtn = document.getElementById('submit-notif-btn');
+        submitNotifBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const title = document.getElementById('notifTitle').value.trim();
+            const message = document.getElementById('notifMessage').value.trim();
+            const type = document.getElementById('notifType').value;
+            const timestamp = document.getElementById('notifTimestamp').value.trim() || 'Just now';
+
+            if (!title || !message) {
+                return alert("Notification Title and Message Payload are required!");
+            }
+
+            try {
+                const notifId = `notif-${Date.now()}`;
+                const docData = {
+                    id: notifId,
+                    title: title,
+                    message: message,
+                    type: type,
+                    timestamp: timestamp,
+                    read: false,
+                    published: true,
+                    createdAt: new Date().toISOString()
+                };
+
+                await setDoc(doc(db, "notifications", notifId), docData);
+                alert("SUCCESS: App Notification Broadcasted to Firestore!");
+
+                document.getElementById('notifTitle').value = '';
+                document.getElementById('notifMessage').value = '';
+            } catch (err) {
+                alert("Firestore Notification Error: " + err.message);
+            }
+        });
+
+        // --- 5. APP SETTINGS SAVE ---
+        const submitSettingsBtn = document.getElementById('submit-settings-btn');
+        submitSettingsBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+
+            const telegramUrl = document.getElementById('settingTelegram').value.trim();
+            const adminEmail = document.getElementById('settingEmail').value.trim();
+            const whatsapp = document.getElementById('settingWhatsapp').value.trim();
+            const disclaimer = document.getElementById('settingDisclaimer').value.trim();
+
+            try {
+                const docData = {
+                    telegramUrl: telegramUrl || 'https://t.me/thekingdomtradingsignal',
+                    adminContactEmail: adminEmail || 'support@accuracyscore.site',
+                    whatsappSupport: whatsapp || '2349152840495',
+                    disclaimerText: disclaimer || 'Accuracy Score provides sports analysis for informational purposes only.',
+                    updatedAt: new Date().toISOString()
+                };
+
+                await setDoc(doc(db, "app_settings", "general"), docData, { merge: true });
+                alert("SUCCESS: Dynamic App Settings updated in Firestore!");
+            } catch (err) {
+                alert("Firestore Settings Error: " + err.message);
+            }
+        });
+
+        async function loadAppSettings() {
+            try {
+                const snap = await getDoc(doc(db, "app_settings", "general"));
+                if (snap.exists()) {
+                    const data = snap.data();
+                    if (data.telegramUrl) document.getElementById('settingTelegram').value = data.telegramUrl;
+                    if (data.adminContactEmail) document.getElementById('settingEmail').value = data.adminContactEmail;
+                    if (data.whatsappSupport) document.getElementById('settingWhatsapp').value = data.whatsappSupport;
+                    if (data.disclaimerText) document.getElementById('settingDisclaimer').value = data.disclaimerText;
+                }
+            } catch (err) {
+                console.warn("Error loading app settings:", err);
+            }
+        }
+
+        // --- REALTIME FIRESTORE LISTENERS FOR LIVE MANAGE / SETTLE ---
+        function initRealtimeListeners() {
+            // Live Free Tips
+            onSnapshot(collection(db, "free_tips"), (snapshot) => {
+                const container = document.getElementById('freeMatchesList');
+                if (snapshot.empty) {
+                    container.innerHTML = '<p style="font-size:12px; color:#94a3b8;">No free tips in database.</p>';
+                    return;
+                }
+                container.innerHTML = '';
+                snapshot.forEach(docSnap => {
+                    const item = docSnap.data();
+                    const id = docSnap.id;
+                    const isPub = item.published !== false;
+
+                    const div = document.createElement('div');
+                    div.className = `item-row ${isPub ? '' : 'unpublished'}`;
+                    div.innerHTML = `
+                        <div>
+                            <strong>${item.homeTeam} vs ${item.awayTeam}</strong>
+                            <span class="badge ${isPub ? 'badge-pub' : 'badge-unpub'}">${isPub ? 'PUBLISHED' : 'UNPUBLISHED'}</span>
+                            <br>
+                            <small>Date: [${item.date || 'Today'}] | Tip: ${item.prediction} @ ${item.odds} | Status: <strong style="color:#38bdf8">${item.status || 'NOT STARTED'}</strong></small>
+                        </div>
+                        <div class="btn-grid">
+                            <button type="button" class="status-pill btn-won" id="free-won-${id}">WON</button>
+                            <button type="button" class="status-pill btn-lost" id="free-lost-${id}">LOST</button>
+                            <button type="button" class="status-pill btn-toggle" id="free-toggle-${id}">${isPub ? 'Hide' : 'Show'}</button>
+                            <button type="button" class="status-pill btn-void" id="free-del-${id}">Delete</button>
+                        </div>
+                    `;
+                    container.appendChild(div);
+
+                    setTimeout(() => {
+                        document.getElementById(`free-won-${id}`)?.addEventListener('click', () => updateDoc(doc(db, "free_tips", id), { status: 'WON' }));
+                        document.getElementById(`free-lost-${id}`)?.addEventListener('click', () => updateDoc(doc(db, "free_tips", id), { status: 'LOST' }));
+                        document.getElementById(`free-toggle-${id}`)?.addEventListener('click', () => updateDoc(doc(db, "free_tips", id), { published: !isPub }));
+                        document.getElementById(`free-del-${id}`)?.addEventListener('click', () => {
+                            if (confirm("Delete this Free Tip permanently?")) deleteDoc(doc(db, "free_tips", id));
+                        });
+                    }, 0);
+                });
+            });
+
+            // Live VIP Matches with Actual Score & Automatic Result Synchronization
+            onSnapshot(collection(db, "vip_zones"), (snapshot) => {
+                const container = document.getElementById('activeVipMatchesList');
+                if (snapshot.empty) {
+                    container.innerHTML = '<p style="font-size:12px; color:#94a3b8;">No VIP matches in database.</p>';
+                    return;
+                }
+                container.innerHTML = '';
+                snapshot.forEach(docSnap => {
+                    const item = docSnap.data();
+                    const id = docSnap.id;
+                    const isPub = item.published !== false;
+
+                    const div = document.createElement('div');
+                    div.className = `item-row ${isPub ? '' : 'unpublished'}`;
+                    div.innerHTML = `
+                        <div>
+                            <strong>${item.homeTeam} vs ${item.awayTeam}</strong>
+                            <span class="badge ${isPub ? 'badge-pub' : 'badge-unpub'}">${isPub ? 'PUBLISHED' : 'UNPUBLISHED'}</span>
+                            <br>
+                            <small>${item.competition || 'VIP League'} (${item.date || 'Today'}) | Pred: <strong>${item.correctScorePrediction}</strong> @ ${item.odds} | Status: <strong style="color:#38bdf8">${item.status || 'upcoming'}</strong></small>
+                            ${item.actualScore ? `<br><small style="color:#34d399">Final Score: <strong>${item.actualScore}</strong></small>` : ''}
+                        </div>
+                        <div style="margin-top: 8px;">
+                            <label style="font-size: 11px; margin-top: 4px;">Actual Final Score (e.g. 2 - 1):</label>
+                            <input type="text" id="vip-score-${id}" placeholder="e.g. 2 - 1" value="${item.actualScore || ''}" style="margin: 4px 0 8px 0; padding: 8px; font-size: 13px;">
+                        </div>
+                        <div class="btn-grid">
+                            <button type="button" class="status-pill btn-won" id="vip-won-${id}">WON</button>
+                            <button type="button" class="status-pill btn-lost" id="vip-lost-${id}">LOST</button>
+                            <button type="button" class="status-pill btn-toggle" id="vip-toggle-${id}">${isPub ? 'Hide' : 'Show'}</button>
+                            <button type="button" class="status-pill btn-void" id="vip-del-${id}">Delete</button>
+                        </div>
+                    `;
+                    container.appendChild(div);
+
+                    setTimeout(() => {
+                        document.getElementById(`vip-won-${id}`)?.addEventListener('click', () => settleVipMatch(id, item, 'WON'));
+                        document.getElementById(`vip-lost-${id}`)?.addEventListener('click', () => settleVipMatch(id, item, 'LOST'));
+                        document.getElementById(`vip-toggle-${id}`)?.addEventListener('click', () => updateDoc(doc(db, "vip_zones", id), { published: !isPub }));
+                        document.getElementById(`vip-del-${id}`)?.addEventListener('click', async () => {
+                            if (confirm("Delete this VIP match permanently?")) {
+                                await deleteDoc(doc(db, "vip_zones", id));
+                                try {
+                                    await deleteDoc(doc(db, "correct_score_results", `vip-${id}`));
+                                } catch (e) {}
+                            }
+                        });
+                    }, 0);
+                });
+            });
+
+            // Live Correct Score Tickets
+            onSnapshot(collection(db, "correct_score_results"), (snapshot) => {
+                const container = document.getElementById('csTicketList');
+                if (snapshot.empty) {
+                    container.innerHTML = '<p style="font-size:12px; color:#94a3b8;">No correct score tickets in database.</p>';
+                    return;
+                }
+                container.innerHTML = '';
+                snapshot.forEach(docSnap => {
+                    const item = docSnap.data();
+                    const id = docSnap.id;
+                    const isPub = item.published !== false;
+
+                    const div = document.createElement('div');
+                    div.className = `item-row ${isPub ? '' : 'unpublished'}`;
+                    div.innerHTML = `
+                        <div>
+                            <strong>${item.ticketTitle}</strong> (${item.date || 'Today'})
+                            <span class="badge ${isPub ? 'badge-pub' : 'badge-unpub'}">${isPub ? 'PUBLISHED' : 'UNPUBLISHED'}</span>
+                            <br>
+                            <small>Odds: ${item.odds} | Status: <strong style="color:#38bdf8">${item.status}</strong></small>
+                            ${item.matches && item.matches[0] ? `<br><small style="color:#94a3b8">Pred: ${item.matches[0].predictedScore} | Actual: ${item.matches[0].actualScore}</small>` : ''}
+                        </div>
+                        <div class="btn-grid">
+                            <button type="button" class="status-pill btn-won" id="cs-won-${id}">WON</button>
+                            <button type="button" class="status-pill btn-lost" id="cs-lost-${id}">LOST</button>
+                            <button type="button" class="status-pill btn-toggle" id="cs-toggle-${id}">${isPub ? 'Hide' : 'Show'}</button>
+                            <button type="button" class="status-pill btn-void" id="cs-del-${id}">Delete</button>
+                        </div>
+                    `;
+                    container.appendChild(div);
+
+                    setTimeout(() => {
+                        document.getElementById(`cs-won-${id}`)?.addEventListener('click', () => updateDoc(doc(db, "correct_score_results", id), { status: 'WON' }));
+                        document.getElementById(`cs-lost-${id}`)?.addEventListener('click', () => updateDoc(doc(db, "correct_score_results", id), { status: 'LOST' }));
+                        document.getElementById(`cs-toggle-${id}`)?.addEventListener('click', () => updateDoc(doc(db, "correct_score_results", id), { published: !isPub }));
+                        document.getElementById(`cs-del-${id}`)?.addEventListener('click', () => {
+                            if (confirm("Delete ticket permanently?")) deleteDoc(doc(db, "correct_score_results", id));
+                        });
+                    }, 0);
+                });
+            });
+
+            // Live Notifications
+            onSnapshot(collection(db, "notifications"), (snapshot) => {
+                const container = document.getElementById('notifList');
+                if (snapshot.empty) {
+                    container.innerHTML = '<p style="font-size:12px; color:#94a3b8;">No notifications in database.</p>';
+                    return;
+                }
+                container.innerHTML = '';
+                snapshot.forEach(docSnap => {
+                    const item = docSnap.data();
+                    const id = docSnap.id;
+                    const isPub = item.published !== false;
+
+                    const div = document.createElement('div');
+                    div.className = `item-row ${isPub ? '' : 'unpublished'}`;
+                    div.innerHTML = `
+                        <div>
+                            <strong>${item.title}</strong>
+                            <span class="badge ${isPub ? 'badge-pub' : 'badge-unpub'}">${isPub ? 'PUBLISHED' : 'UNPUBLISHED'}</span>
+                            <br>
+                            <small style="color:#94a3b8;">${item.message}</small>
+                        </div>
+                        <div class="btn-grid" style="grid-template-columns: repeat(2, 1fr);">
+                            <button type="button" class="status-pill btn-toggle" id="notif-toggle-${id}">${isPub ? 'Unpublish' : 'Publish'}</button>
+                            <button type="button" class="status-pill btn-void" id="notif-del-${id}">Delete</button>
+                        </div>
+                    `;
+                    container.appendChild(div);
+
+                    setTimeout(() => {
+                        document.getElementById(`notif-toggle-${id}`)?.addEventListener('click', () => updateDoc(doc(db, "notifications", id), { published: !isPub }));
+                        document.getElementById(`notif-del-${id}`)?.addEventListener('click', () => {
+                            if (confirm("Delete notification permanently?")) deleteDoc(doc(db, "notifications", id));
+                        });
+                    }, 0);
+                });
+            });
+        }
+    </script>
+</body>
+</html>
