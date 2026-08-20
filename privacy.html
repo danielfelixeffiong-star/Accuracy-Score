@@ -5,13 +5,248 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Privacy Policy - Accuracy Score</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
+    <style>
+        :root {
+            --nav-bg: #09152b;
+            --page-bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --primary: #1d4ed8;
+            --primary-light: #eff6ff;
+            --border: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--page-bg);
+            color: var(--text-main);
+            line-height: 1.65;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Top Navigation */
+        .navbar {
+            background-color: var(--nav-bg);
+            padding: 0.85rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 1.1rem;
+            letter-spacing: 0.04em;
+            text-decoration: none;
+        }
+
+        .nav-brand i {
+            color: #38bdf8;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: #cbd5e1;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            padding: 0.35rem 0.75rem;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-links a:hover {
+            color: #ffffff;
+        }
+
+        .nav-links a.active {
+            background-color: var(--primary);
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        /* Main Content Container */
+        .main-content {
+            flex: 1;
+            max-width: 900px;
+            width: 100%;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .page-title {
+            text-align: center;
+            font-size: 1.85rem;
+            font-weight: 800;
+            color: var(--text-main);
+            margin-bottom: 0.35rem;
+        }
+
+        .page-subtitle {
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 1.75rem;
+        }
+
+        /* Notice Banner */
+        .disclaimer-banner {
+            background-color: var(--primary-light);
+            border: 1px solid #bfdbfe;
+            border-left: 4px solid var(--primary);
+            border-radius: 8px;
+            padding: 1rem 1.25rem;
+            margin-bottom: 1.25rem;
+            font-size: 0.9rem;
+            color: #1e3a8a;
+        }
+
+        /* Cards Grid */
+        .policy-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 1.1rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 0.65rem;
+        }
+
+        .card-header i {
+            color: var(--primary);
+            font-size: 1rem;
+        }
+
+        .policy-card p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 0.65rem;
+        }
+
+        .policy-card p:last-child {
+            margin-bottom: 0;
+        }
+
+        .policy-card ul {
+            margin-left: 1.4rem;
+            margin-top: 0.4rem;
+            margin-bottom: 0.65rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .policy-card li {
+            margin-bottom: 0.35rem;
+        }
+
+        .policy-card a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .policy-card a:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer */
+        .footer {
+            background-color: var(--nav-bg);
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: #94a3b8;
+            font-size: 0.8rem;
+            margin-top: auto;
+        }
+
+        .footer-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #ffffff;
+            font-weight: 700;
+        }
+
+        .footer-brand i {
+            color: #38bdf8;
+        }
+
+        .social-links {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .social-links a {
+            color: #94a3b8;
+            font-size: 1rem;
+            transition: color 0.2s ease;
+        }
+
+        .social-links a:hover {
+            color: #ffffff;
+        }
+
+        @media (max-width: 640px) {
+            .navbar {
+                flex-direction: column;
+                gap: 0.75rem;
+                padding: 0.75rem 1rem;
+            }
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 0.5rem;
+            }
+            .nav-links a {
+                font-size: 0.75rem;
+                padding: 0.25rem 0.5rem;
+            }
+            .footer {
+                flex-direction: column;
+                gap: 0.75rem;
+                text-align: center;
+            }
+        }
+    </style>
 </head>
 <body>
 
-    <nav>
-        <a href="index.html" class="logo">
-            <i class="fa-solid fa-futbol logo-icon"></i> ACCURACY SCORE
+    <!-- TOP NAVIGATION -->
+    <nav class="navbar">
+        <a href="index.html" class="nav-brand">
+            <i class="fa-solid fa-futbol"></i> ACCURACY SCORE
         </a>
         <ul class="nav-links">
             <li><a href="index.html">Home</a></li>
@@ -23,34 +258,194 @@
         </ul>
     </nav>
 
-    <div class="page-container">
+    <!-- MAIN BODY -->
+    <div class="main-content">
         <h1 class="page-title">Privacy Policy</h1>
+        <div class="page-subtitle">Application: <strong>Accuracy Score</strong> &bull; Last Updated: August 20, 2026</div>
 
-        <div class="content-box">
-            <h3><i class="fa-solid fa-user-shield" style="color:#2563eb;"></i> Introduction</h3>
-            <p>Accuracy Score respects your privacy. This Privacy Policy explains how we collect, use, and protect information when you use our website and services.</p>
+        <div class="disclaimer-banner">
+            <strong>Sports Analytics & Informational Service:</strong> Accuracy Score provides football statistical analysis, prediction models, and match information strictly for entertainment and informational purposes. Accuracy Score is not a gambling operator and does not facilitate real-money wagering.
         </div>
 
-        <div class="content-box">
-            <h3><i class="fa-solid fa-file-lines" style="color:#2563eb;"></i> Information We Collect</h3>
-            <p>We may collect information such as device information, app usage information, and information you provide when contacting us.</p>
+        <!-- 1. Introduction -->
+        <div class="policy-card">
+            <div class="card-header">
+                <i class="fa-solid fa-user-shield"></i> 1. Introduction
+            </div>
+            <p>
+                Welcome to <strong>Accuracy Score</strong> ("we," "our," or "us"). We respect your privacy and are committed to handling information responsibly. This Privacy Policy explains how information is handled when you use the Accuracy Score mobile application and associated web interfaces.
+            </p>
         </div>
 
-        <div class="content-box">
-            <h3><i class="fa-solid fa-chart-pie" style="color:#2563eb;"></i> How We Use Information</h3>
-            <p>We use collected information to improve our platform, provide better user experience, maintain security, and respond to user requests.</p>
+        <!-- 2. Information We Collect -->
+        <div class="policy-card">
+            <div class="card-header">
+                <i class="fa-solid fa-file-lines"></i> 2. Information We Collect
+            </div>
+            <p><strong>Technical & Diagnostic Data:</strong> Non-personally identifiable diagnostic information (such as device model, OS version, and performance logs) is processed locally to optimize display responsiveness.</p>
+            <p><strong>Permissions We DO NOT Access:</strong> Accuracy Score does <em>not</em> request or access sensitive device features:
+                <ul>
+                    <li>No access to Contacts or Address Book</li>
+                    <li>No access to Microphone or Audio inputs</li>
+                    <li>No access to Camera or Photos</li>
+                    <li>No access to GPS Location</li>
+                    <li>No access to SMS or Call Logs</li>
+                    <li>No access to Local Storage Files</li>
+                </ul>
+            </p>
+        </div>
+
+        <!-- 3. Firebase & Cloud Firestore -->
+        <div class="policy-card">
+            <div class="card-header">
+                <i class="fa-solid fa-cloud"></i> 3. Firebase & Google Cloud Storage
+            </div>
+            <p>
+                Accuracy Score uses <strong>Google Cloud Firestore</strong> to store and synchronize sports analysis and predictions in real time. All data transmissions between the application and Google Cloud servers are encrypted using standard transport-layer security (HTTPS/TLS).
+            </p>
+        </div>
+
+        <!-- 4. Firebase Authentication -->
+        <div class="policy-card">
+            <div class="card-header">
+                <i class="fa-solid fa-lock"></i> 4. Firebase Authentication
+            </div>
+            <p>
+                Firebase Authentication is utilized strictly for authorized administrators to manage and publish match tips. Ordinary users browsing free predictions, correct scores, VIP analysis, and notifications are <strong>not required</strong> to register or provide login credentials.
+            </p>
+        </div>
+
+        <!-- 5. Application Data -->
+        <div class="policy-card">
+            <div class="card-header">
+                <i class="fa-solid fa-database"></i> 5. Application Data & Synchronized Content
+            </div>
+            <p>
+                Content synchronized via Firestore includes:
+                <ul>
+                    <li><strong>Free Tips:</strong> Daily football predictions for Today, Yesterday, and Tomorrow.</li>
+                    <li><strong>VIP Matches:</strong> Match fixtures, odds, and confidence ratings.</li>
+                    <li><strong>Correct Score Results:</strong> Match status settlements (Won, Lost, Void) and historical archives.</li>
+                    <li><strong>Notifications:</strong> Broadcast alerts and match schedule announcements.</li>
+                    <li><strong>App Settings:</strong> Official support URLs and disclaimer notices.</li>
+                </ul>
+            </p>
+        </div>
+
+        <!-- 6. Advertising -->
+        <div class="policy-card">
+            <div class="card-header">
+                <i class="fa-solid fa-rectangle-ad"></i> 6. Advertising (Google AdMob)
+            </div>
+            <p>
+                Accuracy Score may use Google AdMob or other advertising networks in future updates. If advertising is enabled, this policy will be updated to describe the information collected, advertising identifiers, and ad personalization. Advertising SDKs are not actively collecting user advertising identifiers in this version.
+            </p>
+        </div>
+
+        <!-- 7. Payments & Subscriptions -->
+        <div class="policy-card">
+            <div class="card-header">
+                <i class="fa-solid fa-credit-card"></i> 7. Payments & Subscriptions
+            </div>
+            <p>
+                If VIP subscriptions are introduced through Google Play Billing or Apple In-App Purchases, transactions will be processed directly through the respective platform. Accuracy Score does not directly process, collect, or store users' credit or debit card details.
+            </p>
+        </div>
+
+        <!-- 8. External Links -->
+        <div class="policy-card">
+            <div class="card-header">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i> 8. External Links & Community Channels
+            </div>
+            <p>
+                The application provides links to official community channels:
+                <ul>
+                    <li><strong>Telegram Channel:</strong> <a href="https://t.me/Accuracyscore" target="_blank" rel="noopener noreferrer">https://t.me/Accuracyscore</a></li>
+                    <li><strong>WhatsApp Support:</strong> <a href="https://wa.me/2347070694671" target="_blank" rel="noopener noreferrer">+2347070694671</a></li>
+                </ul>
+                Third-party platforms operate under their own privacy policies. Accuracy Score is not responsible for the privacy practices of external websites.
+            </p>
+        </div>
+
+        <!-- 9. Data Security -->
+        <div class="policy-card">
+            <div class="card-header">
+                <i class="fa-solid fa-shield-halved"></i> 9. Data Security
+            </div>
+            <p>
+                We implement industry-standard technical measures, including HTTPS/TLS encryption and Firestore Role-Based Access Control (RBAC), to safeguard application data. While we take rigorous precautions, no method of transmission over the internet is 100% infallible.
+            </p>
+        </div>
+
+        <!-- 10. Data Retention -->
+        <div class="policy-card">
+            <div class="card-header">
+                <i class="fa-solid fa-clock-rotate-left"></i> 10. Data Retention
+            </div>
+            <p>
+                Information stored in Firestore (such as historical match records) is retained only for as long as necessary to serve the informational and historical tracking purposes of Accuracy Score.
+            </p>
+        </div>
+
+        <!-- 11. Account and Data Deletion -->
+        <div class="policy-card">
+            <div class="card-header">
+                <i class="fa-solid fa-trash-can"></i> 11. Account & Data Deletion Rights
+            </div>
+            <p>
+                Because standard users are not required to create accounts or personal profiles, the application does not feature an in-app deletion button. For any privacy requests or administrative inquiries, you may email us at <a href="mailto:support@accuracyscore.site">support@accuracyscore.site</a>.
+            </p>
+        </div>
+
+        <!-- 12. Children's Privacy -->
+        <div class="policy-card">
+            <div class="card-header">
+                <i class="fa-solid fa-child"></i> 12. Children's Privacy (Age Limit 18+)
+            </div>
+            <p>
+                Accuracy Score is not directed at children under the age of 13. Users who do not meet the legal age of majority in their jurisdiction (such as 18 years of age) should not use the service.
+            </p>
+        </div>
+
+        <!-- 13. Changes to Privacy Policy -->
+        <div class="policy-card">
+            <div class="card-header">
+                <i class="fa-solid fa-pen-to-square"></i> 13. Changes to This Privacy Policy
+            </div>
+            <p>
+                We may revise this Privacy Policy periodically. Updated versions will be posted on this page with an updated "Last Updated" date.
+            </p>
+        </div>
+
+        <!-- 14. Contact Us -->
+        <div class="policy-card">
+            <div class="card-header">
+                <i class="fa-solid fa-envelope"></i> 14. Contact Information
+            </div>
+            <p>
+                For privacy or support questions, please contact us:
+                <ul>
+                    <li><strong>Application:</strong> Accuracy Score</li>
+                    <li><strong>Support & Privacy Email:</strong> <a href="mailto:support@accuracyscore.site">support@accuracyscore.site</a></li>
+                    <li><strong>Telegram Channel:</strong> <a href="https://t.me/Accuracyscore" target="_blank" rel="noopener noreferrer">https://t.me/Accuracyscore</a></li>
+                    <li><strong>WhatsApp Support:</strong> <a href="https://wa.me/2347070694671" target="_blank" rel="noopener noreferrer">+2347070694671</a></li>
+                </ul>
+            </p>
         </div>
     </div>
 
-    <footer>
-        <div class="logo">
-            <i class="fa-solid fa-futbol logo-icon"></i> ACCURACY SCORE
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-brand">
+            <i class="fa-solid fa-futbol"></i> ACCURACY SCORE
         </div>
-        <div>&copy; 2026 Accuracy Score. All rights reserved.</div>
+        <div>
+            &copy; 2026 Accuracy Score. All rights reserved.
+        </div>
         <div class="social-links">
-            <a href="#"><i class="fa-brands fa-facebook"></i></a>
-            <a href="#"><i class="fa-brands fa-twitter"></i></a>
-            <a href="#"><i class="fa-brands fa-instagram"></i></a>
+            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-facebook-f"></i></a>
+            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-twitter"></i></a>
+            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-instagram"></i></a>
         </div>
     </footer>
 
