@@ -2,119 +2,895 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-    <title>Accuracy Score - Master Admin Panel</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AccuracyScore VIP & Tips Admin Portal</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0b0f19; color: #fff; padding: 15px; margin: 0; box-sizing: border-box; overflow-y: auto; }
-        h1 { font-size: 20px; text-align: center; color: #38bdf8; margin: 15px 0; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
-        .card { background: #151f32; padding: 16px; margin-bottom: 20px; border-radius: 12px; border: 1px solid #223049; }
-        h2 { font-size: 15px; margin: 0 0 14px 0; color: #38bdf8; font-weight: bold; text-transform: uppercase; border-bottom: 1px solid #223049; padding-bottom: 8px; display: flex; align-items: center; justify-content: space-between; }
-        label { font-size: 12px; color: #94a3b8; font-weight: bold; display: block; margin-top: 10px; }
-        input, select, textarea { width: 100%; padding: 12px; margin: 6px 0 12px 0; border-radius: 8px; border: 1px solid #334155; box-sizing: border-box; font-size: 14px; background: #0f172a; color: #fff; touch-action: manipulation; }
-        textarea { height: 80px; resize: vertical; }
-        
-        .action-trigger { width: 100%; padding: 14px; margin: 10px 0; border-radius: 8px; border: none; background: #38bdf8; color: #0b0f19; cursor: pointer; font-weight: bold; font-size: 15px; text-transform: uppercase; text-align: center; display: block; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
-        .action-trigger:active { background: #0ea5e9; }
-        .btn-danger { background: #ef4444; color: #fff; }
-        .btn-success { background: #22c55e; color: #fff; }
-        .btn-warning { background: #f59e0b; color: #000; }
-        .btn-secondary { background: #475569; color: #fff; }
-        .btn-purple { background: #8b5cf6; color: #fff; }
-        
-        .item-row { background: #1e293b; padding: 12px; margin: 8px 0; border-radius: 8px; border-left: 4px solid #38bdf8; color: #fff; }
-        .item-row.unpublished { border-left-color: #f59e0b; opacity: 0.8; }
-        .btn-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; margin-top: 8px; }
-        .status-pill { padding: 9px 4px; font-size: 11px; font-weight: 800; border-radius: 4px; color: #fff; text-transform: uppercase; text-align: center; cursor: pointer; user-select: none; border: none; }
-        .btn-won { background: #22c55e; }
-        .btn-lost { background: #ef4444; }
-        .btn-void { background: #64748b; }
-        .btn-toggle { background: #0284c7; }
-        .btn-edit { background: #eab308; color: #000; }
-        
-        .auth-banner { padding: 12px; border-radius: 8px; font-size: 13px; margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between; font-weight: bold; }
-        .auth-banner.logged-in { background: #064e3b; border: 1px solid #059669; color: #6ee7b7; }
-        .auth-banner.logged-out { background: #450a0a; border: 1px solid #dc2626; color: #fca5a5; }
-        
-        .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; text-transform: uppercase; margin-left: 6px; }
-        .badge-pub { background: #065f46; color: #34d399; }
-        .badge-unpub { background: #78350f; color: #fcd34d; }
-        .badge-status { background: #1e1b4b; color: #a5b4fc; border: 1px solid #4338ca; }
-        
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 15px; }
-        .modal-body { background: #151f32; border: 1px solid #38bdf8; border-radius: 12px; padding: 20px; max-width: 500px; width: 100%; max-height: 90vh; overflow-y: auto; }
-        
-        .tab-btn-row { display: flex; gap: 8px; margin-bottom: 15px; }
-        .tab-btn { flex: 1; padding: 10px; border: 1px solid #334155; border-radius: 6px; background: #0f172a; color: #94a3b8; font-weight: bold; cursor: pointer; font-size: 12px; text-transform: uppercase; }
-        .tab-btn.active { background: #38bdf8; color: #0b0f19; border-color: #38bdf8; }
-
-        .hidden { display: none !important; }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #030712;
+            color: #f8fafc;
+        }
+        .gold-gradient {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        }
+        .gold-border {
+            border-color: #f59e0b;
+        }
+        /* Custom scrollbar for better admin viewing */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #f59e0b;
+        }
+        input, select, textarea {
+            background-color: #090d16 !important;
+            border: 1px solid #1e293b !important;
+            color: #f8fafc !important;
+            border-radius: 0.75rem;
+            padding: 0.625rem 0.875rem;
+            width: 100%;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        input:focus, select:focus, textarea:focus {
+            border-color: #f59e0b !important;
+        }
+        label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #94a3b8;
+            margin-bottom: 0.375rem;
+        }
     </style>
 </head>
-<body>
+<body class="min-h-screen flex flex-col antialiased">
 
-    <h1>Accuracy Score Master Console</h1>
+    <!-- Top Navigation Header -->
+    <header class="border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-amber-300 flex items-center justify-center shadow-lg shadow-amber-500/20 text-slate-950 font-black text-lg">
+                    AS
+                </div>
+                <div>
+                    <h1 class="font-extrabold text-sm sm:text-base text-white tracking-wide flex items-center gap-2">
+                        ACCURACYSCORE <span class="bg-amber-500/20 text-amber-400 text-[10px] font-black px-2 py-0.5 rounded border border-amber-500/30">MASTER ADMIN</span>
+                    </h1>
+                    <p class="text-[11px] text-slate-400">Live Management Dashboard & Automated Logo Engine</p>
+                </div>
+            </div>
 
-    <!-- 0. ADMIN AUTHENTICATION BANNER / LOGIN FORM -->
-    <div id="auth-status-bar" class="auth-banner logged-out">
-        <span id="auth-status-text">🔒 Status: Not Authenticated</span>
-        <button id="logout-btn" class="status-pill btn-danger hidden">Logout</button>
-    </div>
+            <!-- User Auth Bar -->
+            <div id="authHeaderBar" class="flex items-center gap-3">
+                <span id="adminUserEmail" class="text-xs text-slate-300 font-semibold hidden sm:inline-block">Checking session...</span>
+                <button id="logoutBtn" class="hidden bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold px-3 py-1.5 rounded-lg border border-slate-700 transition-colors">
+                    Logout
+                </button>
+            </div>
+        </div>
+    </header>
 
-    <div id="login-card" class="card">
-        <h2>🔐 Firebase Administrator Login</h2>
-        <form id="admin-login-form">
-            <label>Admin Email Address:</label>
-            <input type="email" id="login-email" placeholder="admin@accuracyscore.site" required>
-            <label>Admin Password:</label>
-            <input type="password" id="login-password" placeholder="••••••••" required>
-            <button type="submit" id="login-btn" class="action-trigger">Authenticate Admin</button>
-        </form>
-        <div id="login-error" style="color: #f87171; font-size: 12px; font-weight: bold; margin-top: 8px;" class="hidden"></div>
-    </div>
+    <!-- Main Container -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6">
 
-    <!-- MAIN ADMIN PANEL CONTENT (UNLOCKED AFTER VERIFIED LOGIN) -->
-    <div id="admin-panel-content" class="hidden">
+        <!-- Login Screen (Shown if logged out) -->
+        <section id="loginSection" class="max-w-md mx-auto my-12 bg-slate-900/90 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl">
+            <div class="text-center mb-6">
+                <h2 class="text-xl font-black text-white">ADMINISTRATOR SIGN IN</h2>
+                <p class="text-xs text-slate-400 mt-1">Authenticate to access live tips, VIP zones, and tickets database.</p>
+            </div>
+            <form id="loginForm" class="space-y-4">
+                <div>
+                    <label>Admin Email</label>
+                    <input type="email" id="adminEmailInput" placeholder="admin@accuracyscore.com" required>
+                </div>
+                <div>
+                    <label>Password</label>
+                    <input type="password" id="adminPasswordInput" placeholder="••••••••" required>
+                </div>
+                <button type="submit" id="loginSubmitBtn" class="w-full py-3 rounded-xl gold-gradient text-slate-950 font-black text-sm uppercase tracking-wider hover:opacity-95 active:scale-[0.99] transition-all shadow-lg shadow-amber-500/20 mt-2">
+                    Sign In
+                </button>
+            </form>
+            <div id="loginErrorMsg" class="mt-4 p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs text-center hidden"></div>
+        </section>
 
-        <!-- 1. FREE TIPS REGISTRATION & DAY ROTATION SECTION -->
-        <div class="card">
-            <h2>
-                <span>⚽ Free Tip Match Manager</span>
-            </h2>
-            
-            <!-- Quick Day Shift Tool -->
-            <div style="background: #0f172a; padding: 12px; border-radius: 8px; border: 1px dashed #38bdf8; margin-bottom: 14px;">
-                <label style="margin-top: 0; color: #38bdf8;">⚡ 1-Click Day Rotation Utility:</label>
-                <p style="font-size: 11px; color: #94a3b8; margin: 4px 0 8px 0;">
-                    Shifts <strong>Today ➔ Yesterday</strong>, <strong>Tomorrow ➔ Today</strong>, and deletes old <strong>Yesterday</strong> games.
-                </p>
-                <button type="button" class="status-pill btn-purple" id="rotate-days-btn" style="width: 100%; padding: 10px; font-size: 12px;">
-                    🔄 Execute 3-Day Rotation (Today ➔ Yesterday | Tomorrow ➔ Today)
+        <!-- Admin Control Hub (Shown after login) -->
+        <section id="adminDashboard" class="hidden space-y-6">
+
+            <!-- Sub Navigation Tabs -->
+            <div class="flex items-center gap-2 overflow-x-auto pb-2 border-b border-slate-800 text-xs font-bold">
+                <button data-tab="tab-free-tips" class="admin-tab-btn active bg-amber-500 text-slate-950 px-4 py-2 rounded-xl transition-all">
+                    ⚽ Free Tips Manager
+                </button>
+                <button data-tab="tab-vip-zones" class="admin-tab-btn bg-slate-900 text-slate-300 hover:bg-slate-800 px-4 py-2 rounded-xl transition-all">
+                    👑 VIP Zones Matches
+                </button>
+                <button data-tab="tab-correct-scores" class="admin-tab-btn bg-slate-900 text-slate-300 hover:bg-slate-800 px-4 py-2 rounded-xl transition-all">
+                    🎯 Correct Score Tickets & Results
                 </button>
             </div>
 
-            <label>Target Matching Date / Category:</label>
-            <select id="freeDate">
-                <option value="Today">Today</option>
-                <option value="Yesterday">Yesterday</option>
-                <option value="Tomorrow">Tomorrow</option>
-            </select>
-            <label>League Name:</label>
-            <input type="text" id="freeLeague" placeholder="e.g. Premier League">
-            <label>Kickoff Time:</label>
-            <input type="text" id="freeTime" placeholder="e.g. 16:00 UTC">
-            <label>Home Team:</label>
-            <input type="text" id="freeTeam1" placeholder="e.g. Arsenal">
-            <label>Away Team:</label>
-            <input type="text" id="freeTeam2" placeholder="e.g. Chelsea">
-            <label>Free Prediction Tip:</label>
-            <input type="text" id="freePrediction" placeholder="e.g. Home Win or Draw (1X)">
-            <label>Odds:</label>
-            <input type="number" step="0.01" id="freeOdds" placeholder="e.g. 1.85">
-            
-            <button type="button" class="action-trigger" id="submit-free-btn">Publish Free Match</button>
+            <!-- ========================================================== -->
+            <!-- TAB 1: FREE TIPS                                           -->
+            <!-- ========================================================== -->
+            <div id="tab-free-tips" class="tab-content space-y-6">
+                <!-- Add Free Tip Card -->
+                <div class="bg-slate-900/80 border border-slate-800 rounded-3xl p-5 sm:p-6 shadow-xl">
+                    <h3 class="text-sm font-black text-amber-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                        <span>➕ Add New Free Tip</span>
+                    </h3>
+                    <form id="freeTipForm" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div>
+                            <label>Category (Day Tab)</label>
+                            <select id="freeCategory">
+                                <option value="today">Today's Games</option>
+                                <option value="yesterday">Yesterday's Results</option>
+                                <option value="tomorrow">Tomorrow's Fixtures</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>League / Competition</label>
+                            <input type="text" id="freeLeague" placeholder="e.g. Premier League" required>
+                        </div>
+                        <div>
+                            <label>Kickoff Time</label>
+                            <input type="text" id="freeTime" placeholder="e.g. 17:30 UTC" required>
+                        </div>
+
+                        <!-- Home Team & Logo -->
+                        <div class="space-y-2">
+                            <label>Home Team</label>
+                            <input type="text" id="freeTeam1" placeholder="e.g. Arsenal" required>
+                            <div class="flex items-center gap-2">
+                                <input type="file" id="freeTeam1LogoFile" accept="image/*" class="text-xs">
+                                <input type="hidden" id="freeTeam1LogoUrl">
+                                <div id="freeTeam1Placeholder" class="w-8 h-8 rounded bg-slate-800 border border-slate-700 flex items-center justify-center text-[10px] text-slate-400 shrink-0">Logo</div>
+                                <img id="freeTeam1Img" class="w-8 h-8 rounded object-contain bg-slate-950 border border-slate-700 shrink-0 hidden" alt="">
+                                <button type="button" id="freeTeam1ClearBtn" class="text-rose-400 text-xs hidden">✕</button>
+                            </div>
+                            <div id="freeTeam1Status" class="text-[10px] text-slate-400">Type team name for auto-logo</div>
+                        </div>
+
+                        <!-- Away Team & Logo -->
+                        <div class="space-y-2">
+                            <label>Away Team</label>
+                            <input type="text" id="freeTeam2" placeholder="e.g. Chelsea" required>
+                            <div class="flex items-center gap-2">
+                                <input type="file" id="freeTeam2LogoFile" accept="image/*" class="text-xs">
+                                <input type="hidden" id="freeTeam2LogoUrl">
+                                <div id="freeTeam2Placeholder" class="w-8 h-8 rounded bg-slate-800 border border-slate-700 flex items-center justify-center text-[10px] text-slate-400 shrink-0">Logo</div>
+                                <img id="freeTeam2Img" class="w-8 h-8 rounded object-contain bg-slate-950 border border-slate-700 shrink-0 hidden" alt="">
+                                <button type="button" id="freeTeam2ClearBtn" class="text-rose-400 text-xs hidden">✕</button>
+                            </div>
+                            <div id="freeTeam2Status" class="text-[10px] text-slate-400">Type team name for auto-logo</div>
+                        </div>
+
+                        <div>
+                            <label>Prediction</label>
+                            <input type="text" id="freePrediction" placeholder="e.g. Home Win or Over 2.5" required>
+                        </div>
+                        <div>
+                            <label>Odds</label>
+                            <input type="text" id="freeOdds" placeholder="e.g. 1.85" required>
+                        </div>
+                        <div>
+                            <label>Status</label>
+                            <select id="freeStatus">
+                                <option value="pending">Pending (Upcoming)</option>
+                                <option value="won">WON ✅</option>
+                                <option value="lost">LOST ❌</option>
+                            </select>
+                        </div>
+                        <div class="md:col-span-2 lg:col-span-3 flex justify-end">
+                            <button type="submit" class="gold-gradient text-slate-950 font-black text-xs uppercase px-6 py-3 rounded-xl shadow-lg hover:opacity-95 transition-all">
+                                Save Free Tip (Auto-Resolves Logo)
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Existing Free Tips List -->
+                <div class="bg-slate-900/80 border border-slate-800 rounded-3xl p-5 sm:p-6 shadow-xl">
+                    <h3 class="text-sm font-black text-white uppercase tracking-wider mb-4">Published Free Tips Database</h3>
+                    <div id="freeTipsList" class="space-y-3">
+                        <div class="text-slate-500 text-xs">Loading tips...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================================== -->
+            <!-- TAB 2: VIP ZONES                                           -->
+            <!-- ========================================================== -->
+            <div id="tab-vip-zones" class="tab-content hidden space-y-6">
+                <!-- Add VIP Match Card -->
+                <div class="bg-slate-900/80 border border-slate-800 rounded-3xl p-5 sm:p-6 shadow-xl">
+                    <h3 class="text-sm font-black text-amber-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                        <span>👑 Add VIP Zone Match</span>
+                    </h3>
+                    <form id="vipMatchForm" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div>
+                            <label>Competition / League</label>
+                            <input type="text" id="vipCompetition" placeholder="e.g. UEFA Champions League" required>
+                        </div>
+                        <div>
+                            <label>Date / Day</label>
+                            <input type="text" id="vipDate" placeholder="e.g. Today or 22 Aug" required>
+                        </div>
+                        <div>
+                            <label>Kickoff Time</label>
+                            <input type="text" id="vipTime" placeholder="e.g. 20:00 UTC" required>
+                        </div>
+
+                        <!-- Home Team -->
+                        <div class="space-y-2">
+                            <label>Home Team</label>
+                            <input type="text" id="vipTeam1" placeholder="e.g. Real Madrid" required>
+                            <div class="flex items-center gap-2">
+                                <input type="file" id="vipTeam1LogoFile" accept="image/*" class="text-xs">
+                                <input type="hidden" id="vipTeam1LogoUrl">
+                                <div id="vipTeam1Placeholder" class="w-8 h-8 rounded bg-slate-800 border border-slate-700 flex items-center justify-center text-[10px] text-slate-400 shrink-0">Logo</div>
+                                <img id="vipTeam1Img" class="w-8 h-8 rounded object-contain bg-slate-950 border border-slate-700 shrink-0 hidden" alt="">
+                                <button type="button" id="vipTeam1ClearBtn" class="text-rose-400 text-xs hidden">✕</button>
+                            </div>
+                            <div id="vipTeam1Status" class="text-[10px] text-slate-400">Type team name for auto-logo</div>
+                        </div>
+
+                        <!-- Away Team -->
+                        <div class="space-y-2">
+                            <label>Away Team</label>
+                            <input type="text" id="vipTeam2" placeholder="e.g. Bayern Munich" required>
+                            <div class="flex items-center gap-2">
+                                <input type="file" id="vipTeam2LogoFile" accept="image/*" class="text-xs">
+                                <input type="hidden" id="vipTeam2LogoUrl">
+                                <div id="vipTeam2Placeholder" class="w-8 h-8 rounded bg-slate-800 border border-slate-700 flex items-center justify-center text-[10px] text-slate-400 shrink-0">Logo</div>
+                                <img id="vipTeam2Img" class="w-8 h-8 rounded object-contain bg-slate-950 border border-slate-700 shrink-0 hidden" alt="">
+                                <button type="button" id="vipTeam2ClearBtn" class="text-rose-400 text-xs hidden">✕</button>
+                            </div>
+                            <div id="vipTeam2Status" class="text-[10px] text-slate-400">Type team name for auto-logo</div>
+                        </div>
+
+                        <div>
+                            <label>Correct Score Prediction</label>
+                            <input type="text" id="vipPrediction" placeholder="e.g. 2 - 1" required>
+                        </div>
+                        <div>
+                            <label>Odds</label>
+                            <input type="text" id="vipOdds" placeholder="e.g. 9.50" required>
+                        </div>
+                        <div>
+                            <label>Actual Final Score (Optional)</label>
+                            <input type="text" id="vipActualScore" placeholder="e.g. 2 - 1">
+                        </div>
+                        <div class="md:col-span-2 lg:col-span-3 flex justify-end">
+                            <button type="submit" class="gold-gradient text-slate-950 font-black text-xs uppercase px-6 py-3 rounded-xl shadow-lg hover:opacity-95 transition-all">
+                                Save VIP Match (Auto-Resolves Logo)
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Existing VIP Matches List -->
+                <div class="bg-slate-900/80 border border-slate-800 rounded-3xl p-5 sm:p-6 shadow-xl">
+                    <h3 class="text-sm font-black text-white uppercase tracking-wider mb-4">Published VIP Matches Database</h3>
+                    <div id="vipMatchesList" class="space-y-3">
+                        <div class="text-slate-500 text-xs">Loading VIP matches...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================================== -->
+            <!-- TAB 3: CORRECT SCORES & TICKETS                            -->
+            <!-- ========================================================== -->
+            <div id="tab-correct-scores" class="tab-content hidden space-y-6">
+                <!-- Create/Update Result Ticket -->
+                <div class="bg-slate-900/80 border border-slate-800 rounded-3xl p-5 sm:p-6 shadow-xl">
+                    <h3 class="text-sm font-black text-amber-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                        <span>🎯 VIP Correct Score Slip & Badge Editor</span>
+                    </h3>
+                    <form id="correctScoreForm" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div>
+                            <label>Day Slot / Tab</label>
+                            <select id="csSlot">
+                                <option value="latest">Latest Day Slip (Monday)</option>
+                                <option value="previous">Previous Day Slip (Saturday)</option>
+                                <option value="next">Upcoming Day Slip (Wednesday)</option>
+                                <option value="custom">Custom New Slip</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>Date Header Title</label>
+                            <input type="text" id="csDateTitle" placeholder="e.g. 22 AUG 2026" required>
+                        </div>
+                        <div>
+                            <label>Day of Week</label>
+                            <input type="text" id="csDayOfWeek" placeholder="e.g. SATURDAY" required>
+                        </div>
+                        <div>
+                            <label>Total Combined Odds</label>
+                            <input type="text" id="csOdds" placeholder="e.g. 60.00" required>
+                        </div>
+                        <div>
+                            <label>Custom Badge Text (e.g. CONFIRMED WON, 100% WON, WON)</label>
+                            <input type="text" id="csBadgeText" value="CONFIRMED WON" placeholder="e.g. CONFIRMED WON" required>
+                        </div>
+                        <div>
+                            <label>Ticket Status</label>
+                            <select id="csStatus">
+                                <option value="WON">WON ✅ (Green Confirmed Badge)</option>
+                                <option value="LOST">LOST ❌ (Red Badge)</option>
+                                <option value="LOCKED">LOCKED 🔒 (Yellow Locked Badge)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>Ticket Match Title</label>
+                            <input type="text" id="csTitle" placeholder="e.g. Arsenal vs Chelsea" required>
+                        </div>
+                        <div>
+                            <label>Predicted Score</label>
+                            <input type="text" id="csPredictedScore" placeholder="e.g. 2 - 1" required>
+                        </div>
+                        <div>
+                            <label>Actual Score</label>
+                            <input type="text" id="csActualScore" placeholder="e.g. 2 - 1" required>
+                        </div>
+                        <div class="md:col-span-2 lg:col-span-3 flex justify-end">
+                            <button type="submit" class="gold-gradient text-slate-950 font-black text-xs uppercase px-6 py-3 rounded-xl shadow-lg hover:opacity-95 transition-all">
+                                Save Ticket & Badge Text
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Existing Correct Score Tickets List -->
+                <div class="bg-slate-900/80 border border-slate-800 rounded-3xl p-5 sm:p-6 shadow-xl">
+                    <h3 class="text-sm font-black text-white uppercase tracking-wider mb-4">Configured Correct Score Slips</h3>
+                    <div id="correctScoreList" class="space-y-3">
+                        <div class="text-slate-500 text-xs">Loading correct score tickets...</div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- Unified Edit Modal -->
+    <div id="editModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm hidden">
+        <div class="bg-slate-900 border border-amber-500/40 rounded-3xl p-6 max-w-lg w-full shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <h3 id="editModalTitle" class="text-sm font-black text-amber-400 uppercase tracking-wider">Edit Item</h3>
+                <button type="button" id="closeEditModalBtn" class="text-slate-400 hover:text-white text-lg font-bold">✕</button>
+            </div>
+            <div id="editModalBody" class="space-y-3 text-xs"></div>
+            <div class="flex justify-end gap-2 pt-2 border-t border-slate-800">
+                <button type="button" id="cancelEditModalBtn" class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 font-bold text-xs">Cancel</button>
+                <button type="button" id="saveEditModalBtn" class="px-5 py-2 rounded-xl gold-gradient text-slate-950 font-black text-xs uppercase">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK Scripts -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-auth.js";
+        import { getFirestore, collection, onSnapshot, doc, setDoc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
+        import { getStorage } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-storage.js";
+
+        // Read Firebase Configuration dynamically from window or meta
+        const firebaseConfig = window.__FIREBASE_CONFIG__ || {
+            apiKey: "AIzaSyDummyKeyForAppletConfig",
+            authDomain: "ai-studio-accuracyscore.firebaseapp.com",
+            projectId: "ai-studio-accuracyscore-815a63cc-1a8d-4296-8574-4b1171cc9a03",
+            storageBucket: "ai-studio-accuracyscore.appspot.com",
+            messagingSenderId: "447573981468",
+            appId: "1:447573981468:web:109e3ca151e2bc68"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        let storage = null;
+        try { storage = getStorage(app); } catch (e) {}
+
+        // --- AUTOMATED TEAM LOGO RESOLUTION DICTIONARY ---
+        const KNOWN_TEAM_LOGOS = {
+            'arsenal': 'https://crests.football-data.org/57.png',
+            'chelsea': 'https://crests.football-data.org/61.png',
+            'manchester city': 'https://crests.football-data.org/65.png',
+            'man city': 'https://crests.football-data.org/65.png',
+            'manchester united': 'https://crests.football-data.org/66.png',
+            'man united': 'https://crests.football-data.org/66.png',
+            'liverpool': 'https://crests.football-data.org/64.png',
+            'tottenham': 'https://crests.football-data.org/73.png',
+            'spurs': 'https://crests.football-data.org/73.png',
+            'aston villa': 'https://crests.football-data.org/58.png',
+            'newcastle': 'https://crests.football-data.org/67.png',
+            'brighton': 'https://crests.football-data.org/397.png',
+            'west ham': 'https://crests.football-data.org/563.png',
+            'wolves': 'https://crests.football-data.org/76.png',
+            'everton': 'https://crests.football-data.org/62.png',
+            'crystal palace': 'https://crests.football-data.org/354.png',
+            'fulham': 'https://crests.football-data.org/63.png',
+            'brentford': 'https://crests.football-data.org/402.png',
+            'nottingham forest': 'https://crests.football-data.org/351.png',
+            'bournemouth': 'https://crests.football-data.org/1044.png',
+            'leicester': 'https://crests.football-data.org/338.png',
+            'southampton': 'https://crests.football-data.org/340.png',
+            'ipswich': 'https://crests.football-data.org/349.png',
+            'real madrid': 'https://crests.football-data.org/86.png',
+            'barcelona': 'https://crests.football-data.org/81.png',
+            'barca': 'https://crests.football-data.org/81.png',
+            'atletico madrid': 'https://crests.football-data.org/78.png',
+            'sevilla': 'https://crests.football-data.org/559.png',
+            'real sociedad': 'https://crests.football-data.org/92.png',
+            'villarreal': 'https://crests.football-data.org/94.png',
+            'athletic bilbao': 'https://crests.football-data.org/77.png',
+            'real betis': 'https://crests.football-data.org/90.png',
+            'valencia': 'https://crests.football-data.org/95.png',
+            'girona': 'https://crests.football-data.org/298.png',
+            'bayern munich': 'https://crests.football-data.org/5.png',
+            'bayern': 'https://crests.football-data.org/5.png',
+            'borussia dortmund': 'https://crests.football-data.org/4.png',
+            'dortmund': 'https://crests.football-data.org/4.png',
+            'rb leipzig': 'https://crests.football-data.org/721.png',
+            'bayer leverkusen': 'https://crests.football-data.org/3.png',
+            'leverkusen': 'https://crests.football-data.org/3.png',
+            'eintracht frankfurt': 'https://crests.football-data.org/19.png',
+            'stuttgart': 'https://crests.football-data.org/10.png',
+            'juventus': 'https://crests.football-data.org/109.png',
+            'inter milan': 'https://crests.football-data.org/108.png',
+            'inter': 'https://crests.football-data.org/108.png',
+            'ac milan': 'https://crests.football-data.org/98.png',
+            'milan': 'https://crests.football-data.org/98.png',
+            'napoli': 'https://crests.football-data.org/113.png',
+            'as roma': 'https://crests.football-data.org/100.png',
+            'roma': 'https://crests.football-data.org/100.png',
+            'lazio': 'https://crests.football-data.org/110.png',
+            'atalanta': 'https://crests.football-data.org/102.png',
+            'psg': 'https://crests.football-data.org/524.png',
+            'paris saint-germain': 'https://crests.football-data.org/524.png',
+            'marseille': 'https://crests.football-data.org/516.png',
+            'monaco': 'https://crests.football-data.org/548.png',
+            'lyon': 'https://crests.football-data.org/523.png',
+            'lille': 'https://crests.football-data.org/521.png',
+            'ajax': 'https://crests.football-data.org/678.png',
+            'benfica': 'https://crests.football-data.org/1903.png',
+            'porto': 'https://crests.football-data.org/503.png',
+            'sporting cp': 'https://crests.football-data.org/498.png',
+            'sporting lisbon': 'https://crests.football-data.org/498.png',
+            'feyenoord': 'https://crests.football-data.org/675.png',
+            'psv': 'https://crests.football-data.org/674.png',
+            'celtic': 'https://crests.football-data.org/732.png',
+            'rangers': 'https://crests.football-data.org/731.png',
+            'galatasaray': 'https://crests.football-data.org/610.png',
+            'fenerbahce': 'https://crests.football-data.org/611.png',
+            'besiktas': 'https://crests.football-data.org/605.png',
+            'club brugge': 'https://crests.football-data.org/851.png'
+        };
+
+        function cleanTeamName(name) {
+            return (name || '')
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .toLowerCase()
+                .replace(/\bfc\b|\bcf\b|\bafc\b|\bsc\b|\bss\b|\bas\b|\brc\b|\bvfb\b|\bvfl\b|\bf\.c\.\b|\bc\.f\.\b/gi, '')
+                .replace(/[^a-z0-9]/g, ' ')
+                .replace(/\s+/g, ' ')
+                .trim();
+        }
+
+        function resolveTeamLogo(teamName, explicitUrl) {
+            if (explicitUrl && explicitUrl.trim().length > 0) return explicitUrl.trim();
+            if (!teamName) return null;
+            const rawNormalized = teamName.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+            if (KNOWN_TEAM_LOGOS[rawNormalized]) return KNOWN_TEAM_LOGOS[rawNormalized];
+            const cleaned = cleanTeamName(teamName);
+            if (KNOWN_TEAM_LOGOS[cleaned]) return KNOWN_TEAM_LOGOS[cleaned];
+            for (const [key, url] of Object.entries(KNOWN_TEAM_LOGOS)) {
+                if (rawNormalized.includes(key) || key.includes(rawNormalized) || cleaned.includes(key) || key.includes(cleaned)) {
+                    if (key.length >= 4) return url;
+                }
+            }
+            return null;
+        }
+
+        function setupTeamNameAutoLogo(teamInputId, hiddenUrlId, placeholderId, imgId, statusId, clearBtnId) {
+            const teamInput = document.getElementById(teamInputId);
+            const hiddenUrl = document.getElementById(hiddenUrlId);
+            const placeholder = document.getElementById(placeholderId);
+            const img = document.getElementById(imgId);
+            const status = document.getElementById(statusId);
+            const clearBtn = document.getElementById(clearBtnId);
+
+            if (!teamInput) return;
+
+            const handleNameChange = () => {
+                const teamName = teamInput.value.trim();
+                const currentVal = hiddenUrl ? hiddenUrl.value.trim() : '';
+
+                if (currentVal.startsWith('data:image') || currentVal.includes('firebasestorage')) {
+                    return;
+                }
+
+                const autoLogo = resolveTeamLogo(teamName);
+                if (autoLogo) {
+                    if (hiddenUrl) hiddenUrl.value = autoLogo;
+                    if (img) {
+                        img.src = autoLogo;
+                        img.classList.remove('hidden');
+                    }
+                    if (placeholder) placeholder.classList.add('hidden');
+                    if (status) status.innerHTML = `<span style="color:#34d399; font-weight:bold;">✨ Auto-detected Logo</span> (Will auto-save)`;
+                    if (clearBtn) clearBtn.classList.remove('hidden');
+                } else if (!currentVal || Object.values(KNOWN_TEAM_LOGOS).includes(currentVal)) {
+                    if (hiddenUrl) hiddenUrl.value = '';
+                    if (img) {
+                        img.src = '';
+                        img.classList.add('hidden');
+                    }
+                    if (placeholder) placeholder.classList.remove('hidden');
+                    if (status) status.textContent = "No custom logo (initials fallback active)";
+                    if (clearBtn) clearBtn.classList.add('hidden');
+                }
+            };
+
+            teamInput.addEventListener('input', handleNameChange);
+            teamInput.addEventListener('change', handleNameChange);
+        }
+
+        function setupFileInputPreview(fileInputId, hiddenUrlId, placeholderId, imgId, statusId, clearBtnId) {
+            const fileInput = document.getElementById(fileInputId);
+            const hiddenUrl = document.getElementById(hiddenUrlId);
+            const placeholder = document.getElementById(placeholderId);
+            const img = document.getElementById(imgId);
+            const status = document.getElementById(statusId);
+            const clearBtn = document.getElementById(clearBtnId);
+
+            if (!fileInput) return;
+
+            fileInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const dataUrl = event.target.result;
+                    if (hiddenUrl) hiddenUrl.value = dataUrl;
+                    if (img) {
+                        img.src = dataUrl;
+                        img.classList.remove('hidden');
+                    }
+                    if (placeholder) placeholder.classList.add('hidden');
+                    if (status) status.innerHTML = `<span style="color:#f59e0b; font-weight:bold;">Custom Image Attached</span>`;
+                    if (clearBtn) clearBtn.classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            });
+
+            if (clearBtn) {
+                clearBtn.addEventListener('click', () => {
+                    fileInput.value = '';
+                    if (hiddenUrl) hiddenUrl.value = '';
+                    if (img) {
+                        img.src = '';
+                        img.classList.add('hidden');
+                    }
+                    if (placeholder) placeholder.classList.remove('hidden');
+                    if (status) status.textContent = "Logo cleared";
+                    clearBtn.classList.add('hidden');
+                });
+            }
+        }
+
+        // Initialize UI Logo Auto-Detectors
+        setupFileInputPreview('freeTeam1LogoFile', 'freeTeam1LogoUrl', 'freeTeam1Placeholder', 'freeTeam1Img', 'freeTeam1Status', 'freeTeam1ClearBtn');
+        setupFileInputPreview('freeTeam2LogoFile', 'freeTeam2LogoUrl', 'freeTeam2Placeholder', 'freeTeam2Img', 'freeTeam2Status', 'freeTeam2ClearBtn');
+        setupFileInputPreview('vipTeam1LogoFile', 'vipTeam1LogoUrl', 'vipTeam1Placeholder', 'vipTeam1Img', 'vipTeam1Status', 'vipTeam1ClearBtn');
+        setupFileInputPreview('vipTeam2LogoFile', 'vipTeam2LogoUrl', 'vipTeam2Placeholder', 'vipTeam2Img', 'vipTeam2Status', 'vipTeam2ClearBtn');
+
+        setupTeamNameAutoLogo('freeTeam1', 'freeTeam1LogoUrl', 'freeTeam1Placeholder', 'freeTeam1Img', 'freeTeam1Status', 'freeTeam1ClearBtn');
+        setupTeamNameAutoLogo('freeTeam2', 'freeTeam2LogoUrl', 'freeTeam2Placeholder', 'freeTeam2Img', 'freeTeam2Status', 'freeTeam2ClearBtn');
+        setupTeamNameAutoLogo('vipTeam1', 'vipTeam1LogoUrl', 'vipTeam1Placeholder', 'vipTeam1Img', 'vipTeam1Status', 'vipTeam1ClearBtn');
+        setupTeamNameAutoLogo('vipTeam2', 'vipTeam2LogoUrl', 'vipTeam2Placeholder', 'vipTeam2Img', 'vipTeam2Status', 'vipTeam2ClearBtn');
+
+        // Navigation Tabs Handler
+        document.querySelectorAll('.admin-tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.admin-tab-btn').forEach(b => {
+                    b.classList.remove('active', 'bg-amber-500', 'text-slate-950');
+                    b.classList.add('bg-slate-900', 'text-slate-300');
+                });
+                btn.classList.add('active', 'bg-amber-500', 'text-slate-950');
+                btn.classList.remove('bg-slate-900', 'text-slate-300');
+
+                document.querySelectorAll('.tab-content').forEach(tc => tc.classList.add('hidden'));
+                const targetId = btn.getAttribute('data-tab');
+                const targetEl = document.getElementById(targetId);
+                if (targetEl) targetEl.classList.remove('hidden');
+            });
+        });
+
+        // Authentication State Listener
+        onAuthStateChanged(auth, (user) => {
+            const loginSection = document.getElementById('loginSection');
+            const adminDashboard = document.getElementById('adminDashboard');
+            const adminUserEmail = document.getElementById('adminUserEmail');
+            const logoutBtn = document.getElementById('logoutBtn');
+
+            if (user) {
+                loginSection.classList.add('hidden');
+                adminDashboard.classList.remove('hidden');
+                adminUserEmail.textContent = user.email || 'Admin';
+                logoutBtn.classList.remove('hidden');
+                initRealtimeListeners();
+            } else {
+                loginSection.classList.remove('hidden');
+                adminDashboard.classList.add('hidden');
+                adminUserEmail.textContent = 'Not logged in';
+                logoutBtn.classList.add('hidden');
+            }
+        });
+
+        // Login Handler
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('adminEmailInput').value.trim();
+            const password = document.getElementById('adminPasswordInput').value.trim();
+            const errorMsg = document.getElementById('loginErrorMsg');
+            errorMsg.classList.add('hidden');
+
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+            } catch (err) {
+                errorMsg.textContent = err.message || "Failed to authenticate.";
+                errorMsg.classList.remove('hidden');
+            }
+        });
+
+        // Logout Handler
+        document.getElementById('logoutBtn').addEventListener('click', () => signOut(auth));
+
+        // --- SUBMIT FREE TIP ---
+        document.getElementById('freeTipForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const category = document.getElementById('freeCategory').value;
+            const league = document.getElementById('freeLeague').value.trim();
+            const time = document.getElementById('freeTime').value.trim();
+            const team1 = document.getElementById('freeTeam1').value.trim();
+            const team2 = document.getElementById('freeTeam2').value.trim();
+            const team1Logo = document.getElementById('freeTeam1LogoUrl').value.trim() || resolveTeamLogo(team1) || '';
+            const team2Logo = document.getElementById('freeTeam2LogoUrl').value.trim() || resolveTeamLogo(team2) || '';
+            const prediction = document.getElementById('freePrediction').value.trim();
+            const odds = document.getElementById('freeOdds').value.trim();
+            const status = document.getElementById('freeStatus').value;
+
+            try {
+                const newId = `tip-${Date.now()}`;
+                await setDoc(doc(db, "free_tips", newId), {
+                    id: newId,
+                    category,
+                    league,
+                    time,
+                    homeTeam: team1,
+                    awayTeam: team2,
+                    homeTeamLogoUrl: team1Logo,
+                    awayTeamLogoUrl: team2Logo,
+                    prediction,
+                    odds,
+                    status,
+                    published: true,
+                    updatedAt: new Date().toISOString()
+                });
+                alert("Free Tip added successfully with auto-resolved crest!");
+                document.getElementById('freeTipForm').reset();
+            } catch (err) {
+                alert("Error adding tip: " + err.message);
+            }
+        });
+
+        // --- SUBMIT VIP MATCH ---
+        document.getElementById('vipMatchForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const competition = document.getElementById('vipCompetition').value.trim();
+            const date = document.getElementById('vipDate').value.trim();
+            const time = document.getElementById('vipTime').value.trim();
+            const team1 = document.getElementById('vipTeam1').value.trim();
+            const team2 = document.getElementById('vipTeam2').value.trim();
+            const team1Logo = document.getElementById('vipTeam1LogoUrl').value.trim() || resolveTeamLogo(team1) || '';
+            const team2Logo = document.getElementById('vipTeam2LogoUrl').value.trim() || resolveTeamLogo(team2) || '';
+            const prediction = document.getElementById('vipPrediction').value.trim();
+            const odds = document.getElementById('vipOdds').value.trim();
+            const actualScore = document.getElementById('vipActualScore').value.trim();
+
+            try {
+                const newId = `vip-${Date.now()}`;
+                await setDoc(doc(db, "vip_zones", newId), {
+                    id: newId,
+                    competition,
+                    date,
+                    kickoffTime: time,
+                    homeTeam: team1,
+                    awayTeam: team2,
+                    homeTeamLogoUrl: team1Logo,
+                    awayTeamLogoUrl: team2Logo,
+                    correctScorePrediction: prediction,
+                    odds,
+                    actualScore: actualScore || prediction,
+                    published: true,
+                    updatedAt: new Date().toISOString()
+                });
+                alert("VIP Match saved successfully with auto-resolved crest!");
+                document.getElementById('vipMatchForm').reset();
+            } catch (err) {
+                alert("Error adding VIP Match: " + err.message);
+            }
+        });
+
+        // --- SUBMIT CORRECT SCORE TICKET & BADGE TEXT ---
+        document.getElementById('correctScoreForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const slot = document.getElementById('csSlot').value;
+            const dateTitle = document.getElementById('csDateTitle').value.trim();
+            const dayOfWeek = document.getElementById('csDayOfWeek').value.trim();
+            const odds = document.getElementById('csOdds').value.trim();
+            const badgeText = document.getElementById('csBadgeText').value.trim() || 'CONFIRMED WON';
+            const status = document.getElementById('csStatus').value;
+            const title = document.getElementById('csTitle').value.trim();
+            const predictedScore = document.getElementById('csPredictedScore').value.trim();
+            const actualScore = document.getElementById('csActualScore').value.trim();
+
+            const homeName = title.split(' vs ')[0] || 'Team A';
+            const awayName = title.split(' vs ')[1] || 'Team B';
+            const homeLogo = resolveTeamLogo(homeName) || '';
+            const awayLogo = resolveTeamLogo(awayName) || '';
+
+            const docId = slot !== 'custom' ? slot : `cs-${Date.now()}`;
+            try {
+                await setDoc(doc(db, "correct_score_results", docId), {
+                    id: docId,
+                    tabLabel: dayOfWeek.slice(0, 3).toUpperCase(),
+                    dateTitle,
+                    dayOfWeek,
+                    odds: String(odds),
+                    status,
+                    statusBadgeText: badgeText,
+                    published: true,
+                    matches: [
+                        {
+                            id: `m-${docId}`,
+                            homeTeam: homeName,
+                            awayTeam: awayName,
+                            homeTeamLogoUrl: homeLogo,
+                            awayTeamLogoUrl: awayLogo,
+                            league: 'VIP League',
+                            predictedScore,
+                            actualScore,
+                            isWon: status === 'WON'
+                        }
+                    ],
+                    updatedAt: new Date().toISOString()
+                }, { merge: true });
+                alert("Correct Score Ticket & Badge Text saved successfully!");
+            } catch (err) {
+                alert("Error saving Correct Score Ticket: " + err.message);
+            }
+        });
+
+        // --- REALTIME SYNC LISTENERS ---
+        function initRealtimeListeners() {
+            // 1. Free tips listener
+            onSnapshot(collection(db, "free_tips"), (snapshot) => {
+                const listEl = document.getElementById('freeTipsList');
+                if (snapshot.empty) {
+                    listEl.innerHTML = '<div class="text-slate-500 text-xs py-2">No custom free tips in database. Defaults will display in app.</div>';
+                    return;
+                }
+                listEl.innerHTML = snapshot.docs.map(docSnap => {
+                    const item = docSnap.data();
+                    const homeLogo = item.homeTeamLogoUrl || resolveTeamLogo(item.homeTeam);
+                    const awayLogo = item.awayTeamLogoUrl || resolveTeamLogo(item.awayTeam);
+                    return `
+                        <div class="bg-slate-950 border border-slate-800 rounded-2xl p-4 flex items-center justify-between gap-4">
+                            <div class="flex items-center gap-3">
+                                <div class="flex items-center gap-1.5">
+                                    ${homeLogo ? `<img src="${homeLogo}" class="w-6 h-6 object-contain rounded bg-slate-900">` : ''}
+                                    <span class="font-bold text-xs text-white">${item.homeTeam}</span>
+                                    <span class="text-xs text-slate-500">vs</span>
+                                    <span class="font-bold text-xs text-white">${item.awayTeam}</span>
+                                    ${awayLogo ? `<img src="${awayLogo}" class="w-6 h-6 object-contain rounded bg-slate-900">` : ''}
+                                </div>
+                                <span class="bg-slate-800 text-amber-400 font-mono text-[10px] px-2 py-0.5 rounded font-bold">${item.prediction} @ ${item.odds}</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button onclick="deleteDocById('free_tips', '${docSnap.id}')" class="text-rose-400 hover:text-rose-300 font-bold text-xs bg-rose-500/10 border border-rose-500/20 px-3 py-1.5 rounded-lg">Delete</button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            });
+
+            // 2. VIP Matches listener
+            onSnapshot(collection(db, "vip_zones"), (snapshot) => {
+                const listEl = document.getElementById('vipMatchesList');
+                if (snapshot.empty) {
+                    listEl.innerHTML = '<div class="text-slate-500 text-xs py-2">No VIP matches found in database.</div>';
+                    return;
+                }
+                listEl.innerHTML = snapshot.docs.map(docSnap => {
+                    const item = docSnap.data();
+                    const homeLogo = item.homeTeamLogoUrl || resolveTeamLogo(item.homeTeam);
+                    const awayLogo = item.awayTeamLogoUrl || resolveTeamLogo(item.awayTeam);
+                    return `
+                        <div class="bg-slate-950 border border-slate-800 rounded-2xl p-4 flex items-center justify-between gap-4">
+                            <div class="flex items-center gap-3">
+                                <div class="flex items-center gap-1.5">
+                                    ${homeLogo ? `<img src="${homeLogo}" class="w-6 h-6 object-contain rounded bg-slate-900">` : ''}
+                                    <span class="font-bold text-xs text-white">${item.homeTeam}</span>
+                                    <span class="text-xs text-slate-500">vs</span>
+                                    <span class="font-bold text-xs text-white">${item.awayTeam}</span>
+                                    ${awayLogo ? `<img src="${awayLogo}" class="w-6 h-6 object-contain rounded bg-slate-900">` : ''}
+                                </div>
+                                <span class="bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[10px] px-2 py-0.5 rounded font-black font-mono">Score: ${item.correctScorePrediction}</span>
+                            </div>
+                            <button onclick="deleteDocById('vip_zones', '${docSnap.id}')" class="text-rose-400 hover:text-rose-300 font-bold text-xs bg-rose-500/10 border border-rose-500/20 px-3 py-1.5 rounded-lg">Delete</button>
+                        </div>
+                    `;
+                }).join('');
+            });
+
+            // 3. Correct Score Tickets listener
+            onSnapshot(collection(db, "correct_score_results"), (snapshot) => {
+                const listEl = document.getElementById('correctScoreList');
+                if (snapshot.empty) {
+                    listEl.innerHTML = '<div class="text-slate-500 text-xs py-2">No custom tickets saved. Default template tickets active.</div>';
+                    return;
+                }
+                listEl.innerHTML = snapshot.docs.map(docSnap => {
+                    const item = docSnap.data();
+                    const badgeText = item.statusBadgeText || (item.status === 'WON' ? 'CONFIRMED WON' : item.status);
+                    return `
+                        <div class="bg-slate-950 border border-slate-800 rounded-2xl p-4 flex items-center justify-between gap-4">
+                            <div class="flex flex-col gap-1">
+                                <div class="flex items-center gap-2">
+                                    <span class="font-black text-amber-400 text-xs uppercase">${item.dayOfWeek || item.id} (${item.dateTitle || 'Date'})</span>
+                                    <span class="bg-emerald-500/20 text-emerald-300 font-extrabold text-[10px] px-2 py-0.5 rounded border border-emerald-500/30">${badgeText}</span>
+                                </div>
+                                <span class="text-slate-400 text-xs">Total Odds: <strong class="text-white">${item.odds}</strong></span>
+                            </div>
+                            <button onclick="deleteDocById('correct_score_results', '${docSnap.id}')" class="text-rose-400 hover:text-rose-300 font-bold text-xs bg-rose-500/10 border border-rose-500/20 px-3 py-1.5 rounded-lg">Delete</button>
+                        </div>
+                    `;
+                }).join('');
+            });
+        }
+
+        // Global Helper for Deleting Docs
+        window.deleteDocById = async (collectionName, docId) => {
+            if (confirm("Are you sure you want to delete this record?")) {
+                try {
+                    await deleteDoc(doc(db, collectionName, docId));
+                } catch (e) {
+                    alert("Delete failed: " + e.message);
+                }
+            }
+        };
+    </script>
+</body>
+</html>            <button type="button" class="action-trigger" id="submit-free-btn">Publish Free Match</button>
         </div>
 
         <div class="card">
