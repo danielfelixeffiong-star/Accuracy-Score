@@ -2,1062 +2,705 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AccuracyScore VIP & Tips Admin Portal</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <title>Accuracy Score - Master Admin Panel</title>
     <style>
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #030712;
-            color: #f8fafc;
+        :root {
+            --bg-main: #060913;
+            --bg-card: #0e1526;
+            --bg-input: #080d1a;
+            --border-color: #1e293b;
+            --primary: #38bdf8;
+            --primary-hover: #0ea5e9;
+            --amber: #f59e0b;
+            --emerald: #10b981;
+            --rose: #f43f5e;
+            --purple: #a855f7;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
         }
-        .gold-gradient {
-            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-        }
-        .gold-border {
-            border-color: #f59e0b;
-        }
-        /* Custom scrollbar for better admin viewing */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #0f172a;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #334155;
-            border-radius: 3px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #f59e0b;
-        }
-        input, select, textarea {
-            background-color: #090d16 !important;
-            border: 1px solid #1e293b !important;
-            color: #f8fafc !important;
-            border-radius: 0.75rem;
-            padding: 0.625rem 0.875rem;
-            width: 100%;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-        input:focus, select:focus, textarea:focus {
-            border-color: #f59e0b !important;
-        }
-        label {
-            display: block;
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: #94a3b8;
-            margin-bottom: 0.375rem;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background: var(--bg-main); color: var(--text-main); padding: 12px; min-height: 100vh; overflow-y: auto; }
+        
+        .header-bar { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: #0c1220; border: 1px solid #1e293b; border-radius: 12px; margin-bottom: 12px; }
+        .header-brand { display: flex; align-items: center; gap: 8px; font-weight: 900; font-size: 14px; text-transform: uppercase; color: #fff; letter-spacing: 0.5px; }
+        .header-brand span { color: var(--amber); }
+        .auth-badge { font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 6px; }
+        .auth-badge.online { background: #064e3b; color: #34d399; border: 1px solid #059669; }
+        .auth-badge.offline { background: #450a0a; color: #f87171; border: 1px solid #dc2626; }
+        
+        /* Top Navigation Tabs */
+        .nav-tabs { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 12px; scrollbar-width: none; }
+        .nav-tabs::-webkit-scrollbar { display: none; }
+        .nav-tab { flex: 1; min-width: 90px; padding: 10px 6px; background: #0e1526; border: 1px solid #1e293b; border-radius: 10px; color: var(--text-muted); font-size: 11px; font-weight: 800; text-transform: uppercase; text-align: center; cursor: pointer; white-space: nowrap; transition: all 0.2s ease; }
+        .nav-tab:hover { color: #fff; background: #151f38; }
+        .nav-tab.active { background: linear-gradient(135deg, #f59e0b, #d97706); color: #000; border-color: #fbbf24; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3); }
+        .nav-tab.active-blue { background: linear-gradient(135deg, #38bdf8, #0284c7); color: #000; border-color: #7dd3fc; }
+        
+        /* Cards */
+        .card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 14px; padding: 14px; margin-bottom: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+        .card-header { font-size: 13px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; color: #fff; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #1e293b; display: flex; align-items: center; justify-content: space-between; }
+        .card-header.amber { color: var(--amber); }
+        .card-header.blue { color: var(--primary); }
+        .card-header.purple { color: #c084fc; }
+        
+        /* Form Inputs */
+        label { display: block; font-size: 10px; font-weight: 800; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px; margin-top: 10px; }
+        label:first-of-type { margin-top: 0; }
+        input, select, textarea { width: 100%; padding: 10px 12px; background: var(--bg-input); border: 1px solid #1e293b; border-radius: 8px; color: #fff; font-size: 13px; font-weight: 600; outline: none; transition: border-color 0.2s; }
+        input:focus, select:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2); }
+        textarea { height: 75px; resize: vertical; }
+        
+        .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
+
+        /* Logo Upload & Preview Styles */
+        .logo-box { background: #080d1a; border: 1px solid #1e293b; border-radius: 8px; padding: 8px; margin-top: 4px; display: flex; flex-direction: column; gap: 6px; }
+        .logo-preview-row { display: flex; align-items: center; gap: 8px; }
+        .logo-thumb { width: 36px; height: 36px; border-radius: 8px; background: #0e1526; border: 1px solid #334155; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; }
+        .logo-thumb img { width: 100%; height: 100%; object-fit: contain; }
+        .logo-thumb-empty { font-size: 9px; font-weight: 800; color: #64748b; text-align: center; }
+        .file-btn-wrapper { position: relative; overflow: hidden; display: inline-block; width: 100%; }
+        .file-btn-wrapper input[type=file] { position: absolute; left: 0; top: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer; }
+        .btn-upload-label { display: block; padding: 6px 10px; background: #1e293b; border: 1px dashed #475569; border-radius: 6px; font-size: 10px; font-weight: 800; text-align: center; color: #94a3b8; cursor: pointer; text-transform: uppercase; }
+        .btn-upload-label:hover { background: #334155; color: #fff; }
+        
+        /* Buttons */
+        .btn { width: 100%; padding: 12px; border: none; border-radius: 10px; font-size: 13px; font-weight: 800; text-transform: uppercase; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: transform 0.1s, opacity 0.2s; -webkit-tap-highlight-color: transparent; }
+        .btn:active { transform: scale(0.98); }
+        .btn-primary { background: linear-gradient(135deg, #38bdf8, #0284c7); color: #050d1a; font-weight: 900; margin-top: 12px; }
+        .btn-amber { background: linear-gradient(135deg, #f59e0b, #d97706); color: #050d1a; font-weight: 900; margin-top: 12px; }
+        .btn-purple { background: linear-gradient(135deg, #a855f7, #7e22ce); color: #fff; font-weight: 900; margin-top: 12px; }
+        .btn-danger { background: #dc2626; color: #fff; }
+        .btn-success { background: #16a34a; color: #fff; }
+        
+        /* Items List */
+        .item-list { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+        .item-card { background: #080d1a; border: 1px solid #1e293b; border-left: 4px solid var(--primary); border-radius: 10px; padding: 10px 12px; margin-bottom: 8px; font-size: 12px; }
+        .item-card.won { border-left-color: var(--emerald); }
+        .item-card.lost { border-left-color: var(--rose); }
+        .item-card.locked { border-left-color: var(--amber); }
+        .item-card.unpub { opacity: 0.6; border-left-color: #64748b; }
+        
+        .item-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+        .item-title { font-weight: 800; font-size: 13px; color: #fff; display: flex; align-items: center; gap: 6px; }
+        .item-meta { font-size: 11px; color: var(--text-muted); margin-bottom: 8px; line-height: 1.4; }
+        .item-badge { display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 800; text-transform: uppercase; }
+        .badge-won { background: #064e3b; color: #34d399; }
+        .badge-lost { background: #450a0a; color: #f87171; }
+        .badge-locked { background: #78350f; color: #fcd34d; }
+        
+        .action-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; margin-top: 6px; }
+        .action-row-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-top: 6px; }
+        .pill-btn { padding: 8px 4px; border: none; border-radius: 6px; font-size: 10px; font-weight: 800; text-transform: uppercase; text-align: center; cursor: pointer; color: #fff; }
+        .pill-won { background: #16a34a; }
+        .pill-lost { background: #dc2626; }
+        .pill-edit { background: #eab308; color: #000; }
+        .pill-toggle { background: #0284c7; }
+        .pill-del { background: #475569; }
+        
+        /* Modals */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(4px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 12px; }
+        .modal-box { background: #0e1526; border: 1px solid #38bdf8; border-radius: 16px; padding: 16px; max-width: 500px; width: 100%; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.8); }
+        .modal-title { font-size: 14px; font-weight: 900; color: #38bdf8; text-transform: uppercase; margin-bottom: 12px; padding-bottom: 6px; border-bottom: 1px solid #1e293b; }
+        
+        /* Notification Toast */
+        .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #10b981; color: #050d1a; padding: 10px 20px; border-radius: 30px; font-weight: 900; font-size: 12px; text-transform: uppercase; z-index: 2000; box-shadow: 0 4px 20px rgba(0,0,0,0.5); opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+        .toast.show { opacity: 1; }
+        
+        .subtabs { display: flex; gap: 4px; margin-bottom: 10px; }
+        .subtab { flex: 1; padding: 8px 4px; background: #080d1a; border: 1px solid #1e293b; border-radius: 6px; color: #94a3b8; font-size: 11px; font-weight: 700; text-align: center; cursor: pointer; }
+        .subtab.active { background: #38bdf8; color: #000; border-color: #38bdf8; }
+        
+        .hidden { display: none !important; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col antialiased">
+<body>
 
-    <!-- Top Navigation Header -->
-    <header class="border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md sticky top-0 z-40">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-amber-300 flex items-center justify-center shadow-lg shadow-amber-500/20 text-slate-950 font-black text-lg">
-                    AS
-                </div>
-                <div>
-                    <h1 class="font-extrabold text-sm sm:text-base text-white tracking-wide flex items-center gap-2">
-                        ACCURACYSCORE <span class="bg-amber-500/20 text-amber-400 text-[10px] font-black px-2 py-0.5 rounded border border-amber-500/30">MASTER ADMIN</span>
-                    </h1>
-                    <p class="text-[11px] text-slate-400">Live Management Dashboard & Automated Logo Engine</p>
-                </div>
-            </div>
-
-            <!-- User Auth Bar -->
-            <div id="authHeaderBar" class="flex items-center gap-3">
-                <span id="adminUserEmail" class="text-xs text-slate-300 font-semibold hidden sm:inline-block">Checking session...</span>
-                <button id="logoutBtn" class="hidden bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold px-3 py-1.5 rounded-lg border border-slate-700 transition-colors">
-                    Logout
-                </button>
-            </div>
+    <!-- TOP BAR -->
+    <div class="header-bar">
+        <div class="header-brand">
+            <span>⚡</span> ACCURACY SCORE MASTER ADMIN
         </div>
-    </header>
-
-    <!-- Main Container -->
-    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6">
-
-        <!-- Login Screen (Shown if logged out) -->
-        <section id="loginSection" class="max-w-md mx-auto my-12 bg-slate-900/90 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl">
-            <div class="text-center mb-6">
-                <h2 class="text-xl font-black text-white">ADMINISTRATOR SIGN IN</h2>
-                <p class="text-xs text-slate-400 mt-1">Authenticate to access live tips, VIP zones, and tickets database.</p>
-            </div>
-            <form id="loginForm" class="space-y-4">
-                <div>
-                    <label>Admin Email</label>
-                    <input type="email" id="adminEmailInput" placeholder="admin@accuracyscore.com" required>
-                </div>
-                <div>
-                    <label>Password</label>
-                    <input type="password" id="adminPasswordInput" placeholder="••••••••" required>
-                </div>
-                <button type="submit" id="loginSubmitBtn" class="w-full py-3 rounded-xl gold-gradient text-slate-950 font-black text-sm uppercase tracking-wider hover:opacity-95 active:scale-[0.99] transition-all shadow-lg shadow-amber-500/20 mt-2">
-                    Sign In
-                </button>
-            </form>
-            <div id="loginErrorMsg" class="mt-4 p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs text-center hidden"></div>
-        </section>
-
-        <!-- Admin Control Hub (Shown after login) -->
-        <section id="adminDashboard" class="hidden space-y-6">
-
-            <!-- Sub Navigation Tabs -->
-            <div class="flex items-center gap-2 overflow-x-auto pb-2 border-b border-slate-800 text-xs font-bold">
-                <button data-tab="tab-free-tips" class="admin-tab-btn active bg-amber-500 text-slate-950 px-4 py-2 rounded-xl transition-all">
-                    ⚽ Free Tips Manager
-                </button>
-                <button data-tab="tab-vip-zones" class="admin-tab-btn bg-slate-900 text-slate-300 hover:bg-slate-800 px-4 py-2 rounded-xl transition-all">
-                    👑 VIP Zones Matches
-                </button>
-                <button data-tab="tab-correct-scores" class="admin-tab-btn bg-slate-900 text-slate-300 hover:bg-slate-800 px-4 py-2 rounded-xl transition-all">
-                    🎯 Correct Score Tickets & Results
-                </button>
-            </div>
-
-            <!-- ========================================================== -->
-            <!-- TAB 1: FREE TIPS                                           -->
-            <!-- ========================================================== -->
-            <div id="tab-free-tips" class="tab-content space-y-6">
-                <!-- Add Free Tip Card -->
-                <div class="bg-slate-900/80 border border-slate-800 rounded-3xl p-5 sm:p-6 shadow-xl">
-                    <h3 class="text-sm font-black text-amber-400 uppercase tracking-wider mb-4 flex items-center gap-2">
-                        <span>➕ Add New Free Tip</span>
-                    </h3>
-                    <form id="freeTipForm" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        <div>
-                            <label>Category (Day Tab)</label>
-                            <select id="freeCategory">
-                                <option value="today">Today's Games</option>
-                                <option value="yesterday">Yesterday's Results</option>
-                                <option value="tomorrow">Tomorrow's Fixtures</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label>League / Competition</label>
-                            <input type="text" id="freeLeague" placeholder="e.g. Premier League" required>
-                        </div>
-                        <div>
-                            <label>Kickoff Time</label>
-                            <input type="text" id="freeTime" placeholder="e.g. 17:30 UTC" required>
-                        </div>
-
-                        <!-- Home Team & Logo -->
-                        <div class="space-y-2">
-                            <label>Home Team</label>
-                            <input type="text" id="freeTeam1" placeholder="e.g. Arsenal" required>
-                            <div class="flex items-center gap-2">
-                                <input type="file" id="freeTeam1LogoFile" accept="image/*" class="text-xs">
-                                <input type="hidden" id="freeTeam1LogoUrl">
-                                <div id="freeTeam1Placeholder" class="w-8 h-8 rounded bg-slate-800 border border-slate-700 flex items-center justify-center text-[10px] text-slate-400 shrink-0">Logo</div>
-                                <img id="freeTeam1Img" class="w-8 h-8 rounded object-contain bg-slate-950 border border-slate-700 shrink-0 hidden" alt="">
-                                <button type="button" id="freeTeam1ClearBtn" class="text-rose-400 text-xs hidden">✕</button>
-                            </div>
-                            <div id="freeTeam1Status" class="text-[10px] text-slate-400">Type team name for auto-logo</div>
-                        </div>
-
-                        <!-- Away Team & Logo -->
-                        <div class="space-y-2">
-                            <label>Away Team</label>
-                            <input type="text" id="freeTeam2" placeholder="e.g. Chelsea" required>
-                            <div class="flex items-center gap-2">
-                                <input type="file" id="freeTeam2LogoFile" accept="image/*" class="text-xs">
-                                <input type="hidden" id="freeTeam2LogoUrl">
-                                <div id="freeTeam2Placeholder" class="w-8 h-8 rounded bg-slate-800 border border-slate-700 flex items-center justify-center text-[10px] text-slate-400 shrink-0">Logo</div>
-                                <img id="freeTeam2Img" class="w-8 h-8 rounded object-contain bg-slate-950 border border-slate-700 shrink-0 hidden" alt="">
-                                <button type="button" id="freeTeam2ClearBtn" class="text-rose-400 text-xs hidden">✕</button>
-                            </div>
-                            <div id="freeTeam2Status" class="text-[10px] text-slate-400">Type team name for auto-logo</div>
-                        </div>
-
-                        <div>
-                            <label>Prediction</label>
-                            <input type="text" id="freePrediction" placeholder="e.g. Home Win or Over 2.5" required>
-                        </div>
-                        <div>
-                            <label>Odds</label>
-                            <input type="text" id="freeOdds" placeholder="e.g. 1.85" required>
-                        </div>
-                        <div>
-                            <label>Status</label>
-                            <select id="freeStatus">
-                                <option value="pending">Pending (Upcoming)</option>
-                                <option value="won">WON ✅</option>
-                                <option value="lost">LOST ❌</option>
-                            </select>
-                        </div>
-                        <div class="md:col-span-2 lg:col-span-3 flex justify-end">
-                            <button type="submit" class="gold-gradient text-slate-950 font-black text-xs uppercase px-6 py-3 rounded-xl shadow-lg hover:opacity-95 transition-all">
-                                Save Free Tip (Auto-Resolves Logo)
-                            </button>
-                        </div>
-                    </form>
-                </div>
-
-                <!-- Existing Free Tips List -->
-                <div class="bg-slate-900/80 border border-slate-800 rounded-3xl p-5 sm:p-6 shadow-xl">
-                    <h3 class="text-sm font-black text-white uppercase tracking-wider mb-4">Published Free Tips Database</h3>
-                    <div id="freeTipsList" class="space-y-3">
-                        <div class="text-slate-500 text-xs">Loading tips...</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ========================================================== -->
-            <!-- TAB 2: VIP ZONES                                           -->
-            <!-- ========================================================== -->
-            <div id="tab-vip-zones" class="tab-content hidden space-y-6">
-                <!-- Add VIP Match Card -->
-                <div class="bg-slate-900/80 border border-slate-800 rounded-3xl p-5 sm:p-6 shadow-xl">
-                    <h3 class="text-sm font-black text-amber-400 uppercase tracking-wider mb-4 flex items-center gap-2">
-                        <span>👑 Add VIP Zone Match</span>
-                    </h3>
-                    <form id="vipMatchForm" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        <div>
-                            <label>Competition / League</label>
-                            <input type="text" id="vipCompetition" placeholder="e.g. UEFA Champions League" required>
-                        </div>
-                        <div>
-                            <label>Date / Day</label>
-                            <input type="text" id="vipDate" placeholder="e.g. Today or 22 Aug" required>
-                        </div>
-                        <div>
-                            <label>Kickoff Time</label>
-                            <input type="text" id="vipTime" placeholder="e.g. 20:00 UTC" required>
-                        </div>
-
-                        <!-- Home Team -->
-                        <div class="space-y-2">
-                            <label>Home Team</label>
-                            <input type="text" id="vipTeam1" placeholder="e.g. Real Madrid" required>
-                            <div class="flex items-center gap-2">
-                                <input type="file" id="vipTeam1LogoFile" accept="image/*" class="text-xs">
-                                <input type="hidden" id="vipTeam1LogoUrl">
-                                <div id="vipTeam1Placeholder" class="w-8 h-8 rounded bg-slate-800 border border-slate-700 flex items-center justify-center text-[10px] text-slate-400 shrink-0">Logo</div>
-                                <img id="vipTeam1Img" class="w-8 h-8 rounded object-contain bg-slate-950 border border-slate-700 shrink-0 hidden" alt="">
-                                <button type="button" id="vipTeam1ClearBtn" class="text-rose-400 text-xs hidden">✕</button>
-                            </div>
-                            <div id="vipTeam1Status" class="text-[10px] text-slate-400">Type team name for auto-logo</div>
-                        </div>
-
-                        <!-- Away Team -->
-                        <div class="space-y-2">
-                            <label>Away Team</label>
-                            <input type="text" id="vipTeam2" placeholder="e.g. Bayern Munich" required>
-                            <div class="flex items-center gap-2">
-                                <input type="file" id="vipTeam2LogoFile" accept="image/*" class="text-xs">
-                                <input type="hidden" id="vipTeam2LogoUrl">
-                                <div id="vipTeam2Placeholder" class="w-8 h-8 rounded bg-slate-800 border border-slate-700 flex items-center justify-center text-[10px] text-slate-400 shrink-0">Logo</div>
-                                <img id="vipTeam2Img" class="w-8 h-8 rounded object-contain bg-slate-950 border border-slate-700 shrink-0 hidden" alt="">
-                                <button type="button" id="vipTeam2ClearBtn" class="text-rose-400 text-xs hidden">✕</button>
-                            </div>
-                            <div id="vipTeam2Status" class="text-[10px] text-slate-400">Type team name for auto-logo</div>
-                        </div>
-
-                        <div>
-                            <label>Correct Score Prediction</label>
-                            <input type="text" id="vipPrediction" placeholder="e.g. 2 - 1" required>
-                        </div>
-                        <div>
-                            <label>Odds</label>
-                            <input type="text" id="vipOdds" placeholder="e.g. 9.50" required>
-                        </div>
-                        <div>
-                            <label>Actual Final Score (Optional)</label>
-                            <input type="text" id="vipActualScore" placeholder="e.g. 2 - 1">
-                        </div>
-                        <div class="md:col-span-2 lg:col-span-3 flex justify-end">
-                            <button type="submit" class="gold-gradient text-slate-950 font-black text-xs uppercase px-6 py-3 rounded-xl shadow-lg hover:opacity-95 transition-all">
-                                Save VIP Match (Auto-Resolves Logo)
-                            </button>
-                        </div>
-                    </form>
-                </div>
-
-                <!-- Existing VIP Matches List -->
-                <div class="bg-slate-900/80 border border-slate-800 rounded-3xl p-5 sm:p-6 shadow-xl">
-                    <h3 class="text-sm font-black text-white uppercase tracking-wider mb-4">Published VIP Matches Database</h3>
-                    <div id="vipMatchesList" class="space-y-3">
-                        <div class="text-slate-500 text-xs">Loading VIP matches...</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ========================================================== -->
-            <!-- TAB 3: CORRECT SCORES & TICKETS                            -->
-            <!-- ========================================================== -->
-            <div id="tab-correct-scores" class="tab-content hidden space-y-6">
-                <!-- Create/Update Result Ticket -->
-                <div class="bg-slate-900/80 border border-slate-800 rounded-3xl p-5 sm:p-6 shadow-xl">
-                    <h3 class="text-sm font-black text-amber-400 uppercase tracking-wider mb-4 flex items-center gap-2">
-                        <span>🎯 VIP Correct Score Slip & Badge Editor</span>
-                    </h3>
-                    <form id="correctScoreForm" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        <div>
-                            <label>Day Slot / Tab</label>
-                            <select id="csSlot">
-                                <option value="latest">Latest Day Slip (Monday)</option>
-                                <option value="previous">Previous Day Slip (Saturday)</option>
-                                <option value="next">Upcoming Day Slip (Wednesday)</option>
-                                <option value="custom">Custom New Slip</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label>Date Header Title</label>
-                            <input type="text" id="csDateTitle" placeholder="e.g. 22 AUG 2026" required>
-                        </div>
-                        <div>
-                            <label>Day of Week</label>
-                            <input type="text" id="csDayOfWeek" placeholder="e.g. SATURDAY" required>
-                        </div>
-                        <div>
-                            <label>Total Combined Odds</label>
-                            <input type="text" id="csOdds" placeholder="e.g. 60.00" required>
-                        </div>
-                        <div>
-                            <label>Custom Badge Text (e.g. CONFIRMED WON, 100% WON, WON)</label>
-                            <input type="text" id="csBadgeText" value="CONFIRMED WON" placeholder="e.g. CONFIRMED WON" required>
-                        </div>
-                        <div>
-                            <label>Ticket Status</label>
-                            <select id="csStatus">
-                                <option value="WON">WON ✅ (Green Confirmed Badge)</option>
-                                <option value="LOST">LOST ❌ (Red Badge)</option>
-                                <option value="LOCKED">LOCKED 🔒 (Yellow Locked Badge)</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label>Ticket Match Title</label>
-                            <input type="text" id="csTitle" placeholder="e.g. Arsenal vs Chelsea" required>
-                        </div>
-                        <div>
-                            <label>Predicted Score</label>
-                            <input type="text" id="csPredictedScore" placeholder="e.g. 2 - 1" required>
-                        </div>
-                        <div>
-                            <label>Actual Score</label>
-                            <input type="text" id="csActualScore" placeholder="e.g. 2 - 1" required>
-                        </div>
-                        <div class="md:col-span-2 lg:col-span-3 flex justify-end">
-                            <button type="submit" class="gold-gradient text-slate-950 font-black text-xs uppercase px-6 py-3 rounded-xl shadow-lg hover:opacity-95 transition-all">
-                                Save Ticket & Badge Text
-                            </button>
-                        </div>
-                    </form>
-                </div>
-
-                <!-- Existing Correct Score Tickets List -->
-                <div class="bg-slate-900/80 border border-slate-800 rounded-3xl p-5 sm:p-6 shadow-xl">
-                    <h3 class="text-sm font-black text-white uppercase tracking-wider mb-4">Configured Correct Score Slips</h3>
-                    <div id="correctScoreList" class="space-y-3">
-                        <div class="text-slate-500 text-xs">Loading correct score tickets...</div>
-                    </div>
-                </div>
-            </div>
-
-        </section>
-    </main>
-
-    <!-- Unified Edit Modal -->
-    <div id="editModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm hidden">
-        <div class="bg-slate-900 border border-amber-500/40 rounded-3xl p-6 max-w-lg w-full shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
-            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-                <h3 id="editModalTitle" class="text-sm font-black text-amber-400 uppercase tracking-wider">Edit Item</h3>
-                <button type="button" id="closeEditModalBtn" class="text-slate-400 hover:text-white text-lg font-bold">✕</button>
-            </div>
-            <div id="editModalBody" class="space-y-3 text-xs"></div>
-            <div class="flex justify-end gap-2 pt-2 border-t border-slate-800">
-                <button type="button" id="cancelEditModalBtn" class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 font-bold text-xs">Cancel</button>
-                <button type="button" id="saveEditModalBtn" class="px-5 py-2 rounded-xl gold-gradient text-slate-950 font-black text-xs uppercase">Save Changes</button>
-            </div>
+        <div id="auth-status-container">
+            <span id="auth-status-text" class="auth-badge offline">🔒 NOT LOGGED IN</span>
+            <button id="logout-btn" class="pill-btn pill-del hidden" style="padding: 4px 8px; margin-left: 6px;">Logout</button>
         </div>
     </div>
 
-    <!-- Firebase SDK Scripts -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-auth.js";
-        import { getFirestore, collection, onSnapshot, doc, setDoc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
-        import { getStorage } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-storage.js";
+    <!-- 0. ADMIN LOGIN CARD (VISIBLE WHEN LOGGED OUT) -->
+    <div id="login-card" class="card" style="max-width: 400px; margin: 40px auto;">
+        <div class="card-header blue">🔐 Administrator Authentication</div>
+        <form id="admin-login-form">
+            <label>Admin Email:</label>
+            <input type="email" id="login-email" placeholder="admin@accuracyscore.site" required>
+            <label>Admin Password:</label>
+            <input type="password" id="login-password" placeholder="••••••••" required>
+            <button type="submit" class="btn btn-primary">Login to Admin Console</button>
+        </form>
+        <div id="login-error" style="color: #f87171; font-size: 11px; font-weight: 700; margin-top: 10px; display: none;"></div>
+    </div>
 
-        // Read Firebase Configuration dynamically from window or meta
-        const firebaseConfig = window.__FIREBASE_CONFIG__ || {
-            apiKey: "AIzaSyDummyKeyForAppletConfig",
-            authDomain: "ai-studio-accuracyscore.firebaseapp.com",
-            projectId: "ai-studio-accuracyscore-815a63cc-1a8d-4296-8574-4b1171cc9a03",
-            storageBucket: "ai-studio-accuracyscore.appspot.com",
-            messagingSenderId: "447573981468",
-            appId: "1:447573981468:web:109e3ca151e2bc68"
-        };
+    <!-- MAIN ADMIN CONSOLE (VISIBLE ONLY AFTER LOGIN) -->
+    <div id="admin-console" class="hidden">
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        let storage = null;
-        try { storage = getStorage(app); } catch (e) {}
-
-        // --- AUTOMATED TEAM LOGO RESOLUTION DICTIONARY ---
-        const KNOWN_TEAM_LOGOS = {
-            'arsenal': 'https://crests.football-data.org/57.png',
-            'chelsea': 'https://crests.football-data.org/61.png',
-            'manchester city': 'https://crests.football-data.org/65.png',
-            'man city': 'https://crests.football-data.org/65.png',
-            'manchester united': 'https://crests.football-data.org/66.png',
-            'man united': 'https://crests.football-data.org/66.png',
-            'liverpool': 'https://crests.football-data.org/64.png',
-            'tottenham': 'https://crests.football-data.org/73.png',
-            'spurs': 'https://crests.football-data.org/73.png',
-            'aston villa': 'https://crests.football-data.org/58.png',
-            'newcastle': 'https://crests.football-data.org/67.png',
-            'brighton': 'https://crests.football-data.org/397.png',
-            'west ham': 'https://crests.football-data.org/563.png',
-            'wolves': 'https://crests.football-data.org/76.png',
-            'everton': 'https://crests.football-data.org/62.png',
-            'crystal palace': 'https://crests.football-data.org/354.png',
-            'fulham': 'https://crests.football-data.org/63.png',
-            'brentford': 'https://crests.football-data.org/402.png',
-            'nottingham forest': 'https://crests.football-data.org/351.png',
-            'bournemouth': 'https://crests.football-data.org/1044.png',
-            'leicester': 'https://crests.football-data.org/338.png',
-            'southampton': 'https://crests.football-data.org/340.png',
-            'ipswich': 'https://crests.football-data.org/349.png',
-            'real madrid': 'https://crests.football-data.org/86.png',
-            'barcelona': 'https://crests.football-data.org/81.png',
-            'barca': 'https://crests.football-data.org/81.png',
-            'atletico madrid': 'https://crests.football-data.org/78.png',
-            'sevilla': 'https://crests.football-data.org/559.png',
-            'real sociedad': 'https://crests.football-data.org/92.png',
-            'villarreal': 'https://crests.football-data.org/94.png',
-            'athletic bilbao': 'https://crests.football-data.org/77.png',
-            'real betis': 'https://crests.football-data.org/90.png',
-            'valencia': 'https://crests.football-data.org/95.png',
-            'girona': 'https://crests.football-data.org/298.png',
-            'bayern munich': 'https://crests.football-data.org/5.png',
-            'bayern': 'https://crests.football-data.org/5.png',
-            'borussia dortmund': 'https://crests.football-data.org/4.png',
-            'dortmund': 'https://crests.football-data.org/4.png',
-            'rb leipzig': 'https://crests.football-data.org/721.png',
-            'bayer leverkusen': 'https://crests.football-data.org/3.png',
-            'leverkusen': 'https://crests.football-data.org/3.png',
-            'eintracht frankfurt': 'https://crests.football-data.org/19.png',
-            'stuttgart': 'https://crests.football-data.org/10.png',
-            'juventus': 'https://crests.football-data.org/109.png',
-            'inter milan': 'https://crests.football-data.org/108.png',
-            'inter': 'https://crests.football-data.org/108.png',
-            'ac milan': 'https://crests.football-data.org/98.png',
-            'milan': 'https://crests.football-data.org/98.png',
-            'napoli': 'https://crests.football-data.org/113.png',
-            'as roma': 'https://crests.football-data.org/100.png',
-            'roma': 'https://crests.football-data.org/100.png',
-            'lazio': 'https://crests.football-data.org/110.png',
-            'atalanta': 'https://crests.football-data.org/102.png',
-            'psg': 'https://crests.football-data.org/524.png',
-            'paris saint-germain': 'https://crests.football-data.org/524.png',
-            'marseille': 'https://crests.football-data.org/516.png',
-            'monaco': 'https://crests.football-data.org/548.png',
-            'lyon': 'https://crests.football-data.org/523.png',
-            'lille': 'https://crests.football-data.org/521.png',
-            'ajax': 'https://crests.football-data.org/678.png',
-            'benfica': 'https://crests.football-data.org/1903.png',
-            'porto': 'https://crests.football-data.org/503.png',
-            'sporting cp': 'https://crests.football-data.org/498.png',
-            'sporting lisbon': 'https://crests.football-data.org/498.png',
-            'feyenoord': 'https://crests.football-data.org/675.png',
-            'psv': 'https://crests.football-data.org/674.png',
-            'celtic': 'https://crests.football-data.org/732.png',
-            'rangers': 'https://crests.football-data.org/731.png',
-            'galatasaray': 'https://crests.football-data.org/610.png',
-            'fenerbahce': 'https://crests.football-data.org/611.png',
-            'besiktas': 'https://crests.football-data.org/605.png',
-            'club brugge': 'https://crests.football-data.org/851.png'
-        };
-
-        function cleanTeamName(name) {
-            return (name || '')
-                .normalize('NFD')
-                .replace(/[\u0300-\u036f]/g, '')
-                .toLowerCase()
-                .replace(/\bfc\b|\bcf\b|\bafc\b|\bsc\b|\bss\b|\bas\b|\brc\b|\bvfb\b|\bvfl\b|\bf\.c\.\b|\bc\.f\.\b/gi, '')
-                .replace(/[^a-z0-9]/g, ' ')
-                .replace(/\s+/g, ' ')
-                .trim();
-        }
-
-        function resolveTeamLogo(teamName, explicitUrl) {
-            if (explicitUrl && explicitUrl.trim().length > 0) return explicitUrl.trim();
-            if (!teamName) return null;
-            const rawNormalized = teamName.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
-            if (KNOWN_TEAM_LOGOS[rawNormalized]) return KNOWN_TEAM_LOGOS[rawNormalized];
-            const cleaned = cleanTeamName(teamName);
-            if (KNOWN_TEAM_LOGOS[cleaned]) return KNOWN_TEAM_LOGOS[cleaned];
-            for (const [key, url] of Object.entries(KNOWN_TEAM_LOGOS)) {
-                if (rawNormalized.includes(key) || key.includes(rawNormalized) || cleaned.includes(key) || key.includes(cleaned)) {
-                    if (key.length >= 4) return url;
-                }
-            }
-            return null;
-        }
-
-        function setupTeamNameAutoLogo(teamInputId, hiddenUrlId, placeholderId, imgId, statusId, clearBtnId) {
-            const teamInput = document.getElementById(teamInputId);
-            const hiddenUrl = document.getElementById(hiddenUrlId);
-            const placeholder = document.getElementById(placeholderId);
-            const img = document.getElementById(imgId);
-            const status = document.getElementById(statusId);
-            const clearBtn = document.getElementById(clearBtnId);
-
-            if (!teamInput) return;
-
-            const handleNameChange = () => {
-                const teamName = teamInput.value.trim();
-                const currentVal = hiddenUrl ? hiddenUrl.value.trim() : '';
-
-                if (currentVal.startsWith('data:image') || currentVal.includes('firebasestorage')) {
-                    return;
-                }
-
-                const autoLogo = resolveTeamLogo(teamName);
-                if (autoLogo) {
-                    if (hiddenUrl) hiddenUrl.value = autoLogo;
-                    if (img) {
-                        img.src = autoLogo;
-                        img.classList.remove('hidden');
-                    }
-                    if (placeholder) placeholder.classList.add('hidden');
-                    if (status) status.innerHTML = `<span style="color:#34d399; font-weight:bold;">✨ Auto-detected Logo</span> (Will auto-save)`;
-                    if (clearBtn) clearBtn.classList.remove('hidden');
-                } else if (!currentVal || Object.values(KNOWN_TEAM_LOGOS).includes(currentVal)) {
-                    if (hiddenUrl) hiddenUrl.value = '';
-                    if (img) {
-                        img.src = '';
-                        img.classList.add('hidden');
-                    }
-                    if (placeholder) placeholder.classList.remove('hidden');
-                    if (status) status.textContent = "No custom logo (initials fallback active)";
-                    if (clearBtn) clearBtn.classList.add('hidden');
-                }
-            };
-
-            teamInput.addEventListener('input', handleNameChange);
-            teamInput.addEventListener('change', handleNameChange);
-        }
-
-        function setupFileInputPreview(fileInputId, hiddenUrlId, placeholderId, imgId, statusId, clearBtnId) {
-            const fileInput = document.getElementById(fileInputId);
-            const hiddenUrl = document.getElementById(hiddenUrlId);
-            const placeholder = document.getElementById(placeholderId);
-            const img = document.getElementById(imgId);
-            const status = document.getElementById(statusId);
-            const clearBtn = document.getElementById(clearBtnId);
-
-            if (!fileInput) return;
-
-            fileInput.addEventListener('change', (e) => {
-                const file = e.target.files[0];
-                if (!file) return;
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    const dataUrl = event.target.result;
-                    if (hiddenUrl) hiddenUrl.value = dataUrl;
-                    if (img) {
-                        img.src = dataUrl;
-                        img.classList.remove('hidden');
-                    }
-                    if (placeholder) placeholder.classList.add('hidden');
-                    if (status) status.innerHTML = `<span style="color:#f59e0b; font-weight:bold;">Custom Image Attached</span>`;
-                    if (clearBtn) clearBtn.classList.remove('hidden');
-                };
-                reader.readAsDataURL(file);
-            });
-
-            if (clearBtn) {
-                clearBtn.addEventListener('click', () => {
-                    fileInput.value = '';
-                    if (hiddenUrl) hiddenUrl.value = '';
-                    if (img) {
-                        img.src = '';
-                        img.classList.add('hidden');
-                    }
-                    if (placeholder) placeholder.classList.remove('hidden');
-                    if (status) status.textContent = "Logo cleared";
-                    clearBtn.classList.add('hidden');
-                });
-            }
-        }
-
-        // Initialize UI Logo Auto-Detectors
-        setupFileInputPreview('freeTeam1LogoFile', 'freeTeam1LogoUrl', 'freeTeam1Placeholder', 'freeTeam1Img', 'freeTeam1Status', 'freeTeam1ClearBtn');
-        setupFileInputPreview('freeTeam2LogoFile', 'freeTeam2LogoUrl', 'freeTeam2Placeholder', 'freeTeam2Img', 'freeTeam2Status', 'freeTeam2ClearBtn');
-        setupFileInputPreview('vipTeam1LogoFile', 'vipTeam1LogoUrl', 'vipTeam1Placeholder', 'vipTeam1Img', 'vipTeam1Status', 'vipTeam1ClearBtn');
-        setupFileInputPreview('vipTeam2LogoFile', 'vipTeam2LogoUrl', 'vipTeam2Placeholder', 'vipTeam2Img', 'vipTeam2Status', 'vipTeam2ClearBtn');
-
-        setupTeamNameAutoLogo('freeTeam1', 'freeTeam1LogoUrl', 'freeTeam1Placeholder', 'freeTeam1Img', 'freeTeam1Status', 'freeTeam1ClearBtn');
-        setupTeamNameAutoLogo('freeTeam2', 'freeTeam2LogoUrl', 'freeTeam2Placeholder', 'freeTeam2Img', 'freeTeam2Status', 'freeTeam2ClearBtn');
-        setupTeamNameAutoLogo('vipTeam1', 'vipTeam1LogoUrl', 'vipTeam1Placeholder', 'vipTeam1Img', 'vipTeam1Status', 'vipTeam1ClearBtn');
-        setupTeamNameAutoLogo('vipTeam2', 'vipTeam2LogoUrl', 'vipTeam2Placeholder', 'vipTeam2Img', 'vipTeam2Status', 'vipTeam2ClearBtn');
-
-        // Navigation Tabs Handler
-        document.querySelectorAll('.admin-tab-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.admin-tab-btn').forEach(b => {
-                    b.classList.remove('active', 'bg-amber-500', 'text-slate-950');
-                    b.classList.add('bg-slate-900', 'text-slate-300');
-                });
-                btn.classList.add('active', 'bg-amber-500', 'text-slate-950');
-                btn.classList.remove('bg-slate-900', 'text-slate-300');
-
-                document.querySelectorAll('.tab-content').forEach(tc => tc.classList.add('hidden'));
-                const targetId = btn.getAttribute('data-tab');
-                const targetEl = document.getElementById(targetId);
-                if (targetEl) targetEl.classList.remove('hidden');
-            });
-        });
-
-        // Authentication State Listener
-        onAuthStateChanged(auth, (user) => {
-            const loginSection = document.getElementById('loginSection');
-            const adminDashboard = document.getElementById('adminDashboard');
-            const adminUserEmail = document.getElementById('adminUserEmail');
-            const logoutBtn = document.getElementById('logoutBtn');
-
-            if (user) {
-                loginSection.classList.add('hidden');
-                adminDashboard.classList.remove('hidden');
-                adminUserEmail.textContent = user.email || 'Admin';
-                logoutBtn.classList.remove('hidden');
-                initRealtimeListeners();
-            } else {
-                loginSection.classList.remove('hidden');
-                adminDashboard.classList.add('hidden');
-                adminUserEmail.textContent = 'Not logged in';
-                logoutBtn.classList.add('hidden');
-            }
-        });
-
-        // Login Handler
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('adminEmailInput').value.trim();
-            const password = document.getElementById('adminPasswordInput').value.trim();
-            const errorMsg = document.getElementById('loginErrorMsg');
-            errorMsg.classList.add('hidden');
-
-            try {
-                await signInWithEmailAndPassword(auth, email, password);
-            } catch (err) {
-                errorMsg.textContent = err.message || "Failed to authenticate.";
-                errorMsg.classList.remove('hidden');
-            }
-        });
-
-        // Logout Handler
-        document.getElementById('logoutBtn').addEventListener('click', () => signOut(auth));
-
-        // --- SUBMIT FREE TIP ---
-        document.getElementById('freeTipForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const category = document.getElementById('freeCategory').value;
-            const league = document.getElementById('freeLeague').value.trim();
-            const time = document.getElementById('freeTime').value.trim();
-            const team1 = document.getElementById('freeTeam1').value.trim();
-            const team2 = document.getElementById('freeTeam2').value.trim();
-            const team1Logo = document.getElementById('freeTeam1LogoUrl').value.trim() || resolveTeamLogo(team1) || '';
-            const team2Logo = document.getElementById('freeTeam2LogoUrl').value.trim() || resolveTeamLogo(team2) || '';
-            const prediction = document.getElementById('freePrediction').value.trim();
-            const odds = document.getElementById('freeOdds').value.trim();
-            const status = document.getElementById('freeStatus').value;
-
-            try {
-                const newId = `tip-${Date.now()}`;
-                await setDoc(doc(db, "free_tips", newId), {
-                    id: newId,
-                    category,
-                    league,
-                    time,
-                    homeTeam: team1,
-                    awayTeam: team2,
-                    homeTeamLogoUrl: team1Logo,
-                    awayTeamLogoUrl: team2Logo,
-                    prediction,
-                    odds,
-                    status,
-                    published: true,
-                    updatedAt: new Date().toISOString()
-                });
-                alert("Free Tip added successfully with auto-resolved crest!");
-                document.getElementById('freeTipForm').reset();
-            } catch (err) {
-                alert("Error adding tip: " + err.message);
-            }
-        });
-
-        // --- SUBMIT VIP MATCH ---
-        document.getElementById('vipMatchForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const competition = document.getElementById('vipCompetition').value.trim();
-            const date = document.getElementById('vipDate').value.trim();
-            const time = document.getElementById('vipTime').value.trim();
-            const team1 = document.getElementById('vipTeam1').value.trim();
-            const team2 = document.getElementById('vipTeam2').value.trim();
-            const team1Logo = document.getElementById('vipTeam1LogoUrl').value.trim() || resolveTeamLogo(team1) || '';
-            const team2Logo = document.getElementById('vipTeam2LogoUrl').value.trim() || resolveTeamLogo(team2) || '';
-            const prediction = document.getElementById('vipPrediction').value.trim();
-            const odds = document.getElementById('vipOdds').value.trim();
-            const actualScore = document.getElementById('vipActualScore').value.trim();
-
-            try {
-                const newId = `vip-${Date.now()}`;
-                await setDoc(doc(db, "vip_zones", newId), {
-                    id: newId,
-                    competition,
-                    date,
-                    kickoffTime: time,
-                    homeTeam: team1,
-                    awayTeam: team2,
-                    homeTeamLogoUrl: team1Logo,
-                    awayTeamLogoUrl: team2Logo,
-                    correctScorePrediction: prediction,
-                    odds,
-                    actualScore: actualScore || prediction,
-                    published: true,
-                    updatedAt: new Date().toISOString()
-                });
-                alert("VIP Match saved successfully with auto-resolved crest!");
-                document.getElementById('vipMatchForm').reset();
-            } catch (err) {
-                alert("Error adding VIP Match: " + err.message);
-            }
-        });
-
-        // --- SUBMIT CORRECT SCORE TICKET & BADGE TEXT ---
-        document.getElementById('correctScoreForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const slot = document.getElementById('csSlot').value;
-            const dateTitle = document.getElementById('csDateTitle').value.trim();
-            const dayOfWeek = document.getElementById('csDayOfWeek').value.trim();
-            const odds = document.getElementById('csOdds').value.trim();
-            const badgeText = document.getElementById('csBadgeText').value.trim() || 'CONFIRMED WON';
-            const status = document.getElementById('csStatus').value;
-            const title = document.getElementById('csTitle').value.trim();
-            const predictedScore = document.getElementById('csPredictedScore').value.trim();
-            const actualScore = document.getElementById('csActualScore').value.trim();
-
-            const homeName = title.split(' vs ')[0] || 'Team A';
-            const awayName = title.split(' vs ')[1] || 'Team B';
-            const homeLogo = resolveTeamLogo(homeName) || '';
-            const awayLogo = resolveTeamLogo(awayName) || '';
-
-            const docId = slot !== 'custom' ? slot : `cs-${Date.now()}`;
-            try {
-                await setDoc(doc(db, "correct_score_results", docId), {
-                    id: docId,
-                    tabLabel: dayOfWeek.slice(0, 3).toUpperCase(),
-                    dateTitle,
-                    dayOfWeek,
-                    odds: String(odds),
-                    status,
-                    statusBadgeText: badgeText,
-                    published: true,
-                    matches: [
-                        {
-                            id: `m-${docId}`,
-                            homeTeam: homeName,
-                            awayTeam: awayName,
-                            homeTeamLogoUrl: homeLogo,
-                            awayTeamLogoUrl: awayLogo,
-                            league: 'VIP League',
-                            predictedScore,
-                            actualScore,
-                            isWon: status === 'WON'
-                        }
-                    ],
-                    updatedAt: new Date().toISOString()
-                }, { merge: true });
-                alert("Correct Score Ticket & Badge Text saved successfully!");
-            } catch (err) {
-                alert("Error saving Correct Score Ticket: " + err.message);
-            }
-        });
-
-        // --- REALTIME SYNC LISTENERS ---
-        function initRealtimeListeners() {
-            // 1. Free tips listener
-            onSnapshot(collection(db, "free_tips"), (snapshot) => {
-                const listEl = document.getElementById('freeTipsList');
-                if (snapshot.empty) {
-                    listEl.innerHTML = '<div class="text-slate-500 text-xs py-2">No custom free tips in database. Defaults will display in app.</div>';
-                    return;
-                }
-                listEl.innerHTML = snapshot.docs.map(docSnap => {
-                    const item = docSnap.data();
-                    const homeLogo = item.homeTeamLogoUrl || resolveTeamLogo(item.homeTeam);
-                    const awayLogo = item.awayTeamLogoUrl || resolveTeamLogo(item.awayTeam);
-                    return `
-                        <div class="bg-slate-950 border border-slate-800 rounded-2xl p-4 flex items-center justify-between gap-4">
-                            <div class="flex items-center gap-3">
-                                <div class="flex items-center gap-1.5">
-                                    ${homeLogo ? `<img src="${homeLogo}" class="w-6 h-6 object-contain rounded bg-slate-900">` : ''}
-                                    <span class="font-bold text-xs text-white">${item.homeTeam}</span>
-                                    <span class="text-xs text-slate-500">vs</span>
-                                    <span class="font-bold text-xs text-white">${item.awayTeam}</span>
-                                    ${awayLogo ? `<img src="${awayLogo}" class="w-6 h-6 object-contain rounded bg-slate-900">` : ''}
-                                </div>
-                                <span class="bg-slate-800 text-amber-400 font-mono text-[10px] px-2 py-0.5 rounded font-bold">${item.prediction} @ ${item.odds}</span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <button onclick="deleteDocById('free_tips', '${docSnap.id}')" class="text-rose-400 hover:text-rose-300 font-bold text-xs bg-rose-500/10 border border-rose-500/20 px-3 py-1.5 rounded-lg">Delete</button>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-            });
-
-            // 2. VIP Matches listener
-            onSnapshot(collection(db, "vip_zones"), (snapshot) => {
-                const listEl = document.getElementById('vipMatchesList');
-                if (snapshot.empty) {
-                    listEl.innerHTML = '<div class="text-slate-500 text-xs py-2">No VIP matches found in database.</div>';
-                    return;
-                }
-                listEl.innerHTML = snapshot.docs.map(docSnap => {
-                    const item = docSnap.data();
-                    const homeLogo = item.homeTeamLogoUrl || resolveTeamLogo(item.homeTeam);
-                    const awayLogo = item.awayTeamLogoUrl || resolveTeamLogo(item.awayTeam);
-                    return `
-                        <div class="bg-slate-950 border border-slate-800 rounded-2xl p-4 flex items-center justify-between gap-4">
-                            <div class="flex items-center gap-3">
-                                <div class="flex items-center gap-1.5">
-                                    ${homeLogo ? `<img src="${homeLogo}" class="w-6 h-6 object-contain rounded bg-slate-900">` : ''}
-                                    <span class="font-bold text-xs text-white">${item.homeTeam}</span>
-                                    <span class="text-xs text-slate-500">vs</span>
-                                    <span class="font-bold text-xs text-white">${item.awayTeam}</span>
-                                    ${awayLogo ? `<img src="${awayLogo}" class="w-6 h-6 object-contain rounded bg-slate-900">` : ''}
-                                </div>
-                                <span class="bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[10px] px-2 py-0.5 rounded font-black font-mono">Score: ${item.correctScorePrediction}</span>
-                            </div>
-                            <button onclick="deleteDocById('vip_zones', '${docSnap.id}')" class="text-rose-400 hover:text-rose-300 font-bold text-xs bg-rose-500/10 border border-rose-500/20 px-3 py-1.5 rounded-lg">Delete</button>
-                        </div>
-                    `;
-                }).join('');
-            });
-
-            // 3. Correct Score Tickets listener
-            onSnapshot(collection(db, "correct_score_results"), (snapshot) => {
-                const listEl = document.getElementById('correctScoreList');
-                if (snapshot.empty) {
-                    listEl.innerHTML = '<div class="text-slate-500 text-xs py-2">No custom tickets saved. Default template tickets active.</div>';
-                    return;
-                }
-                listEl.innerHTML = snapshot.docs.map(docSnap => {
-                    const item = docSnap.data();
-                    const badgeText = item.statusBadgeText || (item.status === 'WON' ? 'CONFIRMED WON' : item.status);
-                    return `
-                        <div class="bg-slate-950 border border-slate-800 rounded-2xl p-4 flex items-center justify-between gap-4">
-                            <div class="flex flex-col gap-1">
-                                <div class="flex items-center gap-2">
-                                    <span class="font-black text-amber-400 text-xs uppercase">${item.dayOfWeek || item.id} (${item.dateTitle || 'Date'})</span>
-                                    <span class="bg-emerald-500/20 text-emerald-300 font-extrabold text-[10px] px-2 py-0.5 rounded border border-emerald-500/30">${badgeText}</span>
-                                </div>
-                                <span class="text-slate-400 text-xs">Total Odds: <strong class="text-white">${item.odds}</strong></span>
-                            </div>
-                            <button onclick="deleteDocById('correct_score_results', '${docSnap.id}')" class="text-rose-400 hover:text-rose-300 font-bold text-xs bg-rose-500/10 border border-rose-500/20 px-3 py-1.5 rounded-lg">Delete</button>
-                        </div>
-                    `;
-                }).join('');
-            });
-        }
-
-        // Global Helper for Deleting Docs
-        window.deleteDocById = async (collectionName, docId) => {
-            if (confirm("Are you sure you want to delete this record?")) {
-                try {
-                    await deleteDoc(doc(db, collectionName, docId));
-                } catch (e) {
-                    alert("Delete failed: " + e.message);
-                }
-            }
-        };
-    </script>
-</body>
-</html>            <button type="button" class="action-trigger" id="submit-free-btn">Publish Free Match</button>
+        <!-- TOP NAVIGATION TABS -->
+        <div class="nav-tabs">
+            <div class="nav-tab active-blue" id="tab-btn-free" onclick="switchMainTab('free')">⚽ Free Tips</div>
+            <div class="nav-tab" id="tab-btn-vip" onclick="switchMainTab('vip')">👑 VIP Matches</div>
+            <div class="nav-tab" id="tab-btn-cs" onclick="switchMainTab('cs')">🎯 VIP Correct Scores</div>
+            <div class="nav-tab" id="tab-btn-logos" onclick="switchMainTab('logos')">🛡️ Club Logos</div>
+            <div class="nav-tab" id="tab-btn-notif" onclick="switchMainTab('notif')">🔔 Notifications</div>
+            <div class="nav-tab" id="tab-btn-users" onclick="switchMainTab('users')">👥 Users & VIP</div>
         </div>
 
-        <div class="card">
-            <h2>⏳ Live Settle / Edit Free Tips</h2>
-            <div class="tab-btn-row">
-                <button type="button" class="tab-btn active" id="filter-free-all">All</button>
-                <button type="button" class="tab-btn" id="filter-free-today">Today</button>
-                <button type="button" class="tab-btn" id="filter-free-yesterday">Yesterday</button>
-                <button type="button" class="tab-btn" id="filter-free-tomorrow">Tomorrow</button>
-            </div>
-            <div id="freeMatchesList">Loading live free tips...</div>
-        </div>
-
-        <!-- 2. VIP ZONES REGISTRATION & SETTLEMENT SECTION -->
-        <div class="card">
-            <h2>👑 Upload Active VIP Match</h2>
-            <label>Competition Name:</label>
-            <input type="text" id="vipLeague" placeholder="e.g. UEFA Champions League">
-            <label>Display Date:</label>
-            <input type="text" id="vipDate" placeholder="Today" value="Today">
-            <label>Kickoff Time:</label>
-            <input type="text" id="vipTime" placeholder="e.g. 20:00 UTC">
-            <label>Home Team:</label>
-            <input type="text" id="vipTeam1" placeholder="e.g. Bayern Munich">
-            <label>Away Team:</label>
-            <input type="text" id="vipTeam2" placeholder="e.g. Real Madrid">
-            <label>Correct Score / Vip Prediction:</label>
-            <input type="text" id="vipPrediction" placeholder="e.g. 2 - 1">
-            <label>Odds:</label>
-            <input type="number" step="0.01" id="vipOdds" placeholder="e.g. 1.95">
-            <label>Actual Final Score (Optional):</label>
-            <input type="text" id="vipActualScore" placeholder="e.g. 2 - 1 (leave blank if match not yet finished)">
-
-            <button type="button" class="action-trigger" id="submit-vip-btn">Publish VIP Match</button>
-        </div>
-
-        <div class="card" style="background:#131224; border-color:#3b2273;">
-            <h2>
-                <span>⚡ Live Settle / Edit VIP Matches</span>
-            </h2>
+        <!-- ================================================================= -->
+        <!-- TAB 1: FREE TIPS SECTION                                          -->
+        <!-- ================================================================= -->
+        <div id="section-free" class="tab-section">
             
-            <!-- Quick VIP Result Rotation -->
-            <div style="background: #1c1438; padding: 12px; border-radius: 8px; border: 1px dashed #a855f7; margin-bottom: 14px;">
-                <label style="margin-top: 0; color: #c084fc;">👑 1-Click VIP Result Rotation:</label>
-                <p style="font-size: 11px; color: #d8b4fe; margin: 4px 0 8px 0;">
-                    Moves current <strong>Latest VIP</strong> result ticket to <strong>Previous VIP</strong> slot.
-                </p>
-                <button type="button" class="status-pill btn-purple" id="rotate-vip-results-btn" style="width: 100%; padding: 10px; font-size: 12px;">
-                    🔄 Rotate VIP Results: Move Latest ➔ Previous
-                </button>
+            <!-- Quick 3-Day Rotation -->
+            <div class="card" style="background: #0d1629; border: 1px dashed #38bdf8;">
+                <div style="display:flex; align-items:center; justify-content:space-between;">
+                    <div>
+                        <strong style="font-size:12px; color:#38bdf8;">🔄 1-Click Free Tips Day Rotation</strong>
+                        <p style="font-size:10px; color:#94a3b8; margin-top:2px;">Shifts Today ➔ Yesterday, Tomorrow ➔ Today, and deletes old Yesterday games.</p>
+                    </div>
+                    <button type="button" id="btn-rotate-days" class="pill-btn pill-toggle" style="padding: 8px 12px; white-space:nowrap; font-size:11px;">Execute Shift</button>
+                </div>
             </div>
 
-            <div id="activeVipMatchesList">Loading live VIP matches...</div>
+            <!-- Upload Free Tip Form -->
+            <div class="card">
+                <div class="card-header blue">⚽ Upload New Free Tip Match</div>
+                <div class="row-3">
+                    <div>
+                        <label>Date Category:</label>
+                        <select id="freeDate">
+                            <option value="Today">Today</option>
+                            <option value="Yesterday">Yesterday</option>
+                            <option value="Tomorrow">Tomorrow</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>League Name:</label>
+                        <input type="text" id="freeLeague" placeholder="e.g. Premier League" value="Premier League">
+                    </div>
+                    <div>
+                        <label>Kickoff Time:</label>
+                        <input type="text" id="freeTime" placeholder="e.g. 16:00 UTC" value="16:00 UTC">
+                    </div>
+                </div>
+
+                <!-- Teams & Manual Logo Upload -->
+                <div class="row-2">
+                    <div>
+                        <label>Home Team:</label>
+                        <input type="text" id="freeTeam1" placeholder="e.g. Arsenal">
+                        <div class="logo-box">
+                            <span style="font-size:9px; font-weight:800; color:#38bdf8;">HOME CLUB LOGO (IMAGE / FILE)</span>
+                            <div class="logo-preview-row">
+                                <div class="logo-thumb" id="preview-free-logo1">
+                                    <span class="logo-thumb-empty">NO LOGO</span>
+                                </div>
+                                <div style="flex:1;">
+                                    <div class="file-btn-wrapper">
+                                        <span class="btn-upload-label">📁 Upload Image File</span>
+                                        <input type="file" id="file-free-logo1" accept="image/*" onchange="handleImageFileSelect(this, 'freeTeam1Logo', 'preview-free-logo1')">
+                                    </div>
+                                    <input type="text" id="freeTeam1Logo" placeholder="Or paste Google Image URL" style="margin-top:4px; font-size:11px; padding:6px;" oninput="updateLogoPreview('freeTeam1Logo', 'preview-free-logo1')">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <label>Away Team:</label>
+                        <input type="text" id="freeTeam2" placeholder="e.g. Chelsea">
+                        <div class="logo-box">
+                            <span style="font-size:9px; font-weight:800; color:#38bdf8;">AWAY CLUB LOGO (IMAGE / FILE)</span>
+                            <div class="logo-preview-row">
+                                <div class="logo-thumb" id="preview-free-logo2">
+                                    <span class="logo-thumb-empty">NO LOGO</span>
+                                </div>
+                                <div style="flex:1;">
+                                    <div class="file-btn-wrapper">
+                                        <span class="btn-upload-label">📁 Upload Image File</span>
+                                        <input type="file" id="file-free-logo2" accept="image/*" onchange="handleImageFileSelect(this, 'freeTeam2Logo', 'preview-free-logo2')">
+                                    </div>
+                                    <input type="text" id="freeTeam2Logo" placeholder="Or paste Google Image URL" style="margin-top:4px; font-size:11px; padding:6px;" oninput="updateLogoPreview('freeTeam2Logo', 'preview-free-logo2')">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row-2">
+                    <div>
+                        <label>Free Tip / Prediction:</label>
+                        <input type="text" id="freePred" placeholder="e.g. Home Win or Draw (1X)">
+                    </div>
+                    <div>
+                        <label>Odds:</label>
+                        <input type="number" step="0.01" id="freeOdds" placeholder="e.g. 1.85">
+                    </div>
+                </div>
+
+                <button type="button" id="btn-submit-free" class="btn btn-primary">Publish Free Tip to Mobile App</button>
+            </div>
+
+            <!-- Live Free Tips Settle / Manage -->
+            <div class="card">
+                <div class="card-header blue">
+                    <span>📋 Live Free Tips Management</span>
+                    <span id="free-count-badge" style="font-size:11px; color:#38bdf8;">0 tips</span>
+                </div>
+                
+                <div class="subtabs">
+                    <div class="subtab active" id="filter-free-all" onclick="filterFreeTips('all')">All</div>
+                    <div class="subtab" id="filter-free-today" onclick="filterFreeTips('today')">Today</div>
+                    <div class="subtab" id="filter-free-yesterday" onclick="filterFreeTips('yesterday')">Yesterday</div>
+                    <div class="subtab" id="filter-free-tomorrow" onclick="filterFreeTips('tomorrow')">Tomorrow</div>
+                </div>
+
+                <div id="free-tips-list">Loading free tips...</div>
+            </div>
         </div>
 
-        <!-- 3. CORRECT SCORE RESULTS SECTION (DIRECT TICKET MANAGEMENT) -->
-        <div class="card">
-            <h2>🎯 Correct Score Ticket Manager</h2>
-            <label>Target Tab Slot:</label>
-            <select id="csSlot">
-                <option value="latest">Latest VIP (Middle Tab)</option>
-                <option value="previous">Previous VIP (Left Tab)</option>
-                <option value="next">Next VIP (Right Tab)</option>
-                <option value="custom">Custom ID / Ticket</option>
-            </select>
-            <label>Ticket Title / Header:</label>
-            <input type="text" id="csTicketTitle" placeholder="e.g. VIP Correct Score Slip">
-            <label>Tab Label (e.g. LATEST VIP (MON 10/08)):</label>
-            <input type="text" id="csTabLabel" placeholder="e.g. LATEST VIP (MON 10/08)">
-            <label>Date Title (e.g. 10 / 08 / 2026):</label>
-            <input type="text" id="csDateTitle" placeholder="10 / 08 / 2026">
-            <label>Day of Week:</label>
-            <input type="text" id="csDayOfWeek" placeholder="MONDAY">
-            <label>Total Combined Odds:</label>
-            <input type="number" step="0.01" id="csOdds" placeholder="e.g. 60.00">
-            <label>Predicted Score:</label>
-            <input type="text" id="csPredictedScore" placeholder="e.g. 2 - 1">
-            <label>Actual Final Score:</label>
-            <input type="text" id="csActualScore" placeholder="e.g. 2 - 1">
-            <label>Ticket Result Status:</label>
-            <select id="csStatus">
-                <option value="WON">WON</option>
-                <option value="LOST">LOST</option>
-                <option value="LOCKED">LOCKED (Upcoming)</option>
-            </select>
+        <!-- ================================================================= -->
+        <!-- TAB 2: VIP MATCHES / VIP ZONES SECTION                            -->
+        <!-- ================================================================= -->
+        <div id="section-vip" class="tab-section hidden">
+            
+            <!-- Upload VIP Match Form -->
+            <div class="card">
+                <div class="card-header purple">👑 Upload VIP Zone Match</div>
+                <div class="row-3">
+                    <div>
+                        <label>Competition:</label>
+                        <input type="text" id="vipLeague" placeholder="e.g. Champions League" value="UEFA Champions League">
+                    </div>
+                    <div>
+                        <label>Display Date:</label>
+                        <input type="text" id="vipDate" placeholder="Today" value="Today">
+                    </div>
+                    <div>
+                        <label>Kickoff Time:</label>
+                        <input type="text" id="vipTime" placeholder="e.g. 20:00 UTC" value="20:00 UTC">
+                    </div>
+                </div>
 
-            <button type="button" class="action-trigger" id="submit-cs-btn">Publish Correct Score Ticket</button>
+                <!-- Teams & Manual Logo Upload -->
+                <div class="row-2">
+                    <div>
+                        <label>Home Team:</label>
+                        <input type="text" id="vipTeam1" placeholder="e.g. Bayern Munich">
+                        <div class="logo-box">
+                            <span style="font-size:9px; font-weight:800; color:#c084fc;">HOME CLUB LOGO (IMAGE / FILE)</span>
+                            <div class="logo-preview-row">
+                                <div class="logo-thumb" id="preview-vip-logo1">
+                                    <span class="logo-thumb-empty">NO LOGO</span>
+                                </div>
+                                <div style="flex:1;">
+                                    <div class="file-btn-wrapper">
+                                        <span class="btn-upload-label">📁 Upload Image File</span>
+                                        <input type="file" id="file-vip-logo1" accept="image/*" onchange="handleImageFileSelect(this, 'vipTeam1Logo', 'preview-vip-logo1')">
+                                    </div>
+                                    <input type="text" id="vipTeam1Logo" placeholder="Or paste Google Image URL" style="margin-top:4px; font-size:11px; padding:6px;" oninput="updateLogoPreview('vipTeam1Logo', 'preview-vip-logo1')">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <label>Away Team:</label>
+                        <input type="text" id="vipTeam2" placeholder="e.g. Real Madrid">
+                        <div class="logo-box">
+                            <span style="font-size:9px; font-weight:800; color:#c084fc;">AWAY CLUB LOGO (IMAGE / FILE)</span>
+                            <div class="logo-preview-row">
+                                <div class="logo-thumb" id="preview-vip-logo2">
+                                    <span class="logo-thumb-empty">NO LOGO</span>
+                                </div>
+                                <div style="flex:1;">
+                                    <div class="file-btn-wrapper">
+                                        <span class="btn-upload-label">📁 Upload Image File</span>
+                                        <input type="file" id="file-vip-logo2" accept="image/*" onchange="handleImageFileSelect(this, 'vipTeam2Logo', 'preview-vip-logo2')">
+                                    </div>
+                                    <input type="text" id="vipTeam2Logo" placeholder="Or paste Google Image URL" style="margin-top:4px; font-size:11px; padding:6px;" oninput="updateLogoPreview('vipTeam2Logo', 'preview-vip-logo2')">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row-3">
+                    <div>
+                        <label>VIP Prediction (Score):</label>
+                        <input type="text" id="vipPred" placeholder="e.g. 2 - 1">
+                    </div>
+                    <div>
+                        <label>Odds:</label>
+                        <input type="number" step="0.01" id="vipOdds" placeholder="e.g. 2.10">
+                    </div>
+                    <div>
+                        <label>Actual Final Score (Optional):</label>
+                        <input type="text" id="vipActual" placeholder="e.g. 2 - 1">
+                    </div>
+                </div>
+
+                <button type="button" id="btn-submit-vip" class="btn btn-purple">Publish VIP Match</button>
+            </div>
+
+            <!-- Live VIP Matches List -->
+            <div class="card">
+                <div class="card-header purple">
+                    <span>👑 Live VIP Matches</span>
+                    <span id="vip-count-badge" style="font-size:11px; color:#c084fc;">0 matches</span>
+                </div>
+                <div id="vip-matches-list">Loading VIP matches...</div>
+            </div>
         </div>
 
-        <div class="card">
-            <h2>📋 Live Correct Score Tickets</h2>
-            <div id="csTicketList">Loading live tickets...</div>
+        <!-- ================================================================= -->
+        <!-- TAB 3: VIP CORRECT SCORES, HEADING BANNER & TICKETS               -->
+        <!-- ================================================================= -->
+        <div id="section-cs" class="tab-section hidden">
+            
+            <!-- 1. VIP CORRECT SCORE HEADING BANNER (NEXT VIP NOTICE) -->
+            <div class="card" style="border: 2px solid #f59e0b; background: #13192b;">
+                <div class="card-header amber">
+                    <span>🔥 VIP Correct Score Screen Heading Banner</span>
+                    <span style="font-size:10px; color:#fcd34d; font-weight:bold;">LIVE SYNC</span>
+                </div>
+                <p style="font-size: 11px; color: #94a3b8; margin-bottom: 10px;">
+                    This instantly controls the golden announcement card at the top of the VIP Correct Score screen on mobile devices.
+                </p>
+
+                <div class="row-2">
+                    <div>
+                        <label style="color:#fcd34d;">🔥 Date Heading (e.g. DATE: 10 / 08 / 2026 ( MONDAY )):</label>
+                        <input type="text" id="settingNextVipDate" placeholder="DATE: 10 / 08 / 2026 ( MONDAY )" style="border-color:#f59e0b; font-weight:700;">
+                    </div>
+                    <div>
+                        <label>Match Type Text (e.g. MATCH TYPE: 2 CORRECT SCORES):</label>
+                        <input type="text" id="settingNextVipType" placeholder="MATCH TYPE: 2 CORRECT SCORES">
+                    </div>
+                </div>
+
+                <div>
+                    <label style="color:#fcd34d;">🔥 Total Combined Odds (e.g. 60.00 or TOTAL ODDS: 60.00):</label>
+                    <input type="text" id="settingNextVipOdds" placeholder="TOTAL ODDS: 60.00" style="border-color:#f59e0b; font-weight:700;">
+                </div>
+
+                <button type="button" id="btn-save-banner" class="btn btn-amber">Save Heading Announcement to Mobile App</button>
+            </div>
+
+            <!-- Quick VIP Result Slip Rotation -->
+            <div class="card" style="background: #0d1629; border: 1px dashed #f59e0b;">
+                <div style="display:flex; align-items:center; justify-content:space-between;">
+                    <div>
+                        <strong style="font-size:12px; color:#fcd34d;">🔄 1-Click VIP Result Rotation</strong>
+                        <p style="font-size:10px; color:#94a3b8; margin-top:2px;">Copies current "Latest VIP" slip to "Previous VIP", clearing space for new results.</p>
+                    </div>
+                    <button type="button" id="btn-rotate-vip-results" class="pill-btn pill-edit" style="padding: 8px 12px; white-space:nowrap; font-size:11px;">Rotate Latest ➔ Previous</button>
+                </div>
+            </div>
+
+            <!-- 2. DIRECT VIP CORRECT SCORE TICKET MANAGER -->
+            <div class="card">
+                <div class="card-header amber">🎯 Create / Update Correct Score Result Slip</div>
+                
+                <div class="row-2">
+                    <div>
+                        <label>Target Tab Slot:</label>
+                        <select id="csSlot">
+                            <option value="latest">Latest VIP (Middle Tab)</option>
+                            <option value="previous">Previous VIP (Left Tab)</option>
+                            <option value="next">Next VIP (Right Tab)</option>
+                            <option value="custom">Custom ID / Extra Slot</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Tab Label (e.g. LATEST VIP (MON 10/08)):</label>
+                        <input type="text" id="csTabLabel" placeholder="e.g. LATEST VIP (MON 10/08)">
+                    </div>
+                </div>
+
+                <div class="row-3">
+                    <div>
+                        <label>Date Title (e.g. 10 / 08 / 2026):</label>
+                        <input type="text" id="csDateTitle" placeholder="10 / 08 / 2026">
+                    </div>
+                    <div>
+                        <label>Day of Week:</label>
+                        <input type="text" id="csDayOfWeek" placeholder="MONDAY">
+                    </div>
+                    <div>
+                        <label style="color:#fcd34d;">Total Ticket Odds:</label>
+                        <input type="number" step="0.01" id="csOdds" placeholder="e.g. 60.00" style="border-color:#f59e0b; font-weight:700;">
+                    </div>
+                </div>
+
+                <div class="row-2">
+                    <div>
+                        <label>Ticket Result Status:</label>
+                        <select id="csStatus">
+                            <option value="WON">WON (Green Badge)</option>
+                            <option value="LOST">LOST (Red Badge)</option>
+                            <option value="LOCKED">LOCKED (Yellow Locked Badge)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Custom Badge Text:</label>
+                        <input type="text" id="csBadgeText" value="CONFIRMED WON" placeholder="e.g. CONFIRMED WON">
+                    </div>
+                </div>
+
+                <!-- Match 1 In Ticket -->
+                <div style="background:#080d1a; border:1px solid #1e293b; border-radius:10px; padding:10px; margin-top:10px;">
+                    <span style="font-size:10px; font-weight:900; color:#f59e0b; text-transform:uppercase;">⚽ Match 1 Details</span>
+                    <div class="row-2" style="margin-top:6px;">
+                        <div>
+                            <label>Home Team 1:</label>
+                            <input type="text" id="csM1Home" placeholder="e.g. Bayern Munich">
+                            <div class="logo-box">
+                                <div class="logo-preview-row">
+                                    <div class="logo-thumb" id="preview-csm1-home">
+                                        <span class="logo-thumb-empty">NO LOGO</span>
+                                    </div>
+                                    <div style="flex:1;">
+                                        <div class="file-btn-wrapper">
+                                            <span class="btn-upload-label">📁 Upload Image</span>
+                                            <input type="file" accept="image/*" onchange="handleImageFileSelect(this, 'csM1HomeLogo', 'preview-csm1-home')">
+                                        </div>
+                                        <input type="text" id="csM1HomeLogo" placeholder="Image URL" style="margin-top:4px; font-size:10px; padding:4px;" oninput="updateLogoPreview('csM1HomeLogo', 'preview-csm1-home')">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <label>Away Team 1:</label>
+                            <input type="text" id="csM1Away" placeholder="e.g. Real Madrid">
+                            <div class="logo-box">
+                                <div class="logo-preview-row">
+                                    <div class="logo-thumb" id="preview-csm1-away">
+                                        <span class="logo-thumb-empty">NO LOGO</span>
+                                    </div>
+                                    <div style="flex:1;">
+                                        <div class="file-btn-wrapper">
+                                            <span class="btn-upload-label">📁 Upload Image</span>
+                                            <input type="file" accept="image/*" onchange="handleImageFileSelect(this, 'csM1AwayLogo', 'preview-csm1-away')">
+                                        </div>
+                                        <input type="text" id="csM1AwayLogo" placeholder="Image URL" style="margin-top:4px; font-size:10px; padding:4px;" oninput="updateLogoPreview('csM1AwayLogo', 'preview-csm1-away')">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row-3" style="margin-top:6px;">
+                        <div>
+                            <label>Competition:</label>
+                            <input type="text" id="csM1League" placeholder="UEFA Champions League" value="UEFA Champions League">
+                        </div>
+                        <div>
+                            <label>Predicted Score:</label>
+                            <input type="text" id="csM1Pred" placeholder="e.g. 2 - 1">
+                        </div>
+                        <div>
+                            <label>Final Score (FT):</label>
+                            <input type="text" id="csM1Actual" placeholder="e.g. 2 - 1">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Match 2 In Ticket -->
+                <div style="background:#080d1a; border:1px solid #1e293b; border-radius:10px; padding:10px; margin-top:10px;">
+                    <span style="font-size:10px; font-weight:900; color:#f59e0b; text-transform:uppercase;">⚽ Match 2 Details (Optional)</span>
+                    <div class="row-2" style="margin-top:6px;">
+                        <div>
+                            <label>Home Team 2:</label>
+                            <input type="text" id="csM2Home" placeholder="e.g. Arsenal">
+                            <div class="logo-box">
+                                <div class="logo-preview-row">
+                                    <div class="logo-thumb" id="preview-csm2-home">
+                                        <span class="logo-thumb-empty">NO LOGO</span>
+                                    </div>
+                                    <div style="flex:1;">
+                                        <div class="file-btn-wrapper">
+                                            <span class="btn-upload-label">📁 Upload Image</span>
+                                            <input type="file" accept="image/*" onchange="handleImageFileSelect(this, 'csM2HomeLogo', 'preview-csm2-home')">
+                                        </div>
+                                        <input type="text" id="csM2HomeLogo" placeholder="Image URL" style="margin-top:4px; font-size:10px; padding:4px;" oninput="updateLogoPreview('csM2HomeLogo', 'preview-csm2-home')">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <label>Away Team 2:</label>
+                            <input type="text" id="csM2Away" placeholder="e.g. Chelsea">
+                            <div class="logo-box">
+                                <div class="logo-preview-row">
+                                    <div class="logo-thumb" id="preview-csm2-away">
+                                        <span class="logo-thumb-empty">NO LOGO</span>
+                                    </div>
+                                    <div style="flex:1;">
+                                        <div class="file-btn-wrapper">
+                                            <span class="btn-upload-label">📁 Upload Image</span>
+                                            <input type="file" accept="image/*" onchange="handleImageFileSelect(this, 'csM2AwayLogo', 'preview-csm2-away')">
+                                        </div>
+                                        <input type="text" id="csM2AwayLogo" placeholder="Image URL" style="margin-top:4px; font-size:10px; padding:4px;" oninput="updateLogoPreview('csM2AwayLogo', 'preview-csm2-away')">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row-3" style="margin-top:6px;">
+                        <div>
+                            <label>Competition:</label>
+                            <input type="text" id="csM2League" placeholder="Premier League" value="Premier League">
+                        </div>
+                        <div>
+                            <label>Predicted Score:</label>
+                            <input type="text" id="csM2Pred" placeholder="e.g. 3 - 1">
+                        </div>
+                        <div>
+                            <label>Final Score (FT):</label>
+                            <input type="text" id="csM2Actual" placeholder="e.g. 3 - 1">
+                        </div>
+                    </div>
+                </div>
+
+                <button type="button" id="btn-submit-cs" class="btn btn-amber">Publish Correct Score Ticket</button>
+            </div>
+
+            <!-- Live Correct Score Tickets List -->
+            <div class="card">
+                <div class="card-header amber">
+                    <span>📋 Live Correct Score Result Slips</span>
+                    <span id="cs-count-badge" style="font-size:11px; color:#f59e0b;">0 slips</span>
+                </div>
+                <div id="cs-tickets-list">Loading result slips...</div>
+            </div>
         </div>
 
-        <!-- 4. NOTIFICATIONS MANAGER -->
-        <div class="card">
-            <h2>🔔 Broadcast App Notification Alert</h2>
-            <label>Notification Title:</label>
-            <input type="text" id="notifTitle" placeholder="e.g. New VIP Tip Updated">
-            <label>Message Payload:</label>
-            <textarea id="notifMessage" placeholder="e.g. High-confidence Champions League ticket is now available."></textarea>
-            <label>Alert Category:</label>
-            <select id="notifType">
-                <option value="system">System Alert</option>
-                <option value="free_tip">Free Tip</option>
-                <option value="vip">VIP Match</option>
-                <option value="result">Match Result</option>
-            </select>
-            <label>Timestamp Text:</label>
-            <input type="text" id="notifTimestamp" value="Just now" placeholder="Just now">
+        <!-- ================================================================= -->
+        <!-- TAB 4: CLUB LOGOS DIRECTORY & UPLOADER                            -->
+        <!-- ================================================================= -->
+        <div id="section-logos" class="tab-section hidden">
+            <div class="card" style="border: 1px solid #38bdf8;">
+                <div class="card-header blue">🛡️ Club Logos Master Directory & Uploader</div>
+                <p style="font-size: 11px; color: #94a3b8; margin-bottom: 10px;">
+                    Upload custom club logos downloaded from Google. These logos will be instantly stored and used automatically across Free Tips, VIP Matches, and VIP Correct Scores!
+                </p>
 
-            <button type="button" class="action-trigger" id="submit-notif-btn">Send App Alert</button>
+                <div class="row-2">
+                    <div>
+                        <label>Team / Club Name:</label>
+                        <input type="text" id="customLogoTeam" placeholder="e.g. Manchester City">
+                    </div>
+                    <div>
+                        <label>Logo Preview:</label>
+                        <div class="logo-preview-row" style="margin-top:4px;">
+                            <div class="logo-thumb" id="preview-custom-logo">
+                                <span class="logo-thumb-empty">NO LOGO</span>
+                            </div>
+                            <div style="flex:1;">
+                                <div class="file-btn-wrapper">
+                                    <span class="btn-upload-label">📁 Upload Image from Phone/PC</span>
+                                    <input type="file" id="file-custom-logo" accept="image/*" onchange="handleImageFileSelect(this, 'customLogoUrl', 'preview-custom-logo')">
+                                </div>
+                                <input type="text" id="customLogoUrl" placeholder="Or paste Google Image URL" style="margin-top:4px; font-size:11px; padding:6px;" oninput="updateLogoPreview('customLogoUrl', 'preview-custom-logo')">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="button" id="btn-save-custom-logo" class="btn btn-primary">Save Club Logo to App Database</button>
+            </div>
+
+            <div class="card">
+                <div class="card-header blue">
+                    <span>📚 Saved Custom Club Logos</span>
+                    <span id="logos-count-badge" style="font-size:11px; color:#38bdf8;">0 logos</span>
+                </div>
+                <div id="custom-logos-list">Loading logos directory...</div>
+            </div>
         </div>
 
-        <div class="card">
-            <h2>📣 Live Notifications Feed</h2>
-            <div id="notifList">Loading notifications...</div>
+        <!-- ================================================================= -->
+        <!-- TAB 5: BROADCAST NOTIFICATIONS SECTION                            -->
+        <!-- ================================================================= -->
+        <div id="section-notif" class="tab-section hidden">
+            <div class="card">
+                <div class="card-header blue">🔔 Broadcast Mobile Notification Alert</div>
+                
+                <label>Notification Title:</label>
+                <input type="text" id="notifTitle" placeholder="e.g. 🔥 New VIP Correct Score Tip Updated">
+
+                <label>Message Payload:</label>
+                <textarea id="notifMessage" placeholder="e.g. High-confidence UEFA Champions League ticket is now available in VIP Zone."></textarea>
+
+                <div class="row-2">
+                    <div>
+                        <label>Alert Category:</label>
+                        <select id="notifType">
+                            <option value="vip">VIP Match Alert</option>
+                            <option value="free_tip">Free Tip Alert</option>
+                            <option value="result">Match Result Alert</option>
+                            <option value="system">System Notification</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Timestamp Text:</label>
+                        <input type="text" id="notifTimestamp" value="Just now" placeholder="Just now">
+                    </div>
+                </div>
+
+                <button type="button" id="btn-submit-notif" class="btn btn-primary">Broadcast Alert to All App Users</button>
+            </div>
+
+            <div class="card">
+                <div class="card-header blue">
+                    <span>📣 Broadcast History & Active Feed</span>
+                    <span id="notif-count-badge" style="font-size:11px; color:#38bdf8;">0 alerts</span>
+                </div>
+                <div id="notif-feed-list">Loading notifications...</div>
+            </div>
         </div>
 
-        <!-- 5. REGISTERED USER & VIP MEMBERSHIP MANAGEMENT -->
-        <div class="card">
-            <h2>👥 Registered App Users & VIP Access</h2>
-            <p style="font-size: 11px; color: #94a3b8; margin: 0 0 10px 0;">
-                View registered app users and toggle their VIP subscription access directly.
-            </p>
-            <div id="userList">Loading registered users...</div>
-        </div>
-
-        <!-- 6. DYNAMIC APP SETTINGS & NEXT VIP NOTICE BANNER -->
-        <div class="card">
-            <h2>⚙️ Dynamic App Settings & Next VIP Notice</h2>
-            <label>🔥 Next VIP Release Date Banner (shown on VIP Results Screen):</label>
-            <input type="text" id="settingNextVipDate" placeholder="DATE: 12 / 08 / 2026 ( WEDNESDAY )">
-            <label>Next VIP Match Type Text:</label>
-            <input type="text" id="settingNextVipType" placeholder="MATCH TYPE: 2 CORRECT SCORES">
-            <label>Next VIP Total Odds Text:</label>
-            <input type="text" id="settingNextVipOdds" placeholder="TOTAL ODDS: 60.00">
-
-            <hr style="border-color: #223049; margin: 15px 0;">
-
-            <label>Official Telegram Channel URL:</label>
-            <input type="text" id="settingTelegram" placeholder="https://t.me/thekingdomtradingsignal">
-            <label>Admin Contact Email:</label>
-            <input type="email" id="settingEmail" placeholder="support@accuracyscore.site">
-            <label>WhatsApp Support Phone Number:</label>
-            <input type="text" id="settingWhatsapp" placeholder="2349152840495">
-            <label>App Disclaimer Text:</label>
-            <textarea id="settingDisclaimer" placeholder="Accuracy Score provides sports analysis for informational purposes only..."></textarea>
-
-            <button type="button" class="action-trigger" id="submit-settings-btn">Save Global Settings</button>
+        <!-- ================================================================= -->
+        <!-- TAB 6: REGISTERED USERS & VIP MANAGEMENT                          -->
+        <!-- ================================================================= -->
+        <div id="section-users" class="tab-section hidden">
+            <div class="card">
+                <div class="card-header purple">
+                    <span>👥 Registered App Users & VIP Subscriptions</span>
+                    <span id="users-count-badge" style="font-size:11px; color:#c084fc;">0 users</span>
+                </div>
+                <p style="font-size: 11px; color: #94a3b8; margin-bottom: 10px;">
+                    View registered mobile accounts and toggle their VIP subscription status directly.
+                </p>
+                <div id="users-list">Loading users...</div>
+            </div>
         </div>
 
     </div>
 
     <!-- UNIVERSAL EDIT MODAL -->
     <div id="edit-modal" class="modal-overlay hidden">
-        <div class="modal-body">
-            <h2 id="modal-title">✏️ Edit Record</h2>
-            <div id="modal-form-content"></div>
-            <div style="display: flex; gap: 10px; margin-top: 15px;">
-                <button type="button" class="action-trigger btn-secondary" id="modal-cancel-btn" style="margin:0;">Cancel</button>
-                <button type="button" class="action-trigger btn-success" id="modal-save-btn" style="margin:0;">Save Changes</button>
+        <div class="modal-box">
+            <div id="modal-title" class="modal-title">✏️ Edit Record</div>
+            <div id="modal-content"></div>
+            <div class="row-2" style="margin-top: 14px;">
+                <button type="button" class="btn btn-danger" id="modal-cancel-btn" style="margin:0; padding:10px;">Cancel</button>
+                <button type="button" class="btn btn-success" id="modal-save-btn" style="margin:0; padding:10px;">Save Changes</button>
             </div>
         </div>
     </div>
 
-    <!-- Firebase JS SDK ES Modules -->
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast" class="toast">Action Saved Successfully!</div>
+
+    <!-- FIREBASE SDK & CONTROLLER SCRIPT -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -1076,199 +719,282 @@
         const auth = getAuth(app);
         const db = getFirestore(app, "ai-studio-accuracyscore-815a63cc-1a8d-4296-8574-4b1171cc9a03");
 
-        let currentUser = null;
         let activeFreeFilter = 'all';
-        let currentEditingCallback = null;
+        let cachedFreeTips = [];
+        let currentModalSaveCallback = null;
 
-        // UI References
-        const statusBar = document.getElementById('auth-status-bar');
-        const statusText = document.getElementById('auth-status-text');
-        const logoutBtn = document.getElementById('logout-btn');
-        const loginCard = document.getElementById('login-card');
-        const adminContent = document.getElementById('admin-panel-content');
-        const loginForm = document.getElementById('admin-login-form');
-        const loginError = document.getElementById('login-error');
+        // UI Toast helper
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg || 'Action Saved Successfully!';
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2500);
+        }
 
-        const editModal = document.getElementById('edit-modal');
-        const modalTitle = document.getElementById('modal-title');
-        const modalFormContent = document.getElementById('modal-form-content');
-        const modalCancelBtn = document.getElementById('modal-cancel-btn');
-        const modalSaveBtn = document.getElementById('modal-save-btn');
+        // Image file helper: reads image file from input, compresses to standard 128x128 Base64 data URL for fast cloud storage
+        window.handleImageFileSelect = function(fileInput, targetInputId, previewContainerId) {
+            const file = fileInput.files && fileInput.files[0];
+            if (!file) return;
 
-        modalCancelBtn.addEventListener('click', () => {
-            editModal.classList.add('hidden');
-            currentEditingCallback = null;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    
+                    // Maintain aspect ratio with max dimension 160px
+                    let width = img.width;
+                    let height = img.height;
+                    const maxDim = 160;
+                    if (width > height) {
+                        if (width > maxDim) {
+                            height = Math.round((height * maxDim) / width);
+                            width = maxDim;
+                        }
+                    } else {
+                        if (height > maxDim) {
+                            width = Math.round((width * maxDim) / height);
+                            height = maxDim;
+                        }
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    const dataUrl = canvas.toDataURL('image/png');
+                    const targetInput = document.getElementById(targetInputId);
+                    if (targetInput) {
+                        targetInput.value = dataUrl;
+                    }
+                    const preview = document.getElementById(previewContainerId);
+                    if (preview) {
+                        preview.innerHTML = `<img src="${dataUrl}" alt="Logo Preview">`;
+                    }
+                    showToast("Logo Image Loaded & Ready!");
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        };
+
+        window.updateLogoPreview = function(inputId, previewContainerId) {
+            const val = document.getElementById(inputId)?.value.trim();
+            const preview = document.getElementById(previewContainerId);
+            if (!preview) return;
+            if (val) {
+                preview.innerHTML = `<img src="${val}" alt="Logo Preview" onerror="this.onerror=null; this.parentNode.innerHTML='<span class=\\'logo-thumb-empty\\'>BAD URL</span>';">`;
+            } else {
+                preview.innerHTML = `<span class="logo-thumb-empty">NO LOGO</span>`;
+            }
+        };
+
+        // Tab Navigation
+        window.switchMainTab = function(tabId) {
+            ['free', 'vip', 'cs', 'logos', 'notif', 'users'].forEach(t => {
+                const sec = document.getElementById(`section-${t}`);
+                const btn = document.getElementById(`tab-btn-${t}`);
+                if (sec) sec.classList.add('hidden');
+                if (btn) {
+                    btn.classList.remove('active', 'active-blue');
+                }
+            });
+
+            const activeSec = document.getElementById(`section-${tabId}`);
+            const activeBtn = document.getElementById(`tab-btn-${tabId}`);
+            if (activeSec) activeSec.classList.remove('hidden');
+            if (activeBtn) {
+                if (tabId === 'cs') {
+                    activeBtn.classList.add('active');
+                } else {
+                    activeBtn.classList.add('active-blue');
+                }
+            }
+        };
+
+        // Modal Controls
+        document.getElementById('modal-cancel-btn').addEventListener('click', () => {
+            document.getElementById('edit-modal').classList.add('hidden');
+            currentModalSaveCallback = null;
         });
 
-        modalSaveBtn.addEventListener('click', async () => {
-            if (currentEditingCallback) {
-                await currentEditingCallback();
-                editModal.classList.add('hidden');
-                currentEditingCallback = null;
+        document.getElementById('modal-save-btn').addEventListener('click', async () => {
+            if (currentModalSaveCallback) {
+                await currentModalSaveCallback();
+                document.getElementById('edit-modal').classList.add('hidden');
+                currentModalSaveCallback = null;
+                showToast('Changes Saved to Cloud Firestore!');
             }
         });
 
-        // --- AUTHENTICATION OBSERVER ---
+        // --- AUTHENTICATION FLOW ---
         onAuthStateChanged(auth, async (user) => {
+            const statusText = document.getElementById('auth-status-text');
+            const logoutBtn = document.getElementById('logout-btn');
+            const loginCard = document.getElementById('login-card');
+            const adminConsole = document.getElementById('admin-console');
+
             if (user) {
                 try {
-                    const adminRef = doc(db, "admins", user.uid);
-                    const adminSnap = await getDoc(adminRef);
+                    let isAuthorized = false;
+                    if (user.email === 'mamabakingdmfx@gmail.com') {
+                        isAuthorized = true;
+                    } else {
+                        const adminRef = doc(db, "admins", user.uid);
+                        const adminSnap = await getDoc(adminRef);
+                        if (adminSnap.exists() && (adminSnap.data().role === 'admin' || adminSnap.data().role === 'superadmin')) {
+                            isAuthorized = true;
+                        }
+                    }
 
-                    if (adminSnap.exists() && (adminSnap.data().role === 'admin' || adminSnap.data().role === 'superadmin')) {
-                        currentUser = user;
-                        statusBar.className = "auth-banner logged-in";
-                        statusText.textContent = `✅ Authenticated Admin: ${user.email} (${adminSnap.data().role})`;
+                    if (isAuthorized) {
+                        statusText.className = "auth-badge online";
+                        statusText.textContent = `✅ ADMIN: ${user.email}`;
                         logoutBtn.classList.remove('hidden');
                         loginCard.classList.add('hidden');
-                        adminContent.classList.remove('hidden');
-                        loginError.classList.add('hidden');
+                        adminConsole.classList.remove('hidden');
 
-                        initRealtimeListeners();
-                        loadAppSettings();
+                        initRealtimeSync();
+                        loadSettingsBanner();
                     } else {
-                        throw new Error(`UID ${user.uid} is not authorized in /admins or lacks admin role.`);
+                        throw new Error(`User ${user.uid} is not authorized.`);
                     }
                 } catch (err) {
-                    console.error("Admin verification error:", err);
-                    loginError.textContent = `Access Denied: ${err.message}`;
-                    loginError.classList.remove('hidden');
-                    statusBar.className = "auth-banner logged-out";
-                    statusText.textContent = "🔒 Status: Unauthorized Admin Record";
-                    logoutBtn.classList.add('hidden');
+                    console.error("Auth check error:", err);
+                    statusText.className = "auth-badge offline";
+                    statusText.textContent = "🔒 UNAUTHORIZED";
                     loginCard.classList.remove('hidden');
-                    adminContent.classList.add('hidden');
+                    adminConsole.classList.add('hidden');
+                    document.getElementById('login-error').textContent = err.message;
+                    document.getElementById('login-error').style.display = 'block';
                     await signOut(auth);
                 }
             } else {
-                currentUser = null;
-                statusBar.className = "auth-banner logged-out";
-                statusText.textContent = "🔒 Status: Not Authenticated";
+                statusText.className = "auth-badge offline";
+                statusText.textContent = "🔒 NOT LOGGED IN";
                 logoutBtn.classList.add('hidden');
                 loginCard.classList.remove('hidden');
-                adminContent.classList.add('hidden');
+                adminConsole.classList.add('hidden');
             }
         });
 
-        // --- LOGIN HANDLER ---
-        loginForm.addEventListener('submit', async (e) => {
+        document.getElementById('admin-login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('login-email').value.trim();
             const password = document.getElementById('login-password').value;
-            loginError.classList.add('hidden');
+            const errDiv = document.getElementById('login-error');
+            errDiv.style.display = 'none';
 
             try {
                 await signInWithEmailAndPassword(auth, email, password);
             } catch (err) {
-                loginError.textContent = `Login Failed: ${err.message}`;
-                loginError.classList.remove('hidden');
+                errDiv.textContent = `Login Failed: ${err.message}`;
+                errDiv.style.display = 'block';
             }
         });
 
-        // --- LOGOUT HANDLER ---
-        logoutBtn.addEventListener('click', async () => {
+        document.getElementById('logout-btn').addEventListener('click', async () => {
             await signOut(auth);
         });
 
-        // --- 1. FREE TIPS PUBLISH & MANAGE ---
-        const submitFreeBtn = document.getElementById('submit-free-btn');
-        submitFreeBtn.addEventListener('click', async (e) => {
-            e.preventDefault();
+        // =====================================================================
+        // 1. FREE TIPS LOGIC
+        // =====================================================================
+        document.getElementById('btn-submit-free').addEventListener('click', async () => {
             const date = document.getElementById('freeDate').value;
             const league = document.getElementById('freeLeague').value.trim() || 'Premier League';
             const time = document.getElementById('freeTime').value.trim() || '16:00 UTC';
             const team1 = document.getElementById('freeTeam1').value.trim();
             const team2 = document.getElementById('freeTeam2').value.trim();
-            const prediction = document.getElementById('freePrediction').value.trim();
+            const logo1 = document.getElementById('freeTeam1Logo').value.trim();
+            const logo2 = document.getElementById('freeTeam2Logo').value.trim();
+            const pred = document.getElementById('freePred').value.trim();
             const odds = document.getElementById('freeOdds').value.trim();
 
-            if (!team1 || !team2 || !prediction || !odds) {
-                return alert("Please fill in required fields: Home Team, Away Team, Prediction Tip, and Odds!");
+            if (!team1 || !team2 || !pred || !odds) {
+                return alert("Please fill in Home Team, Away Team, Prediction Tip, and Odds!");
             }
 
             try {
-                const docData = {
+                await addDoc(collection(db, "free_tips"), {
                     homeTeam: team1,
                     awayTeam: team2,
+                    homeLogo: logo1 || '',
+                    awayLogo: logo2 || '',
                     league: league,
                     kickoffTime: time,
                     date: date,
-                    prediction: prediction,
+                    prediction: pred,
                     odds: String(odds),
                     status: 'NOT STARTED',
                     published: true,
                     createdAt: new Date().toISOString(),
                     updatedAt: new Date().toISOString()
-                };
-
-                await addDoc(collection(db, "free_tips"), docData);
-                alert("SUCCESS: Free Tip published to Firestore!");
+                });
 
                 document.getElementById('freeTeam1').value = '';
                 document.getElementById('freeTeam2').value = '';
-                document.getElementById('freePrediction').value = '';
+                document.getElementById('freeTeam1Logo').value = '';
+                document.getElementById('freeTeam2Logo').value = '';
+                document.getElementById('preview-free-logo1').innerHTML = '<span class="logo-thumb-empty">NO LOGO</span>';
+                document.getElementById('preview-free-logo2').innerHTML = '<span class="logo-thumb-empty">NO LOGO</span>';
+                document.getElementById('freePred').value = '';
                 document.getElementById('freeOdds').value = '';
+                showToast("Free Tip Published Successfully!");
             } catch (err) {
-                console.error("Firestore Free Tips Error:", err);
-                alert("Firestore Error: " + err.message);
+                alert("Error saving Free Tip: " + err.message);
             }
         });
 
-        // --- 1-CLICK FREE TIPS 3-DAY ROTATION ---
-        document.getElementById('rotate-days-btn').addEventListener('click', async () => {
-            if (!confirm("Confirm 3-Day Rotation?\n- All 'Yesterday' free tips will be deleted.\n- All 'Today' tips will move to 'Yesterday'.\n- All 'Tomorrow' tips will move to 'Today'.\n- You can then manually upload new tips for 'Tomorrow'.")) {
+        // 3-Day Rotation
+        document.getElementById('btn-rotate-days').addEventListener('click', async () => {
+            if (!confirm("Confirm 3-Day Free Tips Rotation?\n- 'Yesterday' games will be deleted.\n- 'Today' games will shift to 'Yesterday'.\n- 'Tomorrow' games will shift to 'Today'.")) {
                 return;
             }
 
             try {
                 const snap = await getDocs(collection(db, "free_tips"));
-                let deletedCount = 0;
-                let movedToYesterday = 0;
-                let movedToToday = 0;
-
                 for (const docSnap of snap.docs) {
                     const item = docSnap.data();
                     const d = (item.date || 'Today').toLowerCase();
                     if (d === 'yesterday') {
                         await deleteDoc(doc(db, "free_tips", docSnap.id));
-                        deletedCount++;
                     } else if (d === 'today') {
                         await updateDoc(doc(db, "free_tips", docSnap.id), { date: 'Yesterday', updatedAt: new Date().toISOString() });
-                        movedToYesterday++;
                     } else if (d === 'tomorrow') {
                         await updateDoc(doc(db, "free_tips", docSnap.id), { date: 'Today', updatedAt: new Date().toISOString() });
-                        movedToToday++;
                     }
                 }
-
-                alert(`SUCCESS: 3-Day Rotation Finished!\n- Deleted Yesterday: ${deletedCount}\n- Today ➔ Yesterday: ${movedToYesterday}\n- Tomorrow ➔ Today: ${movedToToday}`);
+                showToast("3-Day Rotation Completed!");
             } catch (err) {
                 alert("Rotation Error: " + err.message);
             }
         });
 
-        // --- FREE TIPS FILTER TABS ---
-        ['all', 'today', 'yesterday', 'tomorrow'].forEach(filter => {
-            document.getElementById(`filter-free-${filter}`).addEventListener('click', () => {
-                activeFreeFilter = filter;
-                ['all', 'today', 'yesterday', 'tomorrow'].forEach(f => {
-                    document.getElementById(`filter-free-${f}`).className = `tab-btn ${f === filter ? 'active' : ''}`;
-                });
-                renderFreeTips();
+        window.filterFreeTips = function(filter) {
+            activeFreeFilter = filter;
+            ['all', 'today', 'yesterday', 'tomorrow'].forEach(f => {
+                const btn = document.getElementById(`filter-free-${f}`);
+                if (btn) {
+                    if (f === filter) btn.classList.add('active');
+                    else btn.classList.remove('active');
+                }
             });
-        });
+            renderFreeTips();
+        };
 
-        let cachedFreeTips = [];
         function renderFreeTips() {
-            const container = document.getElementById('freeMatchesList');
+            const container = document.getElementById('free-tips-list');
             let list = cachedFreeTips;
-
             if (activeFreeFilter !== 'all') {
                 list = list.filter(item => (item.date || 'Today').toLowerCase() === activeFreeFilter);
             }
 
+            document.getElementById('free-count-badge').textContent = `${list.length} tips`;
+
             if (list.length === 0) {
-                container.innerHTML = `<p style="font-size:12px; color:#94a3b8;">No free tips found for filter '${activeFreeFilter}'.</p>`;
+                container.innerHTML = `<p style="font-size:11px; color:#94a3b8;">No free tips in filter '${activeFreeFilter}'.</p>`;
                 return;
             }
 
@@ -1276,22 +1002,26 @@
             list.forEach(item => {
                 const id = item.id;
                 const isPub = item.published !== false;
+                const status = item.status || 'NOT STARTED';
+                const statusClass = status === 'WON' ? 'won' : (status === 'LOST' ? 'lost' : '');
+
                 const div = document.createElement('div');
-                div.className = `item-row ${isPub ? '' : 'unpublished'}`;
+                div.className = `item-card ${statusClass} ${isPub ? '' : 'unpub'}`;
                 div.innerHTML = `
-                    <div>
-                        <strong>${item.homeTeam} vs ${item.awayTeam}</strong>
-                        <span class="badge ${isPub ? 'badge-pub' : 'badge-unpub'}">${isPub ? 'PUBLISHED' : 'UNPUBLISHED'}</span>
-                        <span class="badge badge-status">${item.date || 'Today'}</span>
-                        <br>
-                        <small>League: ${item.league || 'League'} | Time: ${item.kickoffTime || '--:--'} | Tip: <strong>${item.prediction}</strong> @ ${item.odds} | Status: <strong style="color:#38bdf8">${item.status || 'NOT STARTED'}</strong></small>
+                    <div class="item-header">
+                        <div class="item-title">${item.homeTeam} vs ${item.awayTeam}</div>
+                        <span class="item-badge ${status === 'WON' ? 'badge-won' : (status === 'LOST' ? 'badge-lost' : 'badge-locked')}">${status}</span>
                     </div>
-                    <div class="btn-grid">
-                        <button type="button" class="status-pill btn-won" id="free-won-${id}">WON</button>
-                        <button type="button" class="status-pill btn-lost" id="free-lost-${id}">LOST</button>
-                        <button type="button" class="status-pill btn-edit" id="free-edit-${id}">✏️ Edit</button>
-                        <button type="button" class="status-pill btn-toggle" id="free-toggle-${id}">${isPub ? 'Hide' : 'Show'}</button>
-                        <button type="button" class="status-pill btn-void" id="free-del-${id}">Delete</button>
+                    <div class="item-meta">
+                        📅 <strong>${item.date || 'Today'}</strong> • ⏰ ${item.kickoffTime || '--:--'} • 🏆 ${item.league || 'League'}<br>
+                        🎯 Tip: <strong>${item.prediction}</strong> | Odds: <strong>${item.odds}</strong> | ${isPub ? '🟢 Live on App' : '🔴 Hidden'}
+                    </div>
+                    <div class="action-row">
+                        <button type="button" class="pill-btn pill-won" id="free-won-${id}">WON</button>
+                        <button type="button" class="pill-btn pill-lost" id="free-lost-${id}">LOST</button>
+                        <button type="button" class="pill-btn pill-edit" id="free-edit-${id}">✏️ Edit</button>
+                        <button type="button" class="pill-btn pill-toggle" id="free-toggle-${id}">${isPub ? 'Hide' : 'Show'}</button>
+                        <button type="button" class="pill-btn pill-del" id="free-del-${id}">Delete</button>
                     </div>
                 `;
                 container.appendChild(div);
@@ -1300,37 +1030,67 @@
                     document.getElementById(`free-won-${id}`)?.addEventListener('click', () => updateDoc(doc(db, "free_tips", id), { status: 'WON', updatedAt: new Date().toISOString() }));
                     document.getElementById(`free-lost-${id}`)?.addEventListener('click', () => updateDoc(doc(db, "free_tips", id), { status: 'LOST', updatedAt: new Date().toISOString() }));
                     document.getElementById(`free-toggle-${id}`)?.addEventListener('click', () => updateDoc(doc(db, "free_tips", id), { published: !isPub, updatedAt: new Date().toISOString() }));
-                    document.getElementById(`free-del-${id}`)?.addEventListener('click', () => {
-                        if (confirm("Delete this Free Tip permanently?")) deleteDoc(doc(db, "free_tips", id));
+                    document.getElementById(`free-del-${id}`)?.addEventListener('click', async () => {
+                        if (confirm("Delete this Free Tip permanently?")) await deleteDoc(doc(db, "free_tips", id));
                     });
-                    document.getElementById(`free-edit-${id}`)?.addEventListener('click', () => openEditFreeTipModal(id, item));
+                    document.getElementById(`free-edit-${id}`)?.addEventListener('click', () => openEditFreeModal(id, item));
                 }, 0);
             });
         }
 
-        function openEditFreeTipModal(id, item) {
-            modalTitle.textContent = `✏️ Edit Free Tip: ${item.homeTeam} vs ${item.awayTeam}`;
-            modalFormContent.innerHTML = `
-                <label>Date Category:</label>
-                <select id="edit-free-date">
-                    <option value="Today" ${item.date === 'Today' ? 'selected' : ''}>Today</option>
-                    <option value="Yesterday" ${item.date === 'Yesterday' ? 'selected' : ''}>Yesterday</option>
-                    <option value="Tomorrow" ${item.date === 'Tomorrow' ? 'selected' : ''}>Tomorrow</option>
-                </select>
-                <label>League Name:</label>
-                <input type="text" id="edit-free-league" value="${item.league || ''}">
-                <label>Kickoff Time:</label>
-                <input type="text" id="edit-free-time" value="${item.kickoffTime || ''}">
-                <label>Home Team:</label>
-                <input type="text" id="edit-free-team1" value="${item.homeTeam || ''}">
-                <label>Away Team:</label>
-                <input type="text" id="edit-free-team2" value="${item.awayTeam || ''}">
-                <label>Prediction Tip:</label>
-                <input type="text" id="edit-free-pred" value="${item.prediction || ''}">
-                <label>Odds:</label>
-                <input type="text" id="edit-free-odds" value="${item.odds || ''}">
+        function openEditFreeModal(id, item) {
+            document.getElementById('modal-title').textContent = `✏️ Edit Free Tip: ${item.homeTeam} vs ${item.awayTeam}`;
+            document.getElementById('modal-content').innerHTML = `
+                <div class="row-2">
+                    <div>
+                        <label>Date Category:</label>
+                        <select id="modal-free-date">
+                            <option value="Today" ${item.date === 'Today' ? 'selected' : ''}>Today</option>
+                            <option value="Yesterday" ${item.date === 'Yesterday' ? 'selected' : ''}>Yesterday</option>
+                            <option value="Tomorrow" ${item.date === 'Tomorrow' ? 'selected' : ''}>Tomorrow</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>League:</label>
+                        <input type="text" id="modal-free-league" value="${item.league || ''}">
+                    </div>
+                </div>
+                <div class="row-2">
+                    <div>
+                        <label>Home Team:</label>
+                        <input type="text" id="modal-free-team1" value="${item.homeTeam || ''}">
+                    </div>
+                    <div>
+                        <label>Away Team:</label>
+                        <input type="text" id="modal-free-team2" value="${item.awayTeam || ''}">
+                    </div>
+                </div>
+                <div class="row-2">
+                    <div>
+                        <label>Home Logo (File/URL):</label>
+                        <input type="text" id="modal-free-logo1" value="${item.homeLogo || ''}" placeholder="Image URL or Base64">
+                    </div>
+                    <div>
+                        <label>Away Logo (File/URL):</label>
+                        <input type="text" id="modal-free-logo2" value="${item.awayLogo || ''}" placeholder="Image URL or Base64">
+                    </div>
+                </div>
+                <div class="row-3">
+                    <div>
+                        <label>Kickoff Time:</label>
+                        <input type="text" id="modal-free-time" value="${item.kickoffTime || ''}">
+                    </div>
+                    <div>
+                        <label>Prediction:</label>
+                        <input type="text" id="modal-free-pred" value="${item.prediction || ''}">
+                    </div>
+                    <div>
+                        <label>Odds:</label>
+                        <input type="text" id="modal-free-odds" value="${item.odds || ''}">
+                    </div>
+                </div>
                 <label>Status:</label>
-                <select id="edit-free-status">
+                <select id="modal-free-status">
                     <option value="NOT STARTED" ${item.status === 'NOT STARTED' ? 'selected' : ''}>NOT STARTED</option>
                     <option value="WON" ${item.status === 'WON' ? 'selected' : ''}>WON</option>
                     <option value="LOST" ${item.status === 'LOST' ? 'selected' : ''}>LOST</option>
@@ -1338,534 +1098,612 @@
                     <option value="VOID" ${item.status === 'VOID' ? 'selected' : ''}>VOID</option>
                 </select>
             `;
-            editModal.classList.remove('hidden');
 
-            currentEditingCallback = async () => {
-                const date = document.getElementById('edit-free-date').value;
-                const league = document.getElementById('edit-free-league').value.trim();
-                const kickoffTime = document.getElementById('edit-free-time').value.trim();
-                const homeTeam = document.getElementById('edit-free-team1').value.trim();
-                const awayTeam = document.getElementById('edit-free-team2').value.trim();
-                const prediction = document.getElementById('edit-free-pred').value.trim();
-                const odds = document.getElementById('edit-free-odds').value.trim();
-                const status = document.getElementById('edit-free-status').value;
-
+            document.getElementById('edit-modal').classList.remove('hidden');
+            currentModalSaveCallback = async () => {
                 await updateDoc(doc(db, "free_tips", id), {
-                    date,
-                    league,
-                    kickoffTime,
-                    homeTeam,
-                    awayTeam,
-                    prediction,
-                    odds,
-                    status,
+                    date: document.getElementById('modal-free-date').value,
+                    league: document.getElementById('modal-free-league').value.trim(),
+                    kickoffTime: document.getElementById('modal-free-time').value.trim(),
+                    homeTeam: document.getElementById('modal-free-team1').value.trim(),
+                    awayTeam: document.getElementById('modal-free-team2').value.trim(),
+                    homeLogo: document.getElementById('modal-free-logo1').value.trim(),
+                    awayLogo: document.getElementById('modal-free-logo2').value.trim(),
+                    prediction: document.getElementById('modal-free-pred').value.trim(),
+                    odds: document.getElementById('modal-free-odds').value.trim(),
+                    status: document.getElementById('modal-free-status').value,
                     updatedAt: new Date().toISOString()
                 });
-                alert("SUCCESS: Free Tip updated!");
             };
         }
 
-        // --- 2. VIP MATCH PUBLISH & MANAGE ---
-        const submitVipBtn = document.getElementById('submit-vip-btn');
-        submitVipBtn.addEventListener('click', async (e) => {
-            e.preventDefault();
+        // =====================================================================
+        // 2. VIP MATCHES LOGIC
+        // =====================================================================
+        document.getElementById('btn-submit-vip').addEventListener('click', async () => {
             const league = document.getElementById('vipLeague').value.trim() || 'UEFA Champions League';
             const date = document.getElementById('vipDate').value.trim() || 'Today';
             const time = document.getElementById('vipTime').value.trim() || '20:00 UTC';
             const team1 = document.getElementById('vipTeam1').value.trim();
             const team2 = document.getElementById('vipTeam2').value.trim();
-            const prediction = document.getElementById('vipPrediction').value.trim();
+            const logo1 = document.getElementById('vipTeam1Logo').value.trim();
+            const logo2 = document.getElementById('vipTeam2Logo').value.trim();
+            const pred = document.getElementById('vipPred').value.trim();
             const odds = document.getElementById('vipOdds').value.trim();
-            const actualScore = document.getElementById('vipActualScore').value.trim();
+            const actual = document.getElementById('vipActual').value.trim();
 
-            if (!team1 || !team2 || !prediction || !odds) {
-                return alert("Please fill in required fields for VIP Match!");
+            if (!team1 || !team2 || !pred || !odds) {
+                return alert("Please fill in Home Team, Away Team, Prediction, and Odds!");
             }
 
             try {
-                const docData = {
+                await addDoc(collection(db, "vip_zones"), {
                     competition: league,
                     date: date,
                     kickoffTime: time,
                     homeTeam: team1,
                     awayTeam: team2,
-                    correctScorePrediction: prediction,
+                    homeLogo: logo1 || '',
+                    awayLogo: logo2 || '',
+                    correctScorePrediction: pred,
                     odds: String(odds),
                     status: 'upcoming',
-                    actualScore: actualScore || '',
+                    actualScore: actual || '',
                     published: true,
-                    updatedAt: new Date().toISOString()
-                };
-
-                await addDoc(collection(db, "vip_zones"), docData);
-                alert("SUCCESS: VIP Match published to Firestore!");
-
-                document.getElementById('vipTeam1').value = '';
-                document.getElementById('vipTeam2').value = '';
-                document.getElementById('vipPrediction').value = '';
-                document.getElementById('vipOdds').value = '';
-                document.getElementById('vipActualScore').value = '';
-            } catch (err) {
-                alert("Firestore VIP Error: " + err.message);
-            }
-        });
-
-        // --- HELPER: SETTLE VIP MATCH & AUTO-SYNC TO CORRECT SCORE RESULTS ---
-        async function settleVipMatch(vipId, item, status, targetSlot = 'latest') {
-            try {
-                const scoreInput = document.getElementById(`vip-score-${vipId}`);
-                const actualScore = scoreInput ? scoreInput.value.trim() : (item.actualScore || item.correctScorePrediction || '');
-
-                // 1. Update VIP match in vip_zones
-                await updateDoc(doc(db, "vip_zones", vipId), {
-                    status: status,
-                    actualScore: actualScore,
+                    createdAt: new Date().toISOString(),
                     updatedAt: new Date().toISOString()
                 });
 
-                // 2. Sync to correct_score_results
-                const csDocId = targetSlot ? targetSlot : `vip-${vipId}`;
-                const title = `${item.homeTeam} vs ${item.awayTeam}`;
-                const csData = {
-                    id: csDocId,
-                    tabLabel: targetSlot === 'previous' ? `PREVIOUS VIP (${item.date || 'SAT'})` : `LATEST VIP (${item.date || 'MON'})`,
-                    dateTitle: item.date || '10 / 08 / 2026',
-                    dayOfWeek: 'MONDAY',
-                    ticketTitle: item.competition ? `${item.competition}: ${title}` : title,
-                    date: item.date || 'Today',
-                    odds: String(item.odds || '2.00'),
-                    status: status === 'won' || status === 'WON' ? 'WON' : (status === 'lost' || status === 'LOST' ? 'LOST' : 'WON'),
-                    published: true,
-                    vipMatchId: vipId,
-                    matches: [
-                        {
-                            id: `m-${vipId}`,
-                            homeTeam: item.homeTeam,
-                            awayTeam: item.awayTeam,
-                            league: item.competition || 'VIP League',
-                            predictedScore: item.correctScorePrediction || '2 - 1',
-                            actualScore: actualScore || item.correctScorePrediction || '2 - 1',
-                            status: status === 'won' || status === 'WON' ? 'won' : 'lost',
-                            odds: String(item.odds || '2.00')
-                        }
-                    ],
-                    updatedAt: new Date().toISOString()
-                };
-
-                await setDoc(doc(db, "correct_score_results", csDocId), csData, { merge: true });
-                alert(`SUCCESS: VIP Match settled as ${status} & synced to Correct Score Results slot: '${csDocId}'!`);
+                document.getElementById('vipTeam1').value = '';
+                document.getElementById('vipTeam2').value = '';
+                document.getElementById('vipTeam1Logo').value = '';
+                document.getElementById('vipTeam2Logo').value = '';
+                document.getElementById('preview-vip-logo1').innerHTML = '<span class="logo-thumb-empty">NO LOGO</span>';
+                document.getElementById('preview-vip-logo2').innerHTML = '<span class="logo-thumb-empty">NO LOGO</span>';
+                document.getElementById('vipPred').value = '';
+                document.getElementById('vipOdds').value = '';
+                document.getElementById('vipActual').value = '';
+                showToast("VIP Match Published Successfully!");
             } catch (err) {
-                console.error("Settlement sync error:", err);
-                alert("Settlement error: " + err.message);
+                alert("Error publishing VIP match: " + err.message);
+            }
+        });
+
+        function renderVipMatches(snapshot) {
+            const container = document.getElementById('vip-matches-list');
+            document.getElementById('vip-count-badge').textContent = `${snapshot.size} matches`;
+
+            if (snapshot.empty) {
+                container.innerHTML = '<p style="font-size:11px; color:#94a3b8;">No VIP matches in database.</p>';
+                return;
+            }
+
+            container.innerHTML = '';
+            snapshot.forEach(docSnap => {
+                const item = docSnap.data();
+                const id = docSnap.id;
+                const isPub = item.published !== false;
+                const status = (item.status || 'upcoming').toLowerCase();
+
+                const div = document.createElement('div');
+                div.className = `item-card ${status === 'won' ? 'won' : (status === 'lost' ? 'lost' : '')} ${isPub ? '' : 'unpub'}`;
+                div.innerHTML = `
+                    <div class="item-header">
+                        <div class="item-title">${item.homeTeam} vs ${item.awayTeam}</div>
+                        <span class="item-badge ${status === 'won' ? 'badge-won' : (status === 'lost' ? 'badge-lost' : 'badge-locked')}">${status.toUpperCase()}</span>
+                    </div>
+                    <div class="item-meta">
+                        📅 <strong>${item.date || 'Today'}</strong> • ⏰ ${item.kickoffTime || '--:--'} • 🏆 ${item.competition || 'VIP League'}<br>
+                        🎯 Prediction: <strong>${item.correctScorePrediction}</strong> | Odds: <strong>${item.odds}</strong> | ${item.actualScore ? `Score: <strong style="color:#34d399">${item.actualScore}</strong>` : 'No score yet'}
+                    </div>
+                    <div class="action-row">
+                        <button type="button" class="pill-btn pill-won" id="vip-won-${id}">WON</button>
+                        <button type="button" class="pill-btn pill-lost" id="vip-lost-${id}">LOST</button>
+                        <button type="button" class="pill-btn pill-edit" id="vip-edit-${id}">✏️ Edit</button>
+                        <button type="button" class="pill-btn pill-toggle" id="vip-toggle-${id}">${isPub ? 'Hide' : 'Show'}</button>
+                        <button type="button" class="pill-btn pill-del" id="vip-del-${id}">Delete</button>
+                    </div>
+                `;
+                container.appendChild(div);
+
+                setTimeout(() => {
+                    document.getElementById(`vip-won-${id}`)?.addEventListener('click', () => updateDoc(doc(db, "vip_zones", id), { status: 'won', updatedAt: new Date().toISOString() }));
+                    document.getElementById(`vip-lost-${id}`)?.addEventListener('click', () => updateDoc(doc(db, "vip_zones", id), { status: 'lost', updatedAt: new Date().toISOString() }));
+                    document.getElementById(`vip-toggle-${id}`)?.addEventListener('click', () => updateDoc(doc(db, "vip_zones", id), { published: !isPub, updatedAt: new Date().toISOString() }));
+                    document.getElementById(`vip-del-${id}`)?.addEventListener('click', async () => {
+                        if (confirm("Delete this VIP match?")) await deleteDoc(doc(db, "vip_zones", id));
+                    });
+                    document.getElementById(`vip-edit-${id}`)?.addEventListener('click', () => openEditVipModal(id, item));
+                }, 0);
+            });
+        }
+
+        function openEditVipModal(id, item) {
+            document.getElementById('modal-title').textContent = `✏️ Edit VIP Match: ${item.homeTeam} vs ${item.awayTeam}`;
+            document.getElementById('modal-content').innerHTML = `
+                <div class="row-2">
+                    <div>
+                        <label>Competition:</label>
+                        <input type="text" id="modal-vip-league" value="${item.competition || ''}">
+                    </div>
+                    <div>
+                        <label>Date Display:</label>
+                        <input type="text" id="modal-vip-date" value="${item.date || ''}">
+                    </div>
+                </div>
+                <div class="row-2">
+                    <div>
+                        <label>Home Team:</label>
+                        <input type="text" id="modal-vip-team1" value="${item.homeTeam || ''}">
+                    </div>
+                    <div>
+                        <label>Away Team:</label>
+                        <input type="text" id="modal-vip-team2" value="${item.awayTeam || ''}">
+                    </div>
+                </div>
+                <div class="row-2">
+                    <div>
+                        <label>Home Logo (File/URL):</label>
+                        <input type="text" id="modal-vip-logo1" value="${item.homeLogo || ''}" placeholder="Image URL or Base64">
+                    </div>
+                    <div>
+                        <label>Away Logo (File/URL):</label>
+                        <input type="text" id="modal-vip-logo2" value="${item.awayLogo || ''}" placeholder="Image URL or Base64">
+                    </div>
+                </div>
+                <div class="row-3">
+                    <div>
+                        <label>Kickoff Time:</label>
+                        <input type="text" id="modal-vip-time" value="${item.kickoffTime || ''}">
+                    </div>
+                    <div>
+                        <label>Prediction:</label>
+                        <input type="text" id="modal-vip-pred" value="${item.correctScorePrediction || ''}">
+                    </div>
+                    <div>
+                        <label>Odds:</label>
+                        <input type="text" id="modal-vip-odds" value="${item.odds || ''}">
+                    </div>
+                </div>
+                <div class="row-2">
+                    <div>
+                        <label>Actual Final Score:</label>
+                        <input type="text" id="modal-vip-actual" value="${item.actualScore || ''}">
+                    </div>
+                    <div>
+                        <label>Status:</label>
+                        <select id="modal-vip-status">
+                            <option value="upcoming" ${item.status === 'upcoming' ? 'selected' : ''}>UPCOMING</option>
+                            <option value="won" ${item.status === 'won' ? 'selected' : ''}>WON</option>
+                            <option value="lost" ${item.status === 'lost' ? 'selected' : ''}>LOST</option>
+                        </select>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('edit-modal').classList.remove('hidden');
+            currentModalSaveCallback = async () => {
+                await updateDoc(doc(db, "vip_zones", id), {
+                    competition: document.getElementById('modal-vip-league').value.trim(),
+                    date: document.getElementById('modal-vip-date').value.trim(),
+                    kickoffTime: document.getElementById('modal-vip-time').value.trim(),
+                    homeTeam: document.getElementById('modal-vip-team1').value.trim(),
+                    awayTeam: document.getElementById('modal-vip-team2').value.trim(),
+                    homeLogo: document.getElementById('modal-vip-logo1').value.trim(),
+                    awayLogo: document.getElementById('modal-vip-logo2').value.trim(),
+                    correctScorePrediction: document.getElementById('modal-vip-pred').value.trim(),
+                    odds: document.getElementById('modal-vip-odds').value.trim(),
+                    actualScore: document.getElementById('modal-vip-actual').value.trim(),
+                    status: document.getElementById('modal-vip-status').value,
+                    updatedAt: new Date().toISOString()
+                });
+            };
+        }
+
+        // =====================================================================
+        // 3. VIP CORRECT SCORES & HEADING BANNER LOGIC
+        // =====================================================================
+        async function loadSettingsBanner() {
+            try {
+                const docSnap = await getDoc(doc(db, "app_settings", "general"));
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    if (data.nextVipDate) document.getElementById('settingNextVipDate').value = data.nextVipDate;
+                    if (data.nextVipType) document.getElementById('settingNextVipType').value = data.nextVipType;
+                    if (data.nextVipOdds) document.getElementById('settingNextVipOdds').value = data.nextVipOdds;
+                }
+            } catch (err) {
+                console.error("Error loading banner settings:", err);
             }
         }
 
-        // --- 1-CLICK ROTATE VIP RESULTS: MOVE LATEST -> PREVIOUS ---
-        document.getElementById('rotate-vip-results-btn').addEventListener('click', async () => {
-            if (!confirm("Rotate VIP Results?\nThis will copy the current 'Latest VIP' ticket to 'Previous VIP' slot, freeing up 'Latest VIP' for new settled matches.")) {
+        document.getElementById('btn-save-banner').addEventListener('click', async () => {
+            const date = document.getElementById('settingNextVipDate').value.trim();
+            const type = document.getElementById('settingNextVipType').value.trim();
+            const odds = document.getElementById('settingNextVipOdds').value.trim();
+
+            try {
+                await setDoc(doc(db, "app_settings", "general"), {
+                    nextVipDate: date,
+                    nextVipType: type,
+                    nextVipOdds: odds,
+                    updatedAt: new Date().toISOString()
+                }, { merge: true });
+
+                showToast("Heading Announcement Banner Saved!");
+            } catch (err) {
+                alert("Error saving banner: " + err.message);
+            }
+        });
+
+        // Rotate VIP Result Slips (Latest ➔ Previous)
+        document.getElementById('btn-rotate-vip-results').addEventListener('click', async () => {
+            if (!confirm("Rotate VIP Correct Score Slips?\nThis copies current 'Latest VIP' ticket into 'Previous VIP', clearing space for a new Latest VIP.")) {
                 return;
             }
 
             try {
-                const latestSnap = await getDoc(doc(db, "correct_score_results", "latest"));
+                const latestSnap = await getDoc(doc(db, "correct_scores", "latest"));
                 if (!latestSnap.exists()) {
-                    return alert("No 'latest' VIP ticket currently exists in Firestore.");
+                    return alert("No 'Latest VIP' slip found to rotate.");
                 }
 
-                const latestData = latestSnap.data();
-                const prevData = {
-                    ...latestData,
-                    id: 'previous',
-                    tabLabel: latestData.tabLabel?.replace('LATEST', 'PREVIOUS') || 'PREVIOUS VIP',
-                    updatedAt: new Date().toISOString()
-                };
+                const data = latestSnap.data();
+                data.tabLabel = data.tabLabel ? data.tabLabel.replace(/LATEST/i, 'PREVIOUS') : 'PREVIOUS VIP';
+                data.id = 'previous';
+                data.updatedAt = new Date().toISOString();
 
-                await setDoc(doc(db, "correct_score_results", "previous"), prevData);
-                alert("SUCCESS: 'Latest VIP' successfully copied to 'Previous VIP' slot!");
+                await setDoc(doc(db, "correct_scores", "previous"), data);
+                showToast("Rotated Latest VIP ➔ Previous VIP!");
             } catch (err) {
-                alert("VIP Result Rotation Error: " + err.message);
+                alert("Error rotating VIP results: " + err.message);
             }
         });
 
-        function openEditVipModal(id, item) {
-            modalTitle.textContent = `✏️ Edit VIP Match: ${item.homeTeam} vs ${item.awayTeam}`;
-            modalFormContent.innerHTML = `
-                <label>Competition:</label>
-                <input type="text" id="edit-vip-comp" value="${item.competition || ''}">
-                <label>Date:</label>
-                <input type="text" id="edit-vip-date" value="${item.date || ''}">
-                <label>Kickoff Time:</label>
-                <input type="text" id="edit-vip-time" value="${item.kickoffTime || ''}">
-                <label>Home Team:</label>
-                <input type="text" id="edit-vip-team1" value="${item.homeTeam || ''}">
-                <label>Away Team:</label>
-                <input type="text" id="edit-vip-team2" value="${item.awayTeam || ''}">
-                <label>Correct Score Prediction:</label>
-                <input type="text" id="edit-vip-pred" value="${item.correctScorePrediction || ''}">
-                <label>Odds:</label>
-                <input type="text" id="edit-vip-odds" value="${item.odds || ''}">
-                <label>Actual Final Score:</label>
-                <input type="text" id="edit-vip-actual" value="${item.actualScore || ''}">
-                <label>Status:</label>
-                <select id="edit-vip-status">
-                    <option value="upcoming" ${item.status === 'upcoming' ? 'selected' : ''}>Upcoming</option>
-                    <option value="won" ${item.status === 'won' ? 'selected' : ''}>Won</option>
-                    <option value="lost" ${item.status === 'lost' ? 'selected' : ''}>Lost</option>
-                    <option value="void" ${item.status === 'void' ? 'selected' : ''}>Void</option>
-                </select>
-            `;
-            editModal.classList.remove('hidden');
-
-            currentEditingCallback = async () => {
-                const competition = document.getElementById('edit-vip-comp').value.trim();
-                const date = document.getElementById('edit-vip-date').value.trim();
-                const kickoffTime = document.getElementById('edit-vip-time').value.trim();
-                const homeTeam = document.getElementById('edit-vip-team1').value.trim();
-                const awayTeam = document.getElementById('edit-vip-team2').value.trim();
-                const correctScorePrediction = document.getElementById('edit-vip-pred').value.trim();
-                const odds = document.getElementById('edit-vip-odds').value.trim();
-                const actualScore = document.getElementById('edit-vip-actual').value.trim();
-                const status = document.getElementById('edit-vip-status').value;
-
-                await updateDoc(doc(db, "vip_zones", id), {
-                    competition,
-                    date,
-                    kickoffTime,
-                    homeTeam,
-                    awayTeam,
-                    correctScorePrediction,
-                    odds,
-                    actualScore,
-                    status,
-                    updatedAt: new Date().toISOString()
-                });
-                alert("SUCCESS: VIP Match updated!");
-            };
-        }
-
-        // --- 3. CORRECT SCORE RESULTS MANUAL PUBLISH ---
-        const submitCsBtn = document.getElementById('submit-cs-btn');
-        submitCsBtn.addEventListener('click', async (e) => {
-            e.preventDefault();
+        // Submit/Update Correct Score Ticket
+        document.getElementById('btn-submit-cs').addEventListener('click', async () => {
             const slot = document.getElementById('csSlot').value;
-            const title = document.getElementById('csTicketTitle').value.trim() || 'VIP Correct Score Ticket';
-            const tabLabel = document.getElementById('csTabLabel').value.trim() || 'LATEST VIP';
-            const dateTitle = document.getElementById('csDateTitle').value.trim() || '10 / 08 / 2026';
-            const dayOfWeek = document.getElementById('csDayOfWeek').value.trim() || 'MONDAY';
-            const odds = document.getElementById('csOdds').value.trim() || '60.00';
-            const predictedScore = document.getElementById('csPredictedScore').value.trim() || '2 - 1';
-            const actualScore = document.getElementById('csActualScore').value.trim() || '2 - 1';
+            const tabLabel = document.getElementById('csTabLabel').value.trim();
+            const dateTitle = document.getElementById('csDateTitle').value.trim();
+            const dayOfWeek = document.getElementById('csDayOfWeek').value.trim();
+            const totalOdds = document.getElementById('csOdds').value.trim();
             const status = document.getElementById('csStatus').value;
+            const badgeText = document.getElementById('csBadgeText').value.trim();
+
+            const m1Home = document.getElementById('csM1Home').value.trim();
+            const m1Away = document.getElementById('csM1Away').value.trim();
+            const m1HomeLogo = document.getElementById('csM1HomeLogo').value.trim();
+            const m1AwayLogo = document.getElementById('csM1AwayLogo').value.trim();
+            const m1League = document.getElementById('csM1League').value.trim();
+            const m1Pred = document.getElementById('csM1Pred').value.trim();
+            const m1Actual = document.getElementById('csM1Actual').value.trim();
+
+            const m2Home = document.getElementById('csM2Home').value.trim();
+            const m2Away = document.getElementById('csM2Away').value.trim();
+            const m2HomeLogo = document.getElementById('csM2HomeLogo').value.trim();
+            const m2AwayLogo = document.getElementById('csM2AwayLogo').value.trim();
+            const m2League = document.getElementById('csM2League').value.trim();
+            const m2Pred = document.getElementById('csM2Pred').value.trim();
+            const m2Actual = document.getElementById('csM2Actual').value.trim();
+
+            if (!dateTitle || !totalOdds || !m1Home || !m1Away || !m1Pred) {
+                return alert("Please fill Date, Total Odds, and at least Match 1 Home, Away, and Predicted score.");
+            }
+
+            const matches = [
+                {
+                    homeTeam: m1Home,
+                    awayTeam: m1Away,
+                    homeLogo: m1HomeLogo || '',
+                    awayLogo: m1AwayLogo || '',
+                    competition: m1League || 'League',
+                    predictedScore: m1Pred,
+                    actualScore: m1Actual || m1Pred,
+                    odds: String(totalOdds)
+                }
+            ];
+
+            if (m2Home && m2Away && m2Pred) {
+                matches.push({
+                    homeTeam: m2Home,
+                    awayTeam: m2Away,
+                    homeLogo: m2HomeLogo || '',
+                    awayLogo: m2AwayLogo || '',
+                    competition: m2League || 'League',
+                    predictedScore: m2Pred,
+                    actualScore: m2Actual || m2Pred,
+                    odds: '1.00'
+                });
+            }
+
+            const docId = slot === 'custom' ? `custom_${Date.now()}` : slot;
 
             try {
-                const docId = slot !== 'custom' ? slot : `cs-${Date.now()}`;
-                const docData = {
-                    id: docId,
-                    tabLabel: tabLabel,
-                    dateTitle: dateTitle,
-                    dayOfWeek: dayOfWeek,
-                    ticketTitle: title,
-                    odds: String(odds),
+                await setDoc(doc(db, "correct_scores", docId), {
+                    date: dateTitle,
+                    dayOfWeek: dayOfWeek || 'TODAY',
+                    totalOdds: String(totalOdds),
+                    tabLabel: tabLabel || `${slot.toUpperCase()} VIP`,
+                    isLocked: status === 'LOCKED',
                     status: status,
+                    badgeText: badgeText || 'CONFIRMED WON',
+                    matches: matches,
                     published: true,
-                    matches: [
-                        {
-                            id: `m-1`,
-                            homeTeam: title.split(' vs ')[0] || 'Team A',
-                            awayTeam: title.split(' vs ')[1] || 'Team B',
-                            league: 'VIP League',
-                            predictedScore: predictedScore,
-                            actualScore: actualScore,
-                            status: status === 'WON' ? 'won' : (status === 'LOST' ? 'lost' : 'locked'),
-                            odds: odds
-                        }
-                    ],
+                    createdAt: new Date().toISOString(),
                     updatedAt: new Date().toISOString()
-                };
+                }, { merge: true });
 
-                await setDoc(doc(db, "correct_score_results", docId), docData, { merge: true });
-                alert(`SUCCESS: Correct Score Ticket published to slot '${docId}'!`);
+                showToast(`VIP Correct Score (${slot}) Saved Successfully!`);
             } catch (err) {
-                alert("Firestore Correct Score Error: " + err.message);
+                alert("Error saving Correct Score slip: " + err.message);
             }
         });
 
-        // --- 4. NOTIFICATIONS BROADCAST ---
-        const submitNotifBtn = document.getElementById('submit-notif-btn');
-        submitNotifBtn.addEventListener('click', async (e) => {
-            e.preventDefault();
+        function renderCsTickets(snapshot) {
+            const container = document.getElementById('cs-tickets-list');
+            document.getElementById('cs-count-badge').textContent = `${snapshot.size} slips`;
+
+            if (snapshot.empty) {
+                container.innerHTML = '<p style="font-size:11px; color:#94a3b8;">No Correct Score result slips in database.</p>';
+                return;
+            }
+
+            container.innerHTML = '';
+            snapshot.forEach(docSnap => {
+                const item = docSnap.data();
+                const id = docSnap.id;
+                const isPub = item.published !== false;
+                const status = item.status || (item.isLocked ? 'LOCKED' : 'WON');
+                const statusClass = status === 'WON' ? 'won' : (status === 'LOST' ? 'lost' : 'locked');
+                const matchSummary = (item.matches || []).map(m => `${m.homeTeam} vs ${m.awayTeam} (🎯 ${m.predictedScore})`).join(' | ');
+
+                const div = document.createElement('div');
+                div.className = `item-card ${statusClass} ${isPub ? '' : 'unpub'}`;
+                div.innerHTML = `
+                    <div class="item-header">
+                        <div class="item-title">🎫 [${id.toUpperCase()}] ${item.tabLabel || item.date}</div>
+                        <span class="item-badge ${status === 'WON' ? 'badge-won' : (status === 'LOST' ? 'badge-lost' : 'badge-locked')}">${status}</span>
+                    </div>
+                    <div class="item-meta">
+                        📅 <strong>${item.date} (${item.dayOfWeek || ''})</strong> • 💰 Total Odds: <strong style="color:#f59e0b;">${item.totalOdds}</strong> • 🏷️ ${item.badgeText || 'CONFIRMED WON'}<br>
+                        ⚽ Matches: <em>${matchSummary || 'No matches'}</em>
+                    </div>
+                    <div class="action-row-4">
+                        <button type="button" class="pill-btn pill-won" id="cs-won-${id}">WON</button>
+                        <button type="button" class="pill-btn pill-lost" id="cs-lost-${id}">LOST</button>
+                        <button type="button" class="pill-btn pill-edit" id="cs-lock-${id}">${item.isLocked ? 'UNLOCK' : 'LOCK'}</button>
+                        <button type="button" class="pill-btn pill-del" id="cs-del-${id}">Delete</button>
+                    </div>
+                `;
+                container.appendChild(div);
+
+                setTimeout(() => {
+                    document.getElementById(`cs-won-${id}`)?.addEventListener('click', () => updateDoc(doc(db, "correct_scores", id), { status: 'WON', isLocked: false, badgeText: 'CONFIRMED WON', updatedAt: new Date().toISOString() }));
+                    document.getElementById(`cs-lost-${id}`)?.addEventListener('click', () => updateDoc(doc(db, "correct_scores", id), { status: 'LOST', isLocked: false, badgeText: 'LOST', updatedAt: new Date().toISOString() }));
+                    document.getElementById(`cs-lock-${id}`)?.addEventListener('click', () => updateDoc(doc(db, "correct_scores", id), { isLocked: !item.isLocked, status: item.isLocked ? 'WON' : 'LOCKED', updatedAt: new Date().toISOString() }));
+                    document.getElementById(`cs-del-${id}`)?.addEventListener('click', async () => {
+                        if (confirm(`Delete VIP result slip [${id}] permanently?`)) await deleteDoc(doc(db, "correct_scores", id));
+                    });
+                }, 0);
+            });
+        }
+
+        // =====================================================================
+        // 4. CLUB LOGOS DIRECTORY LOGIC
+        // =====================================================================
+        document.getElementById('btn-save-custom-logo').addEventListener('click', async () => {
+            const team = document.getElementById('customLogoTeam').value.trim();
+            const url = document.getElementById('customLogoUrl').value.trim();
+
+            if (!team || !url) {
+                return alert("Please enter Team Name and provide a logo image or URL!");
+            }
+
+            try {
+                const docId = team.toLowerCase().replace(/[^a-z0-9]/g, '_');
+                await setDoc(doc(db, "club_logos", docId), {
+                    teamName: team,
+                    logoUrl: url,
+                    updatedAt: new Date().toISOString()
+                });
+
+                document.getElementById('customLogoTeam').value = '';
+                document.getElementById('customLogoUrl').value = '';
+                document.getElementById('preview-custom-logo').innerHTML = '<span class="logo-thumb-empty">NO LOGO</span>';
+                showToast(`Logo for '${team}' Saved to Database!`);
+            } catch (err) {
+                alert("Error saving club logo: " + err.message);
+            }
+        });
+
+        function renderClubLogos(snapshot) {
+            const container = document.getElementById('custom-logos-list');
+            document.getElementById('logos-count-badge').textContent = `${snapshot.size} logos`;
+
+            if (snapshot.empty) {
+                container.innerHTML = '<p style="font-size:11px; color:#94a3b8;">No custom club logos saved yet. Upload one above!</p>';
+                return;
+            }
+
+            container.innerHTML = '';
+            snapshot.forEach(docSnap => {
+                const item = docSnap.data();
+                const id = docSnap.id;
+
+                const div = document.createElement('div');
+                div.className = 'item-card';
+                div.innerHTML = `
+                    <div style="display:flex; align-items:center; justify-content:space-between;">
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <div class="logo-thumb">
+                                <img src="${item.logoUrl}" alt="${item.teamName}">
+                            </div>
+                            <div>
+                                <strong style="font-size:13px; color:#fff;">${item.teamName}</strong>
+                                <p style="font-size:10px; color:#94a3b8; word-break:break-all;">${(item.logoUrl || '').substring(0, 50)}...</p>
+                            </div>
+                        </div>
+                        <button type="button" class="pill-btn pill-del" id="logo-del-${id}" style="width:70px;">Delete</button>
+                    </div>
+                `;
+                container.appendChild(div);
+
+                setTimeout(() => {
+                    document.getElementById(`logo-del-${id}`)?.addEventListener('click', async () => {
+                        if (confirm(`Delete logo for '${item.teamName}'?`)) await deleteDoc(doc(db, "club_logos", id));
+                    });
+                }, 0);
+            });
+        }
+
+        // =====================================================================
+        // 5. BROADCAST NOTIFICATIONS LOGIC
+        // =====================================================================
+        document.getElementById('btn-submit-notif').addEventListener('click', async () => {
             const title = document.getElementById('notifTitle').value.trim();
             const message = document.getElementById('notifMessage').value.trim();
             const type = document.getElementById('notifType').value;
-            const timestamp = document.getElementById('notifTimestamp').value.trim() || 'Just now';
+            const time = document.getElementById('notifTimestamp').value.trim() || 'Just now';
 
             if (!title || !message) {
-                return alert("Notification Title and Message Payload are required!");
+                return alert("Please enter both Title and Message for the broadcast notification.");
             }
 
             try {
-                const notifId = `notif-${Date.now()}`;
-                const docData = {
-                    id: notifId,
+                await addDoc(collection(db, "notifications"), {
                     title: title,
                     message: message,
                     type: type,
-                    timestamp: timestamp,
-                    read: false,
-                    published: true,
+                    timestamp: time,
+                    isRead: false,
                     createdAt: new Date().toISOString()
-                };
-
-                await setDoc(doc(db, "notifications", notifId), docData);
-                alert("SUCCESS: App Notification Broadcasted to Firestore!");
+                });
 
                 document.getElementById('notifTitle').value = '';
                 document.getElementById('notifMessage').value = '';
+                showToast("Notification Alert Broadcasted!");
             } catch (err) {
-                alert("Firestore Notification Error: " + err.message);
+                alert("Error sending notification: " + err.message);
             }
         });
 
-        // --- 5. DYNAMIC APP SETTINGS SAVE ---
-        const submitSettingsBtn = document.getElementById('submit-settings-btn');
-        submitSettingsBtn.addEventListener('click', async (e) => {
-            e.preventDefault();
+        function renderNotifications(snapshot) {
+            const container = document.getElementById('notif-feed-list');
+            document.getElementById('notif-count-badge').textContent = `${snapshot.size} alerts`;
 
-            const nextVipDate = document.getElementById('settingNextVipDate').value.trim();
-            const nextVipType = document.getElementById('settingNextVipType').value.trim();
-            const nextVipOdds = document.getElementById('settingNextVipOdds').value.trim();
-
-            const telegramUrl = document.getElementById('settingTelegram').value.trim();
-            const adminEmail = document.getElementById('settingEmail').value.trim();
-            const whatsapp = document.getElementById('settingWhatsapp').value.trim();
-            const disclaimer = document.getElementById('settingDisclaimer').value.trim();
-
-            try {
-                const docData = {
-                    nextVipDate: nextVipDate || 'DATE: 10 / 08 / 2026 ( MONDAY )',
-                    nextVipMatchType: nextVipType || 'MATCH TYPE: 2 CORRECT SCORES',
-                    nextVipOdds: nextVipOdds || 'TOTAL ODDS: 60.00',
-                    telegramUrl: telegramUrl || 'https://t.me/thekingdomtradingsignal',
-                    adminContactEmail: adminEmail || 'support@accuracyscore.site',
-                    whatsappSupport: whatsapp || '2349152840495',
-                    disclaimerText: disclaimer || 'Accuracy Score provides sports analysis for informational purposes only.',
-                    updatedAt: new Date().toISOString()
-                };
-
-                await setDoc(doc(db, "app_settings", "general"), docData, { merge: true });
-                alert("SUCCESS: Dynamic App Settings & Next VIP Notice updated in Firestore!");
-            } catch (err) {
-                alert("Firestore Settings Error: " + err.message);
+            if (snapshot.empty) {
+                container.innerHTML = '<p style="font-size:11px; color:#94a3b8;">No notifications broadcasted yet.</p>';
+                return;
             }
-        });
 
-        async function loadAppSettings() {
-            try {
-                const snap = await getDoc(doc(db, "app_settings", "general"));
-                if (snap.exists()) {
-                    const data = snap.data();
-                    if (data.nextVipDate) document.getElementById('settingNextVipDate').value = data.nextVipDate;
-                    if (data.nextVipMatchType) document.getElementById('settingNextVipType').value = data.nextVipMatchType;
-                    if (data.nextVipOdds) document.getElementById('settingNextVipOdds').value = data.nextVipOdds;
-                    if (data.telegramUrl) document.getElementById('settingTelegram').value = data.telegramUrl;
-                    if (data.adminContactEmail) document.getElementById('settingEmail').value = data.adminContactEmail;
-                    if (data.whatsappSupport) document.getElementById('settingWhatsapp').value = data.whatsappSupport;
-                    if (data.disclaimerText) document.getElementById('settingDisclaimer').value = data.disclaimerText;
-                }
-            } catch (err) {
-                console.warn("Error loading app settings:", err);
-            }
+            container.innerHTML = '';
+            snapshot.forEach(docSnap => {
+                const item = docSnap.data();
+                const id = docSnap.id;
+
+                const div = document.createElement('div');
+                div.className = 'item-card';
+                div.innerHTML = `
+                    <div class="item-header">
+                        <div class="item-title">${item.title}</div>
+                        <span class="item-badge badge-won">${item.type || 'ALERT'}</span>
+                    </div>
+                    <div class="item-meta">
+                        ${item.message}<br>
+                        <span style="color:#64748b;">🕒 ${item.timestamp || 'Recent'}</span>
+                    </div>
+                    <button type="button" class="pill-btn pill-del" id="notif-del-${id}">Delete Alert</button>
+                `;
+                container.appendChild(div);
+
+                setTimeout(() => {
+                    document.getElementById(`notif-del-${id}`)?.addEventListener('click', async () => {
+                        if (confirm("Delete this notification?")) await deleteDoc(doc(db, "notifications", id));
+                    });
+                }, 0);
+            });
         }
 
-        // --- REALTIME FIRESTORE LISTENERS ---
-        function initRealtimeListeners() {
-            // Live Free Tips
-            onSnapshot(collection(db, "free_tips"), (snapshot) => {
+        // =====================================================================
+        // 6. USERS & VIP LOGIC
+        // =====================================================================
+        function renderUsers(snapshot) {
+            const container = document.getElementById('users-list');
+            document.getElementById('users-count-badge').textContent = `${snapshot.size} users`;
+
+            if (snapshot.empty) {
+                container.innerHTML = '<p style="font-size:11px; color:#94a3b8;">No registered users found.</p>';
+                return;
+            }
+
+            container.innerHTML = '';
+            snapshot.forEach(docSnap => {
+                const item = docSnap.data();
+                const id = docSnap.id;
+                const isVip = item.isVip === true;
+
+                const div = document.createElement('div');
+                div.className = `item-card ${isVip ? 'locked' : ''}`;
+                div.innerHTML = `
+                    <div class="item-header">
+                        <div class="item-title">${item.name || 'User'} (${item.email || id})</div>
+                        <span class="item-badge ${isVip ? 'badge-locked' : ''}">${isVip ? '👑 VIP ACTIVE' : 'FREE USER'}</span>
+                    </div>
+                    <div class="item-meta">
+                        UID: <code>${id}</code> • Expiry: ${item.vipExpiry || (isVip ? 'Lifetime' : 'None')}
+                    </div>
+                    <div class="row-2">
+                        <button type="button" class="pill-btn ${isVip ? 'pill-del' : 'pill-won'}" id="user-vip-${id}">${isVip ? 'Revoke VIP' : 'Grant VIP'}</button>
+                        <button type="button" class="pill-btn pill-edit" id="user-del-${id}">Remove User</button>
+                    </div>
+                `;
+                container.appendChild(div);
+
+                setTimeout(() => {
+                    document.getElementById(`user-vip-${id}`)?.addEventListener('click', async () => {
+                        await updateDoc(doc(db, "users", id), {
+                            isVip: !isVip,
+                            vipExpiry: !isVip ? '2030-12-31' : null,
+                            updatedAt: new Date().toISOString()
+                        });
+                    });
+                    document.getElementById(`user-del-${id}`)?.addEventListener('click', async () => {
+                        if (confirm(`Remove user record ${item.email || id}?`)) await deleteDoc(doc(db, "users", id));
+                    });
+                }, 0);
+            });
+        }
+
+        // =====================================================================
+        // REALTIME LISTENER INITIALIZER
+        // =====================================================================
+        function initRealtimeSync() {
+            onSnapshot(collection(db, "free_tips"), (snap) => {
                 cachedFreeTips = [];
-                snapshot.forEach(docSnap => {
-                    cachedFreeTips.push({ id: docSnap.id, ...docSnap.data() });
-                });
+                snap.forEach(d => cachedFreeTips.push({ id: d.id, ...d.data() }));
                 renderFreeTips();
             });
 
-            // Live VIP Matches
-            onSnapshot(collection(db, "vip_zones"), (snapshot) => {
-                const container = document.getElementById('activeVipMatchesList');
-                if (snapshot.empty) {
-                    container.innerHTML = '<p style="font-size:12px; color:#94a3b8;">No VIP matches in database.</p>';
-                    return;
-                }
-                container.innerHTML = '';
-                snapshot.forEach(docSnap => {
-                    const item = docSnap.data();
-                    const id = docSnap.id;
-                    const isPub = item.published !== false;
-
-                    const div = document.createElement('div');
-                    div.className = `item-row ${isPub ? '' : 'unpublished'}`;
-                    div.innerHTML = `
-                        <div>
-                            <strong>${item.homeTeam} vs ${item.awayTeam}</strong>
-                            <span class="badge ${isPub ? 'badge-pub' : 'badge-unpub'}">${isPub ? 'PUBLISHED' : 'UNPUBLISHED'}</span>
-                            <br>
-                            <small>${item.competition || 'VIP League'} (${item.date || 'Today'}) | Pred: <strong>${item.correctScorePrediction}</strong> @ ${item.odds} | Status: <strong style="color:#38bdf8">${item.status || 'upcoming'}</strong></small>
-                            ${item.actualScore ? `<br><small style="color:#34d399">Final Score: <strong>${item.actualScore}</strong></small>` : ''}
-                        </div>
-                        <div style="margin-top: 8px;">
-                            <label style="font-size: 11px; margin-top: 4px;">Actual Final Score (e.g. 2 - 1):</label>
-                            <input type="text" id="vip-score-${id}" placeholder="e.g. 2 - 1" value="${item.actualScore || ''}" style="margin: 4px 0 8px 0; padding: 8px; font-size: 13px;">
-                        </div>
-                        <div class="btn-grid">
-                            <button type="button" class="status-pill btn-won" id="vip-won-${id}">WON</button>
-                            <button type="button" class="status-pill btn-lost" id="vip-lost-${id}">LOST</button>
-                            <button type="button" class="status-pill btn-edit" id="vip-edit-${id}">✏️ Edit</button>
-                            <button type="button" class="status-pill btn-toggle" id="vip-toggle-${id}">${isPub ? 'Hide' : 'Show'}</button>
-                            <button type="button" class="status-pill btn-void" id="vip-del-${id}">Delete</button>
-                        </div>
-                    `;
-                    container.appendChild(div);
-
-                    setTimeout(() => {
-                        document.getElementById(`vip-won-${id}`)?.addEventListener('click', () => settleVipMatch(id, item, 'WON', 'latest'));
-                        document.getElementById(`vip-lost-${id}`)?.addEventListener('click', () => settleVipMatch(id, item, 'LOST', 'latest'));
-                        document.getElementById(`vip-toggle-${id}`)?.addEventListener('click', () => updateDoc(doc(db, "vip_zones", id), { published: !isPub, updatedAt: new Date().toISOString() }));
-                        document.getElementById(`vip-edit-${id}`)?.addEventListener('click', () => openEditVipModal(id, item));
-                        document.getElementById(`vip-del-${id}`)?.addEventListener('click', async () => {
-                            if (confirm("Delete this VIP match permanently?")) {
-                                await deleteDoc(doc(db, "vip_zones", id));
-                                try {
-                                    await deleteDoc(doc(db, "correct_score_results", `vip-${id}`));
-                                } catch (e) {}
-                            }
-                        });
-                    }, 0);
-                });
+            onSnapshot(collection(db, "vip_zones"), (snap) => {
+                renderVipMatches(snap);
             });
 
-            // Live Correct Score Tickets
-            onSnapshot(collection(db, "correct_score_results"), (snapshot) => {
-                const container = document.getElementById('csTicketList');
-                if (snapshot.empty) {
-                    container.innerHTML = '<p style="font-size:12px; color:#94a3b8;">No correct score tickets in database.</p>';
-                    return;
-                }
-                container.innerHTML = '';
-                snapshot.forEach(docSnap => {
-                    const item = docSnap.data();
-                    const id = docSnap.id;
-                    const isPub = item.published !== false;
-
-                    const div = document.createElement('div');
-                    div.className = `item-row ${isPub ? '' : 'unpublished'}`;
-                    div.innerHTML = `
-                        <div>
-                            <strong>[Slot: ${id}] ${item.ticketTitle || 'Ticket'}</strong> (${item.dateTitle || item.date || 'Today'})
-                            <span class="badge ${isPub ? 'badge-pub' : 'badge-unpub'}">${isPub ? 'PUBLISHED' : 'UNPUBLISHED'}</span>
-                            <br>
-                            <small>Tab: ${item.tabLabel || id} | Odds: ${item.odds} | Status: <strong style="color:#38bdf8">${item.status}</strong></small>
-                            ${item.matches && item.matches[0] ? `<br><small style="color:#94a3b8">Pred: ${item.matches[0].predictedScore} | Actual: ${item.matches[0].actualScore}</small>` : ''}
-                        </div>
-                        <div class="btn-grid" style="grid-template-columns: repeat(4, 1fr);">
-                            <button type="button" class="status-pill btn-won" id="cs-won-${id}">WON</button>
-                            <button type="button" class="status-pill btn-lost" id="cs-lost-${id}">LOST</button>
-                            <button type="button" class="status-pill btn-toggle" id="cs-toggle-${id}">${isPub ? 'Hide' : 'Show'}</button>
-                            <button type="button" class="status-pill btn-void" id="cs-del-${id}">Delete</button>
-                        </div>
-                    `;
-                    container.appendChild(div);
-
-                    setTimeout(() => {
-                        document.getElementById(`cs-won-${id}`)?.addEventListener('click', () => updateDoc(doc(db, "correct_score_results", id), { status: 'WON', updatedAt: new Date().toISOString() }));
-                        document.getElementById(`cs-lost-${id}`)?.addEventListener('click', () => updateDoc(doc(db, "correct_score_results", id), { status: 'LOST', updatedAt: new Date().toISOString() }));
-                        document.getElementById(`cs-toggle-${id}`)?.addEventListener('click', () => updateDoc(doc(db, "correct_score_results", id), { published: !isPub, updatedAt: new Date().toISOString() }));
-                        document.getElementById(`cs-del-${id}`)?.addEventListener('click', () => {
-                            if (confirm("Delete ticket permanently?")) deleteDoc(doc(db, "correct_score_results", id));
-                        });
-                    }, 0);
-                });
+            onSnapshot(collection(db, "correct_scores"), (snap) => {
+                renderCsTickets(snap);
             });
 
-            // Live Notifications
-            onSnapshot(collection(db, "notifications"), (snapshot) => {
-                const container = document.getElementById('notifList');
-                if (snapshot.empty) {
-                    container.innerHTML = '<p style="font-size:12px; color:#94a3b8;">No notifications in database.</p>';
-                    return;
-                }
-                container.innerHTML = '';
-                snapshot.forEach(docSnap => {
-                    const item = docSnap.data();
-                    const id = docSnap.id;
-                    const isPub = item.published !== false;
-
-                    const div = document.createElement('div');
-                    div.className = `item-row ${isPub ? '' : 'unpublished'}`;
-                    div.innerHTML = `
-                        <div>
-                            <strong>${item.title}</strong>
-                            <span class="badge ${isPub ? 'badge-pub' : 'badge-unpub'}">${isPub ? 'PUBLISHED' : 'UNPUBLISHED'}</span>
-                            <br>
-                            <small style="color:#94a3b8;">${item.message}</small>
-                        </div>
-                        <div class="btn-grid" style="grid-template-columns: repeat(2, 1fr);">
-                            <button type="button" class="status-pill btn-toggle" id="notif-toggle-${id}">${isPub ? 'Unpublish' : 'Publish'}</button>
-                            <button type="button" class="status-pill btn-void" id="notif-del-${id}">Delete</button>
-                        </div>
-                    `;
-                    container.appendChild(div);
-
-                    setTimeout(() => {
-                        document.getElementById(`notif-toggle-${id}`)?.addEventListener('click', () => updateDoc(doc(db, "notifications", id), { published: !isPub, updatedAt: new Date().toISOString() }));
-                        document.getElementById(`notif-del-${id}`)?.addEventListener('click', () => {
-                            if (confirm("Delete notification permanently?")) deleteDoc(doc(db, "notifications", id));
-                        });
-                    }, 0);
-                });
+            onSnapshot(collection(db, "club_logos"), (snap) => {
+                renderClubLogos(snap);
             });
 
-            // Live Registered App Users
-            onSnapshot(collection(db, "users"), (snapshot) => {
-                const container = document.getElementById('userList');
-                if (snapshot.empty) {
-                    container.innerHTML = '<p style="font-size:12px; color:#94a3b8;">No registered users found.</p>';
-                    return;
-                }
-                container.innerHTML = '';
-                snapshot.forEach(docSnap => {
-                    const u = docSnap.data();
-                    const uid = docSnap.id;
-                    const isVip = u.isVip === true;
+            onSnapshot(collection(db, "notifications"), (snap) => {
+                renderNotifications(snap);
+            });
 
-                    const div = document.createElement('div');
-                    div.className = 'item-row';
-                    div.style.borderLeftColor = isVip ? '#fbbf24' : '#64748b';
-                    div.innerHTML = `
-                        <div>
-                            <strong>${u.fullName || u.email || 'App User'}</strong>
-                            <span class="badge" style="background:${isVip ? '#b45309' : '#334155'}; color:${isVip ? '#fef08a' : '#cbd5e1'};">${isVip ? '👑 VIP ACTIVE' : 'FREE USER'}</span>
-                            <br>
-                            <small style="color:#94a3b8;">Email: ${u.email || '--'} | UID: ${uid}</small>
-                        </div>
-                        <div style="margin-top: 8px;">
-                            <button type="button" class="status-pill ${isVip ? 'btn-danger' : 'btn-success'}" id="user-vip-${uid}" style="width: 100%;">
-                                ${isVip ? 'Revoke VIP Access' : 'Grant VIP Access'}
-                            </button>
-                        </div>
-                    `;
-                    container.appendChild(div);
-
-                    setTimeout(() => {
-                        document.getElementById(`user-vip-${uid}`)?.addEventListener('click', () => {
-                            updateDoc(doc(db, "users", uid), {
-                                isVip: !isVip,
-                                vipActivatedAt: !isVip ? new Date().toISOString() : null,
-                                updatedAt: new Date().toISOString()
-                            });
-                        });
-                    }, 0);
-                });
+            onSnapshot(collection(db, "users"), (snap) => {
+                renderUsers(snap);
             });
         }
     </script>
 </body>
-</html>
+    </html>
