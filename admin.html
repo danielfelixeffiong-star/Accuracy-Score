@@ -1343,7 +1343,7 @@
             }
 
             try {
-                const latestSnap = await getDoc(doc(db, "correct_scores", "latest"));
+                const latestSnap = await getDoc(doc(db, "correct_score_results", "latest"));
                 if (!latestSnap.exists()) {
                     return alert("No 'Latest VIP' slip found to rotate.");
                 }
@@ -1353,7 +1353,7 @@
                 data.id = 'previous';
                 data.updatedAt = new Date().toISOString();
 
-                await setDoc(doc(db, "correct_scores", "previous"), data);
+                await setDoc(doc(db, "correct_score_results", "previous"), data);
                 showToast("Rotated Latest VIP ➔ Previous VIP!");
             } catch (err) {
                 alert("Error rotating VIP results: " + err.message);
@@ -1395,8 +1395,11 @@
                     homeTeam: m1Home,
                     awayTeam: m1Away,
                     homeLogo: m1HomeLogo || '',
+                    homeTeamLogoUrl: m1HomeLogo || '',
                     awayLogo: m1AwayLogo || '',
+                    awayTeamLogoUrl: m1AwayLogo || '',
                     competition: m1League || 'League',
+                    league: m1League || 'League',
                     predictedScore: m1Pred,
                     actualScore: m1Actual || m1Pred,
                     odds: String(totalOdds)
@@ -1408,8 +1411,11 @@
                     homeTeam: m2Home,
                     awayTeam: m2Away,
                     homeLogo: m2HomeLogo || '',
+                    homeTeamLogoUrl: m2HomeLogo || '',
                     awayLogo: m2AwayLogo || '',
+                    awayTeamLogoUrl: m2AwayLogo || '',
                     competition: m2League || 'League',
+                    league: m2League || 'League',
                     predictedScore: m2Pred,
                     actualScore: m2Actual || m2Pred,
                     odds: '1.00'
@@ -1419,14 +1425,17 @@
             const docId = slot === 'custom' ? `custom_${Date.now()}` : slot;
 
             try {
-                await setDoc(doc(db, "correct_scores", docId), {
+                await setDoc(doc(db, "correct_score_results", docId), {
                     date: dateTitle,
+                    dateTitle: dateTitle,
                     dayOfWeek: dayOfWeek || 'TODAY',
                     totalOdds: String(totalOdds),
+                    odds: String(totalOdds),
                     tabLabel: tabLabel || `${slot.toUpperCase()} VIP`,
                     isLocked: status === 'LOCKED',
                     status: status,
                     badgeText: badgeText || 'CONFIRMED WON',
+                    statusBadgeText: badgeText || 'CONFIRMED WON',
                     matches: matches,
                     published: true,
                     createdAt: new Date().toISOString(),
@@ -1478,11 +1487,11 @@
                 container.appendChild(div);
 
                 setTimeout(() => {
-                    document.getElementById(`cs-won-${id}`)?.addEventListener('click', () => updateDoc(doc(db, "correct_scores", id), { status: 'WON', isLocked: false, badgeText: 'CONFIRMED WON', updatedAt: new Date().toISOString() }));
-                    document.getElementById(`cs-lost-${id}`)?.addEventListener('click', () => updateDoc(doc(db, "correct_scores", id), { status: 'LOST', isLocked: false, badgeText: 'LOST', updatedAt: new Date().toISOString() }));
-                    document.getElementById(`cs-lock-${id}`)?.addEventListener('click', () => updateDoc(doc(db, "correct_scores", id), { isLocked: !item.isLocked, status: item.isLocked ? 'WON' : 'LOCKED', updatedAt: new Date().toISOString() }));
+                    document.getElementById(`cs-won-${id}`)?.addEventListener('click', () => updateDoc(doc(db, "correct_score_results", id), { status: 'WON', isLocked: false, badgeText: 'CONFIRMED WON', updatedAt: new Date().toISOString() }));
+                    document.getElementById(`cs-lost-${id}`)?.addEventListener('click', () => updateDoc(doc(db, "correct_score_results", id), { status: 'LOST', isLocked: false, badgeText: 'LOST', updatedAt: new Date().toISOString() }));
+                    document.getElementById(`cs-lock-${id}`)?.addEventListener('click', () => updateDoc(doc(db, "correct_score_results", id), { isLocked: !item.isLocked, status: item.isLocked ? 'WON' : 'LOCKED', updatedAt: new Date().toISOString() }));
                     document.getElementById(`cs-del-${id}`)?.addEventListener('click', async () => {
-                        if (confirm(`Delete VIP result slip [${id}] permanently?`)) await deleteDoc(doc(db, "correct_scores", id));
+                        if (confirm(`Delete VIP result slip [${id}] permanently?`)) await deleteDoc(doc(db, "correct_score_results", id));
                     });
                 }, 0);
             });
@@ -1688,7 +1697,7 @@
                 renderVipMatches(snap);
             });
 
-            onSnapshot(collection(db, "correct_scores"), (snap) => {
+            onSnapshot(collection(db, "correct_score_results"), (snap) => {
                 renderCsTickets(snap);
             });
 
