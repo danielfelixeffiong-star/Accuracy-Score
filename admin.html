@@ -1093,6 +1093,8 @@
                         <input type="text" id="modal-free-odds" value="${item.odds || ''}">
                     </div>
                 </div>
+                <label>Final Score (FT):</label>
+                <input type="text" id="modal-free-actual" value="${(item.actualScore || '').replace(/[^0-9 -]/g, '')}" placeholder="e.g. 2 - 1 (completed matches only)">
                 <label>Status:</label>
                 <select id="modal-free-status">
                     <option value="NOT STARTED" ${item.status === 'NOT STARTED' ? 'selected' : ''}>NOT STARTED</option>
@@ -1105,7 +1107,12 @@
 
             document.getElementById('edit-modal').classList.remove('hidden');
             currentModalSaveCallback = async () => {
+                const score = document.getElementById('modal-free-actual').value.trim();
+                if (score && !/^\d{1,2}\s*-\s*\d{1,2}$/.test(score)) {
+                    throw new Error('Enter the final score as home goals - away goals, for example 2 - 1.');
+                }
                 await updateDoc(doc(db, "free_tips", id), {
+                    actualScore: score ? score.split('-').map(value => String(Number(value.trim()))).join(' - ') : '', 
                     date: document.getElementById('modal-free-date').value,
                     league: document.getElementById('modal-free-league').value.trim(),
                     kickoffTime: document.getElementById('modal-free-time').value.trim(),
