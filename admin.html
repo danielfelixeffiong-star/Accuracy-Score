@@ -505,6 +505,8 @@
                             <label>Predicted Score:</label>
                             <input type="text" id="csM1Pred" placeholder="e.g. 2 - 1">
                         </div>
+                        <div class="form-group"><label>MATCH 1 ODDS:</label><input type="number" min="1.01" step="0.01" id="csM1Odds" placeholder="Individual match odds"></div>
+                        <div class="form-group"><label>MATCH 1 KICKOFF (UTC):</label><input type="time" id="csM1Time"></div>
                         <div>
                             <label>Final Score (FT):</label>
                             <input type="text" id="csM1Actual" placeholder="e.g. 2 - 1">
@@ -562,6 +564,8 @@
                             <label>Predicted Score:</label>
                             <input type="text" id="csM2Pred" placeholder="e.g. 3 - 1">
                         </div>
+                        <div class="form-group"><label>MATCH 2 ODDS:</label><input type="number" min="1.01" step="0.01" id="csM2Odds" placeholder="Individual match odds"></div>
+                        <div class="form-group"><label>MATCH 2 KICKOFF (UTC):</label><input type="time" id="csM2Time"></div>
                         <div>
                             <label>Final Score (FT):</label>
                             <input type="text" id="csM2Actual" placeholder="e.g. 3 - 1">
@@ -1376,6 +1380,8 @@
             const m1AwayLogo = document.getElementById('csM1AwayLogo').value.trim();
             const m1League = document.getElementById('csM1League').value.trim();
             const m1Pred = document.getElementById('csM1Pred').value.trim();
+            const m1Odds = document.getElementById('csM1Odds').value.trim();
+            const m1Time = document.getElementById('csM1Time').value;
             const m1Actual = document.getElementById('csM1Actual').value.trim();
 
             const m2Home = document.getElementById('csM2Home').value.trim();
@@ -1384,10 +1390,17 @@
             const m2AwayLogo = document.getElementById('csM2AwayLogo').value.trim();
             const m2League = document.getElementById('csM2League').value.trim();
             const m2Pred = document.getElementById('csM2Pred').value.trim();
+            const m2Odds = document.getElementById('csM2Odds').value.trim();
+            const m2Time = document.getElementById('csM2Time').value;
             const m2Actual = document.getElementById('csM2Actual').value.trim();
 
             if (!dateTitle || !totalOdds || !m1Home || !m1Away || !m1Pred) {
                 return alert("Please fill Date, Total Odds, and at least Match 1 Home, Away, and Predicted score.");
+            }
+
+            if (!Number.isFinite(Number(m1Odds)) || Number(m1Odds) <= 1 || !m1Time ||
+                (m2Home && m2Away && (!Number.isFinite(Number(m2Odds)) || Number(m2Odds) <= 1 || !m2Time))) {
+                return alert('Enter individual odds greater than 1 and UTC kickoff time for each match.');
             }
 
             const matches = [
@@ -1401,8 +1414,9 @@
                     competition: m1League || 'League',
                     league: m1League || 'League',
                     predictedScore: m1Pred,
+                    kickoffTime: m1Time ? m1Time + ' UTC' : '',
                     actualScore: m1Actual || m1Pred,
-                    odds: String(totalOdds)
+                    odds: m1Odds
                 }
             ];
 
@@ -1417,8 +1431,9 @@
                     competition: m2League || 'League',
                     league: m2League || 'League',
                     predictedScore: m2Pred,
+                    kickoffTime: m2Time ? m2Time + ' UTC' : '',
                     actualScore: m2Actual || m2Pred,
-                    odds: '1.00'
+                    odds: m2Odds
                 });
             }
 
