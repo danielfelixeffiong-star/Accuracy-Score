@@ -1504,6 +1504,7 @@
                         <button type="button" class="pill-btn pill-lost" id="cs-lost-${id}">LOST</button>
                         <button type="button" class="pill-btn pill-edit" id="cs-lock-${id}">${item.isLocked ? 'UNLOCK' : 'LOCK'}</button>
                         <button type="button" class="pill-btn pill-del" id="cs-del-${id}">Delete</button>
+<button type="button" class="pill-btn pill-edit" id="cs-times-${id}">Edit match odds / times</button>
                     </div>
                 `;
                 container.appendChild(div);
@@ -1512,6 +1513,7 @@
                     document.getElementById(`cs-won-${id}`)?.addEventListener('click', () => updateDoc(doc(db, "correct_score_results", id), { status: 'WON', isLocked: false, badgeText: 'CONFIRMED WON', updatedAt: new Date().toISOString() }));
                     document.getElementById(`cs-lost-${id}`)?.addEventListener('click', () => updateDoc(doc(db, "correct_score_results", id), { status: 'LOST', isLocked: false, badgeText: 'LOST', updatedAt: new Date().toISOString() }));
                     document.getElementById(`cs-lock-${id}`)?.addEventListener('click', () => updateDoc(doc(db, "correct_score_results", id), { isLocked: !item.isLocked, status: item.isLocked ? 'WON' : 'LOCKED', updatedAt: new Date().toISOString() }));
+                    document.getElementById(`cs-times-${id}`)?.addEventListener('click', () => openMatchDetailsModal(id, item));
                     document.getElementById(`cs-del-${id}`)?.addEventListener('click', async () => {
                         if (confirm(`Delete VIP result slip [${id}] permanently?`)) await deleteDoc(doc(db, "correct_score_results", id));
                     });
@@ -1520,6 +1522,28 @@
         }
 
         // =====================================================================
+        function openMatchDetailsModal(id, item) {
+            const matches = item.matches || [];
+            document.getElementById('modal-title').textContent = 'Edit individual match odds and kickoff times';
+            document.getElementById('modal-content').innerHTML = matches.map((match, index) => `
+                <h3>Match ${index + 1}</h3>
+                <label>Individual odds:</label>
+                <input type="number" min="1.01" step="0.01" id="match-detail-odds-${index}" value="${String(match.odds || '').replace(/[^0-9.]/g, '')}">
+                <label>Kickoff time (UTC):</label>
+                <input type="time" id="match-detail-time-${index}" value="${(String(match.kickoffTime || '').match(/\b\d{2}:\d{2}\b/) || [''])[0]}">
+            `).join('');
+            document.getElementById('edit-modal').classList.remove('hidden');
+            currentModalSaveCallback = async () => {
+                const updated = matches.map((match, index) => {
+                    const odds = document.getElementById(`match-detail-odds-${index}`).value.trim();
+                    const time = document.getElementById(`match-detail-time-${index}`).value;
+                    if (!Number.isFinite(Number(odds)) || Number(odds) <= 1 || !time) throw new Error('Enter individual odds greater than 1 and UTC kickoff time for every match.');
+                    return { ...match, odds, kickoffTime: time + ' UTC' };
+                });
+                await updateDoc(doc(db, 'correct_score_results', id), { matches: updated, updatedAt: new Date().toISOString() });
+            };
+        }
+
         // 4. CLUB LOGOS DIRECTORY LOGIC
         // =====================================================================
         document.getElementById('btn-save-custom-logo').addEventListener('click', async () => {
