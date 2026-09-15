@@ -825,10 +825,16 @@
 
         document.getElementById('modal-save-btn').addEventListener('click', async () => {
             if (currentModalSaveCallback) {
-                await currentModalSaveCallback();
-                document.getElementById('edit-modal').classList.add('hidden');
-                currentModalSaveCallback = null;
-                showToast('Changes Saved to Cloud Firestore!');
+                const button = document.getElementById('modal-save-btn');
+                button.disabled = true;
+                try {
+                    await currentModalSaveCallback();
+                    document.getElementById('edit-modal').classList.add('hidden');
+                    currentModalSaveCallback = null;
+                    showToast('Changes Saved to Cloud Firestore!');
+                } catch (error) {
+                    alert('Could not save changes: ' + error.message);
+                } finally { button.disabled = false; }
             }
         });
 
@@ -1537,8 +1543,15 @@
                 const updated = matches.map((match, index) => {
                     const odds = document.getElementById(`match-detail-odds-${index}`).value.trim();
                     const time = document.getElementById(`match-detail-time-${index}`).value;
-                    if (!Number.isFinite(Number(odds)) || Number(odds) <= 1 || !time) throw new Error('Enter individual odds greater than 1 and UTC kickoff time for every match.');
-                    return { ...match, odds, kickoffTime: time + ' UTC' };
+                    const previousOdds = String(match.odds || '').replace(/[^0-9.]/g, '');
+                    const previousTime = (String(match.kickoffTime || '').match(/\b\d{2}:\d{2}\b/) || [''])[0];
+                    const result = { ...match };
+                    if (odds !== previousOdds) {
+                        if (!odds || !Number.isFinite(Number(odds)) || Number(odds) <= 1) throw new Error('Match ' + (index + 1) + ': enter odds greater than 1.');
+                        result.odds = Number(odds).toFixed(2);
+                    }
+                    if (time !== previousTime) result.kickoffTime = time ? time + ' UTC' : '';
+                    return result;
                 });
                 await updateDoc(doc(db, 'correct_score_results', id), { matches: updated, updatedAt: new Date().toISOString() });
             };
