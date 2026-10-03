@@ -1,0 +1,14 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.accuracyscore.app",
+      "sha256_cert_fingerprints": [
+        "4F:1F:88:70:DD:0B:E5:4C:A7:F8:45:77:FF:77:45:FA:FD:23:20:C0:A1:0F:9C:42:9E:0D:D2:94:44:D9:23:D6"
+      ]
+    }
+  }
+]
