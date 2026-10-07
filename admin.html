@@ -723,7 +723,7 @@
     <!-- FIREBASE SDK & CONTROLLER SCRIPT -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, sendEmailVerification } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, collection, doc, addDoc, setDoc, updateDoc, deleteDoc, getDoc, getDocs, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -739,8 +739,17 @@
         const auth = getAuth(app);
         async function ticketAdminRequest(action, body) {
             if (!auth.currentUser) throw new Error('Sign in first');
+            await auth.currentUser.reload();
+            if (!auth.currentUser.emailVerified) {
+                if (confirm('Your admin email must be verified before publishing tickets. Send a verification email to ' + auth.currentUser.email + '?')) {
+                    try { await sendEmailVerification(auth.currentUser); }
+                    catch (error) { throw new Error(error.code === 'auth/too-many-requests' ? 'A verification email was requested recently. Check your inbox and spam folder, then retry after verifying.' : 'Could not send verification email. Please try again later.'); }
+                    throw new Error('Verification email sent. Check your inbox or spam folder, open the verification link, then click this button again.');
+                }
+                throw new Error('Please verify your admin email before publishing or closing ticket sales.');
+            }
             const response = await fetch('https://accuracybilling-lqnpdofhba-uc.a.run.app/api/billing/tickets/' + action, {
-                method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + await auth.currentUser.getIdToken() }, body: JSON.stringify(body)
+                method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + await auth.currentUser.getIdToken(true) }, body: JSON.stringify(body)
             });
             const data = await response.json();
             if (!response.ok) throw new Error(data.error || 'Ticket update failed');
