@@ -275,6 +275,18 @@
         <!-- TAB 2: VIP MATCHES / VIP ZONES SECTION                            -->
         <!-- ================================================================= -->
         <div id="section-vip" class="tab-section hidden">
+            <div class="card" style="padding:20px; margin-bottom:20px">
+                <h3>One-time NEXT VIP ticket · US$29</h3>
+                <p>After uploading all upcoming VIP matches, publish a ticket snapshot. Buyers receive only these matches; later edits or uploads do not change a purchased ticket. Set the cutoff no later than the earliest kickoff.</p>
+                <label>Ticket title <input id="paidTicketTitle" placeholder="e.g. VIP ticket — 10 October 2026" maxlength="120"></label>
+                <label>Sales close (your local time) <input id="paidTicketCutoff" type="datetime-local"></label>
+                <button type="button" id="publish-paid-ticket" class="btn btn-purple">Publish current upcoming matches as a ticket</button>
+                <button type="button" id="close-paid-ticket" class="btn">Close ticket sales</button>
+                <p id="paid-ticket-status" role="status"></p>
+            </div>
+
+            
+
             
             <!-- Upload VIP Match Form -->
             <div class="card">
@@ -725,6 +737,32 @@
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
+        async function ticketAdminRequest(action, body) {
+            if (!auth.currentUser) throw new Error('Sign in first');
+            const response = await fetch('https://accuracybilling-lqnpdofhba-uc.a.run.app/api/billing/tickets/' + action, {
+                method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + await auth.currentUser.getIdToken() }, body: JSON.stringify(body)
+            });
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.error || 'Ticket update failed');
+            return data;
+        }
+        document.getElementById('publish-paid-ticket').onclick = async function () {
+            const status = document.getElementById('paid-ticket-status');
+            const title = document.getElementById('paidTicketTitle').value.trim();
+            const saleEndsAt = new Date(document.getElementById('paidTicketCutoff').value).getTime();
+            if (!title || !Number.isFinite(saleEndsAt) || saleEndsAt <= Date.now()) { status.textContent = 'Enter a title and future sales cutoff.'; return; }
+            if (!confirm('Publish a new paid ticket containing ALL currently published upcoming VIP matches? Existing buyers keep their original ticket.')) return;
+            this.disabled = true;
+            try { const data = await ticketAdminRequest('publish', { title, saleEndsAt }); status.textContent = 'Ticket published: ' + data.ticketId; }
+            catch (error) { status.textContent = error.message; }
+            finally { this.disabled = false; }
+        };
+        document.getElementById('close-paid-ticket').onclick = async function () {
+            this.disabled = true;
+            try { await ticketAdminRequest('close', {}); document.getElementById('paid-ticket-status').textContent = 'Ticket sales closed. Existing purchases retain access.'; }
+            catch (error) { document.getElementById('paid-ticket-status').textContent = error.message; }
+            finally { this.disabled = false; }
+        };
         const db = getFirestore(app, "ai-studio-accuracyscore-815a63cc-1a8d-4296-8574-4b1171cc9a03");
 
         let activeFreeFilter = 'all';
