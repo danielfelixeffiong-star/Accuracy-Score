@@ -640,6 +640,9 @@
                     <span>📚 Saved Custom Club Logos</span>
                     <span id="logos-count-badge" style="font-size:11px; color:#38bdf8;">0 logos</span>
                 </div>
+                <label for="logo-search">Search saved club logos</label>
+                <input id="logo-search" type="search" placeholder="Type a club name…" autocomplete="off" style="margin-bottom:12px;">
+                <p id="logo-search-empty" role="status" hidden style="font-size:12px; color:#94a3b8;">No saved logo matches this search.</p>
                 <div id="custom-logos-list">Loading logos directory...</div>
             </div>
         </div>
@@ -1633,10 +1636,26 @@
             }
         });
 
+        function filterSavedLogos() {
+            const normalize = value => value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+            const query = normalize(document.getElementById('logo-search').value);
+            const cards = [...document.querySelectorAll('#custom-logos-list .item-card')];
+            let visible = 0;
+            cards.forEach(card => {
+                card.hidden = !normalize(card.dataset.logoTeam || '').includes(query);
+                if (!card.hidden) visible++;
+            });
+            document.getElementById('logos-count-badge').textContent = query
+                ? `${visible} of ${cards.length} logos` : `${cards.length} logos`;
+            document.getElementById('logo-search-empty').hidden = !query || visible > 0 || !cards.length;
+        }
+        document.getElementById('logo-search').addEventListener('input', filterSavedLogos);
+
         function renderClubLogos(snapshot) {
             const container = document.getElementById('custom-logos-list');
             document.getElementById('logos-count-badge').textContent = `${snapshot.size} logos`;
 
+            document.getElementById('logo-search-empty').hidden = true;
             if (snapshot.empty) {
                 container.innerHTML = '<p style="font-size:11px; color:#94a3b8;">No custom club logos saved yet. Upload one above!</p>';
                 return;
@@ -1649,6 +1668,7 @@
 
                 const div = document.createElement('div');
                 div.className = 'item-card';
+                div.dataset.logoTeam = item.teamName || '';
                 div.innerHTML = `
                     <div style="display:flex; align-items:center; justify-content:space-between;">
                         <div style="display:flex; align-items:center; gap:10px;">
@@ -1671,6 +1691,7 @@
                     });
                 }, 0);
             });
+            filterSavedLogos();
         }
 
         // =====================================================================
